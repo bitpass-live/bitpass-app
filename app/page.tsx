@@ -39,7 +39,7 @@ export default function HomePage() {
       {/* Main content */}
       <div className='flex-1 flex flex-col md:flex-row'>
         {/* Left side - Event info and tickets */}
-        <div className='flex flex-col items-center w-full md:w-1/2 p-6 md:p-10 md:border-r bg-[#151515]'>
+        <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 md:border-r bg-[#151515]'>
           <div className='container'>
             <div className='flex items-center gap-2 w-full pb-4 border-b text-lg'>
               <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
@@ -54,7 +54,7 @@ export default function HomePage() {
         </div>
 
         {/* Right side - Checkout form */}
-        <div className='flex flex-col items-center w-full md:w-1/2 p-6 md:p-10 bg-[#0A0A0A]'>
+        <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 bg-[#0A0A0A]'>
           <div className='container'>
             <CheckoutForm eventId={eventId} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
           </div>

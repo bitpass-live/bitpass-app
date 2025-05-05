@@ -1,5 +1,7 @@
 # BitPass
 
+![BitPass](./assets/banner.png)
+
 **BitPass** is a ticketing platform that allows event organizers to create events, sell tickets, and manage check-ins using Bitcoin Lightning Network and Nostr technology.
 
 ## ✅ Features
