@@ -2,15 +2,23 @@
 
 **BitPass** is a ticketing platform that allows event organizers to create events, sell tickets, and manage check-ins using Bitcoin Lightning Network and Nostr technology.
 
-## 🚀 Features
+## ✅ Features
 
-- [ ] **Event Management**: Create and manage events with customizable details
 - [x] **Ticket Sales**: Sell tickets with Bitcoin Lightning Network payments
 - [x] **Check-in System**: Scan QR codes or manually enter ticket references
 - [x] **Discount Codes**: Create and manage discount codes for your events
+- [x] **Responsive Design**: Works on desktop and mobile devices
+
+### Pages
+
+- [Home / Checkout pge](https://bitpass.vercel.app/)
+- [Auth page](https://bitpass.vercel.app/auth)
+- [Checkin page](https://bitpass.vercel.app/checkin)
+
+## 🚀 Soon
+- [ ] **Event Management**: Create and manage events with customizable details
 - [ ] **Team Management**: Invite team members with different roles
 - [ ] **Payment Processing**: Accept payments via Lightning Network or others
-- [x] **Responsive Design**: Works on desktop and mobile devices
 
 ## 🛠️ Technologies
 
