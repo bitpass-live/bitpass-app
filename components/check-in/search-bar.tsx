@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { SearchIcon, FilterIcon, QrCodeIcon } from 'lucide-react';
+import { SearchIcon, X, QrCodeIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -21,10 +21,10 @@ export function SearchBar({ reference, setReference, onSubmit, onStartCamera, is
   };
 
   return (
-    <div className='mb-8 w-full'>
+    <div className='mb-8 w-full max-w-xs mx-auto'>
       <div className='relative flex gap-1'>
         <div className='absolute -inset-[2px] bg-fluorescent-yellow rounded-xl opacity-100'></div>
-        <form onSubmit={handleSubmit} className='relative w-full'>
+        <form onSubmit={handleSubmit} className='relative flex-1 w-full'>
           {/* Main search container */}
           <div className='relative flex items-center w-full bg-background rounded-xl shadow-2xl border border-border overflow-hidden p-1'>
             {/* Search icon */}
@@ -42,15 +42,17 @@ export function SearchBar({ reference, setReference, onSubmit, onStartCamera, is
             />
 
             {/* Filter button */}
-            <Button
-              type='submit'
-              size='icon'
-              variant='ghost'
-              className='h-12 w-12 rounded-lg mr-0.5 text-muted-foreground hover:text-foreground hover:bg-muted'
-            >
-              <FilterIcon className='h-5 w-5' />
-              <span className='sr-only'>Search</span>
-            </Button>
+            {(reference || reference.length > 0) && (
+              <Button
+                size='icon'
+                variant='ghost'
+                className='h-12 w-12 rounded-lg mr-0.5 text-muted-foreground hover:text-foreground hover:bg-muted'
+                onClick={() => setReference('')}
+              >
+                <X className='h-5 w-5' />
+                <span className='sr-only'>Clear</span>
+              </Button>
+            )}
           </div>
         </form>
 

@@ -214,8 +214,8 @@ export function TicketsTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Reference</TableHead>
-                <TableHead>Ticket Type</TableHead>
+                <TableHead className='w-full'>Reference</TableHead>
+                <TableHead>Ticket</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
