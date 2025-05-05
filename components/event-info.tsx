@@ -124,7 +124,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
   const hasOnlyFreeTickets = ticketItems.length > 0 && ticketItems.every((item) => item.ticket.amount === 0);
 
   return (
-    <div className='w-full max-w-md space-y-6'>
+    <div className='space-y-4'>
       {/* Event info */}
       <div className='border-border-gray py-6'>
         <h1 className='text-2xl font-bold text-white mb-4'>{event.title}</h1>

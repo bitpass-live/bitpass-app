@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useBitpassStore, type DiscountCode } from '@/lib/store';
 import { EventInfo } from '@/components/event-info';
 import { CheckoutForm } from '@/components/checkout-form';
+import { Logo } from '@/components/logo';
 
 export default function HomePage() {
   // ID del evento hardcodeado para la demo
@@ -38,18 +39,25 @@ export default function HomePage() {
       {/* Main content */}
       <div className='flex-1 flex flex-col md:flex-row'>
         {/* Left side - Event info and tickets */}
-        <div className='flex justify-center w-full md:w-1/2 p-6 md:p-10 md:border-r bg-[#151515]'>
-          <EventInfo
-            event={event}
-            selectedTickets={selectedTickets}
-            onTicketChange={handleTicketChange}
-            onDiscountValidated={handleDiscountValidated}
-          />
+        <div className='flex flex-col items-center w-full md:w-1/2 p-6 md:p-10 md:border-r bg-[#151515]'>
+          <div className='container'>
+            <div className='flex items-center gap-2 w-full pb-4 border-b text-lg'>
+              <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
+            </div>
+            <EventInfo
+              event={event}
+              selectedTickets={selectedTickets}
+              onTicketChange={handleTicketChange}
+              onDiscountValidated={handleDiscountValidated}
+            />
+          </div>
         </div>
 
         {/* Right side - Checkout form */}
-        <div className='flex justify-center w-full md:w-1/2 p-6 md:p-10 bg-[#0A0A0A]'>
-          <CheckoutForm eventId={eventId} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
+        <div className='flex flex-col items-center w-full md:w-1/2 p-6 md:p-10 bg-[#0A0A0A]'>
+          <div className='container'>
+            <CheckoutForm eventId={eventId} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
+          </div>
         </div>
       </div>
     </div>

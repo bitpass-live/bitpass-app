@@ -157,7 +157,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
 
   // Paso del formulario (por defecto)
   return (
-    <div className='w-full max-w-md space-y-6'>
+    <div className='space-y-4'>
       <h2 className='text-xl font-semibold text-white'>Complete purchase</h2>
 
       <form onSubmit={handleSubmit} className='space-y-6'>
