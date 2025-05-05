@@ -8,7 +8,7 @@ import { TicketsTable } from '@/components/check-in/tickets-table';
 import { useCheckIn } from '@/components/check-in/hooks/use-check-in';
 import { useToast } from '@/components/ui/use-toast';
 
-export default function CheckinPageRoute() {
+export default function CheckinPage() {
   const [showCameraModal, setShowCameraModal] = useState(false);
   const { reference, setReference, lastResult, isProcessing, handleManualCheckin, scanTicket } = useCheckIn();
 

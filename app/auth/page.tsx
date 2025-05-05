@@ -10,7 +10,7 @@ import { LoginForm } from '@/components/login-form';
 // import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 
-export default function LoginPage() {
+export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { login } = useAuth();
