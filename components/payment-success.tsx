@@ -19,7 +19,7 @@ export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccess
 
   return (
     <div className='w-full max-w-md space-y-6'>
-      <h2 className='text-xl font-semibold text-white'>¡Pago completado!</h2>
+      <h2 className='text-xl font-semibold text-white'>Payment completed!</h2>
 
       <Card className='bg-[#151515] border-border-gray'>
         <CardContent className='p-6 flex flex-col items-center'>
@@ -27,13 +27,15 @@ export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccess
             <div className='inline-flex items-center justify-center p-2 bg-green-100 rounded-full mb-4'>
               <CheckCircle className='h-12 w-12 text-green-600' />
             </div>
-            <h3 className='text-xl font-bold text-white mb-2'>¡Gracias por tu compra!</h3>
-            <p className='text-muted-foreground'>Tu pago ha sido procesado correctamente y tus tickets están listos.</p>
+            <h3 className='text-xl font-bold text-white mb-2'>Thank you for your purchase!</h3>
+            <p className='text-muted-foreground'>
+              Your payment has been processed successfully and your tickets are ready.
+            </p>
           </div>
 
           <div className='w-full space-y-4 mb-6'>
             <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Evento:</span>
+              <span className='text-muted-foreground'>Event:</span>
               <span className='text-white font-medium'>{event.title}</span>
             </div>
             <div className='flex justify-between text-sm'>
@@ -41,27 +43,27 @@ export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccess
               <span className='text-white font-medium'>{sale.ticketTitle}</span>
             </div>
             <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Cantidad:</span>
+              <span className='text-muted-foreground'>Quantity:</span>
               <span className='text-white font-medium'>{sale.quantity}</span>
             </div>
             <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Referencia:</span>
+              <span className='text-muted-foreground'>Ref:</span>
               <span className='text-white font-medium'>{sale.reference}</span>
             </div>
           </div>
 
-          <Button
+          {/* <Button
             onClick={onViewTicket}
             className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray'
           >
             Ver mi ticket
-          </Button>
+          </Button> */}
         </CardContent>
       </Card>
 
       <div className='text-sm text-muted-foreground text-center'>
-        <p>Guarda tu ticket para presentarlo en el evento.</p>
-        <p>También hemos enviado los detalles a tu correo electrónico.</p>
+        <p>Save your ticket to present at the event.</p>
+        <p>We have also sent the details to your email.</p>
       </div>
     </div>
   );

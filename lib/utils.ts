@@ -25,7 +25,7 @@ export function isEventLive(event: Event): boolean {
   return now >= start && now <= end;
 }
 
-export function formatCurrency(amount: number, currency: 'ARS' | 'SAT'): string {
+export function formatCurrency(amount: number, currency: 'SAT' | 'ARS' | 'USD'): string {
   if (currency === 'SAT') {
     return `${amount.toLocaleString()} sats`;
   }

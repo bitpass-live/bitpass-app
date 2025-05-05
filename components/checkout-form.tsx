@@ -91,8 +91,8 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
 
     if (!isFormValid()) {
       toast({
-        title: 'Error en el formulario',
-        description: 'Por favor completa todos los campos requeridos y selecciona un método de pago.',
+        title: 'Error in the form',
+        description: 'Please complete all required fields and select a payment method.',
         variant: 'destructive',
       });
       return;
@@ -134,8 +134,8 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
       setCurrentStep('success');
 
       toast({
-        title: '¡Pago exitoso!',
-        description: 'Tu pago ha sido procesado correctamente.',
+        title: 'Payment successful!',
+        description: 'Your payment has been processed successfully.',
       });
     }
   };
@@ -158,7 +158,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
   // Paso del formulario (por defecto)
   return (
     <div className='w-full max-w-md space-y-6'>
-      <h2 className='text-xl font-semibold text-white'>Completar compra</h2>
+      <h2 className='text-xl font-semibold text-white'>Complete purchase</h2>
 
       <form onSubmit={handleSubmit} className='space-y-6'>
         <Tabs defaultValue='email' value={activeTab} onValueChange={setActiveTab}>
@@ -172,13 +172,13 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
             {activeTab === 'email' && (
               <div>
                 <Label htmlFor='name' className='text-white'>
-                  Nombre
+                  Name
                 </Label>
                 <Input
                   id='name'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder='Tu nombre'
+                  placeholder='Your name'
                   className='bg-[#1A1A1A] border-border-gray text-white mt-2'
                 />
               </div>
@@ -187,14 +187,14 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
             <TabsContent value='email' className='space-y-4 mt-0 p-0'>
               <div>
                 <Label htmlFor='email' className='text-white'>
-                  Email (requerido)
+                  Email (required)
                 </Label>
                 <Input
                   id='email'
                   type='email'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder='tu@email.com'
+                  placeholder='your@email.com'
                   required={activeTab === 'email'}
                   className='bg-[#1A1A1A] border-border-gray text-white mt-2'
                 />
@@ -204,13 +204,13 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
             <TabsContent value='nostr' className='space-y-4 mt-0 p-0'>
               <div>
                 <Label htmlFor='nostrId' className='text-white'>
-                  Lightning Address / Pubkey Nostr (requerido)
+                  Pubkey Nostr (required)
                 </Label>
                 <Input
                   id='nostrId'
                   value={nostrId}
                   onChange={(e) => setNostrId(e.target.value)}
-                  placeholder='npub1... o tu@lightning.address'
+                  placeholder='npub1... o your@lightning.address'
                   required={activeTab === 'nostr'}
                   className='bg-[#1A1A1A] border-border-gray text-white mt-2'
                 />
@@ -224,7 +224,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
           className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray rounded-xl py-6 text-lg font-medium'
           disabled={isSubmitting || !isFormValid()}
         >
-          {isSubmitting ? 'Procesando...' : 'Continuar al pago'}
+          {isSubmitting ? 'Processing...' : 'Continue to payment'}
         </Button>
       </form>
     </div>

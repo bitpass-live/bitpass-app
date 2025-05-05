@@ -74,7 +74,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
     if (!code.trim()) {
       setDiscountMessage({
         type: 'error',
-        message: 'Por favor ingresa un código de descuento',
+        message: 'Please enter a discount code',
       });
       return;
     }
@@ -89,10 +89,10 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
       onDiscountValidated(result.discountCode);
       setDiscountMessage({
         type: 'success',
-        message: `Código aplicado: ${
+        message: `Applied code: ${
           result.discountCode.discountType === 'PERCENTAGE'
-            ? `${result.discountCode.value}% de descuento`
-            : `$${result.discountCode.value} de descuento`
+            ? `${result.discountCode.value}% discount`
+            : `$${result.discountCode.value} discount`
         }`,
       });
     } else {
@@ -100,7 +100,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
       onDiscountValidated(null);
       setDiscountMessage({
         type: 'error',
-        message: result.message || 'Código de descuento inválido',
+        message: result.message || 'Invalid discount code',
       });
     }
   };
@@ -250,11 +250,11 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                     id='discount-code'
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
-                    placeholder='Ingresa tu código'
+                    placeholder='Enter your code'
                     className='bg-[#1A1A1A] border-border-gray text-white'
                   />
                   <Button type='button' variant='outline' onClick={handleValidateCode} disabled={!code.trim()}>
-                    Aplicar
+                    Apply
                   </Button>
                 </div>
               ) : (
@@ -263,23 +263,23 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                   className='p-0 h-auto text-fluorescent-yellow'
                   onClick={() => setShowCouponInput(true)}
                 >
-                  Agregar cupón
+                  Add coupon
                 </Button>
               )}
             </>
           ) : (
             <div className='flex justify-between items-center text-sm mb-2'>
               <div className='flex flex-col'>
-                <span className='text-fluorescent-yellow'>Descuento ({validatedCode.code}):</span>
+                <span className='text-fluorescent-yellow'>Discount ({validatedCode.code}):</span>
                 <p className='text-sm text-green-500'>
                   {validatedCode.discountType === 'PERCENTAGE'
-                    ? `${validatedCode.value}% de descuento`
-                    : `$${validatedCode.value} de descuento`}
+                    ? `${validatedCode.value}% discount`
+                    : `$${validatedCode.value} discount`}
                 </p>
               </div>
               <div className='flex items-center gap-2'>
                 <span className='text-fluorescent-yellow'>-${discountAmount.toLocaleString()}</span>
-                <Button
+                {/* <Button
                   variant='ghost'
                   size='sm'
                   className='h-6 px-2 text-xs'
@@ -289,14 +289,14 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                     setCode('');
                   }}
                 >
-                  Quitar
-                </Button>
+                  Delete
+                </Button> */}
               </div>
             </div>
           )}
 
           <div className='flex justify-between text-base font-medium mt-2 pt-2 border-t border-border-gray'>
-            <span className='text-white'>Total a pagar:</span>
+            <span className='text-white'>Total to pay:</span>
             <span className='text-white'>${(validatedCode ? totalWithDiscount : totalAmount).toLocaleString()}</span>
           </div>
         </div>

@@ -6,7 +6,7 @@ export interface Ticket {
   id: string;
   title: string;
   amount: number;
-  currency: 'ARS' | 'SAT';
+  currency: 'SAT' | 'ARS' | 'USD';
   quantity: number;
   sold?: number;
 }
@@ -31,7 +31,7 @@ export interface TicketSale {
   ticketTitle: string;
   quantity: number;
   amount: number;
-  currency: 'ARS' | 'SAT';
+  currency: 'SAT' | 'ARS' | 'USD';
   status: 'pending' | 'paid' | 'cancelled';
   checkIn: boolean;
   checkInTime?: string;
@@ -127,11 +127,11 @@ export const useBitpassStore = create<BitpassState>()(
           id: 'event123',
           title: 'Bitcoin Conference 2025',
           description:
-            'El evento más importante de Bitcoin en LATAM. Únete a expertos, desarrolladores y entusiastas para explorar el futuro de las criptomonedas y la tecnología blockchain.',
+            'The most important Bitcoin event in Latin America. Join experts, developers, and enthusiasts to explore the future of cryptocurrencies and blockchain technology.',
           start: '2025-05-01T10:00:00Z',
           end: '2025-05-03T18:00:00Z',
           location: 'La Crypta, Buenos Aires',
-          tickets: [{ id: 'ticket1', title: 'General', amount: 15000, currency: 'ARS', quantity: 100, sold: 15 }],
+          tickets: [{ id: 'ticket1', title: 'General', amount: 150, currency: 'USD', quantity: 100, sold: 15 }],
           published: true,
         },
       ],

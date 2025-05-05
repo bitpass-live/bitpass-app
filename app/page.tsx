@@ -28,7 +28,7 @@ export default function HomePage() {
   if (!event) {
     return (
       <div className='flex items-center justify-center h-screen'>
-        <p>Evento no encontrado</p>
+        <p>Event not found</p>
       </div>
     );
   }
