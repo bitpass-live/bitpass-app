@@ -8,8 +8,8 @@ import { AuthGuard } from '@/components/auth/auth-guard';
 
 export const metadata: Metadata = {
   title: {
-    default: 'NotPass – Venta de Entradas con Bitcoin y Nostr',
-    template: '%s | NotPass',
+    default: 'BitPass – Venta de Entradas con Bitcoin y Nostr',
+    template: '%s | BitPass',
   },
   description:
     'Organizá eventos descentralizados, vendé entradas verificables y cobrá con Lightning Network. 100% open source.',
@@ -23,16 +23,16 @@ export const metadata: Metadata = {
     'ticketing descentralizado',
   ],
   openGraph: {
-    title: 'NotPass – Eventos con Lightning y Nostr',
+    title: 'BitPass – Eventos con Lightning y Nostr',
     description: 'La nueva forma de crear, cobrar y validar entradas usando Bitcoin y tecnología descentralizada.',
-    url: 'https://notpass.io',
-    siteName: 'NotPass',
+    url: 'https://BitPass.io',
+    siteName: 'BitPass',
     images: [
       {
-        url: 'https://notpass.io/og-image.jpg',
+        url: 'https://BitPass.io/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'NotPass Preview',
+        alt: 'BitPass Preview',
       },
     ],
     locale: 'es_AR',
@@ -40,11 +40,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NotPass – Venta de Entradas con Bitcoin y Nostr',
+    title: 'BitPass – Venta de Entradas con Bitcoin y Nostr',
     description: 'Gestioná eventos y cobrá en SATs con Nostr y Lightning.',
-    site: '@notpass_io',
-    creator: '@notpass_io',
-    images: ['https://notpass.io/og-image.jpg'],
+    site: '@BitPass_io',
+    creator: '@BitPass_io',
+    images: ['https://BitPass.io/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -52,13 +52,12 @@ export const metadata: Metadata = {
     nocache: false,
   },
   alternates: {
-    canonical: 'https://notpass.io',
+    canonical: 'https://BitPass.io',
     languages: {
-      'es-AR': 'https://notpass.io',
-      'en-US': 'https://notpass.io/en',
+      'es-AR': 'https://BitPass.io',
+      'en-US': 'https://BitPass.io/en',
     },
   },
-  generator: 'v0.dev',
 };
 
 export default function RootLayout({
