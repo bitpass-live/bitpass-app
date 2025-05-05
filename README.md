@@ -1,9 +1,5 @@
 # BitPass
 
-<p align="center">
-  <img src="public/eventro-logo.png" alt="BitPass Logo" width="200" />
-</p>
-
 **BitPass** is a decentralized ticketing platform that allows event organizers to create events, sell tickets, and manage check-ins using Bitcoin Lightning Network and Nostr technology.
 
 ## 🚀 Features
