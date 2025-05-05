@@ -9,7 +9,7 @@
 - **Check-in System**: Scan QR codes or manually enter ticket references
 - **Discount Codes**: Create and manage discount codes for your events
 - **Team Management**: Invite team members with different roles
-- **Payment Processing**: Accept payments via Lightning Network or MercadoPago
+- **Payment Processing**: Accept payments via Lightning Network or others
 - **Responsive Design**: Works on desktop and mobile devices
 
 ## 🛠️ Technologies
