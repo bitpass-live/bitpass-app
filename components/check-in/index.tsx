@@ -36,7 +36,7 @@ export function Checkin() {
   };
 
   return (
-    <div className='mx-auto'>
+    <div className='container'>
       <SearchBar
         reference={reference}
         setReference={setReference}

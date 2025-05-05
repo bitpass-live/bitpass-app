@@ -117,7 +117,7 @@ export function TicketsTable() {
 
   return (
     <>
-      <div className='flex justify-between items-center mb-4'>
+      <div className='flex justify-between items-center w-full mb-4'>
         <h2 className='text-xl font-semibold text-foreground'>Tickets</h2>
         <div className='relative'>
           <button
@@ -209,7 +209,7 @@ export function TicketsTable() {
         </div>
       </div>
 
-      <div className='rounded-md border border-border overflow-hidden'>
+      <div className='rounded-md border border-border overflow-hidden w-full'>
         <div className='overflow-x-auto'>
           <Table>
             <TableHeader>
