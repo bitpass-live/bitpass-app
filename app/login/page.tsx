@@ -1,22 +1,43 @@
-import { LoginForm } from '@/components/login-form';
-import { Logo } from '@/components/logo';
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { useAuth } from '@/lib/auth-provider';
+import { useToast } from '@/components/ui/use-toast';
+
+import { LoginForm } from '@/components/login-form';
+// import { Logo } from '@/components/logo';
+import { Button } from '@/components/ui/button';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const { login } = useAuth();
+
+  const handleDemoLogin = () => {
+    login({ email: 'demo@eventro.com', role: 'OWNER' });
+    router.push('/checkin');
+    toast({
+      title: 'Demo mode activated',
+      description: 'You are now using Eventro in demo mode',
+    });
+  };
+
   return (
     <div className='min-h-screen flex flex-col'>
       {/* Header */}
-      <header className='border-b'>
+      {/* <header className='border-b'>
         <div className='container flex h-16 items-center justify-between py-4'>
           <Link href='/' className='flex items-center'>
             <Logo className='text-xl' />
           </Link>
         </div>
-      </header>
+      </header> */}
 
       {/* Main content */}
       <main className='flex-1 flex items-center justify-center p-6'>
-        <div className='w-full max-w-md space-y-8'>
+        <div className='w-full max-w-md space-y-4'>
           <div className='text-center'>
             <h1 className='text-2xl font-bold'>Welcome Back</h1>
             <p className='text-muted-foreground mt-2'>Sign in to your account to continue</p>
@@ -32,15 +53,19 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
+
+          <Button className='w-full mt-0' variant='ghost' onClick={handleDemoLogin}>
+            Try Demo Mode
+          </Button>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className='py-6 border-t'>
+      {/* <footer className='py-6 border-t'>
         <div className='container text-center text-sm text-muted-foreground'>
           <p>© {new Date().getFullYear()} NotPass. All rights reserved.</p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
