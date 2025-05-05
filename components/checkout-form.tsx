@@ -4,7 +4,7 @@ import type React from 'react';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEventroStore, type DiscountCode } from '@/lib/store';
+import { useBitpassStore, type DiscountCode } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,10 +37,10 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
   const router = useRouter();
   const { toast } = useToast();
 
-  const event = useEventroStore((state) => state.events.find((e) => e.id === eventId));
-  const createSale = useEventroStore((state) => state.createSale);
-  const completeSale = useEventroStore((state) => state.completeSale);
-  const applyDiscountCode = useEventroStore((state) => state.applyDiscountCode);
+  const event = useBitpassStore((state) => state.events.find((e) => e.id === eventId));
+  const createSale = useBitpassStore((state) => state.createSale);
+  const completeSale = useBitpassStore((state) => state.completeSale);
+  const applyDiscountCode = useBitpassStore((state) => state.applyDiscountCode);
 
   if (!event) return null;
 

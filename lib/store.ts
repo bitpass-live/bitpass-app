@@ -62,8 +62,8 @@ export interface DiscountCode {
   active: boolean;
 }
 
-// Actualizar la interfaz EventroState para incluir discountCodes y sus acciones
-interface EventroState {
+// Actualizar la interfaz BitpassState para incluir discountCodes y sus acciones
+interface BitpassState {
   events: Event[];
   sales: TicketSale[];
   roles: Role[];
@@ -119,7 +119,7 @@ const generateReference = () => {
 };
 
 // Create store with persistence
-export const useEventroStore = create<EventroState>()(
+export const useBitpassStore = create<BitpassState>()(
   persist(
     (set, get) => ({
       events: [
@@ -452,7 +452,7 @@ export const useEventroStore = create<EventroState>()(
       },
     }),
     {
-      name: 'eventro-storage',
+      name: 'bitpass-storage',
     },
   ),
 );

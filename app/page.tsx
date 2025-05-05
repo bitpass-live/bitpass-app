@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useEventroStore, type DiscountCode } from '@/lib/store';
+import { useBitpassStore, type DiscountCode } from '@/lib/store';
 import { EventInfo } from '@/components/event-info';
 import { CheckoutForm } from '@/components/checkout-form';
 
@@ -12,7 +12,7 @@ export default function HomePage() {
   const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({});
   const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
 
-  const event = useEventroStore((state) => state.events.find((e) => e.id === eventId));
+  const event = useBitpassStore((state) => state.events.find((e) => e.id === eventId));
 
   const handleTicketChange = (ticketId: string, quantity: number) => {
     setSelectedTickets((prev) => ({

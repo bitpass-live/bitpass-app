@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useEventroStore } from '@/lib/store';
+import { useBitpassStore } from '@/lib/store';
 import { useToast } from '@/components/ui/use-toast';
 
 export interface CheckInResult {
@@ -15,8 +15,8 @@ export function useCheckIn() {
   const [lastResult, setLastResult] = useState<CheckInResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const checkInTicket = useEventroStore((state) => state.checkInTicket);
-  const sales = useEventroStore((state) => state.sales);
+  const checkInTicket = useBitpassStore((state) => state.checkInTicket);
+  const sales = useBitpassStore((state) => state.sales);
   const { toast } = useToast();
 
   // Función para verificar si un ticket existe y hacer check-in

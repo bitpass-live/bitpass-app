@@ -16,11 +16,11 @@ export default function LoginPage() {
   const { login } = useAuth();
 
   const handleDemoLogin = () => {
-    login({ email: 'demo@eventro.com', role: 'OWNER' });
+    login({ email: 'demo@bitpass.com', role: 'OWNER' });
     router.push('/checkin');
     toast({
       title: 'Demo mode activated',
-      description: 'You are now using Eventro in demo mode',
+      description: 'You are now using Bitpass in demo mode',
     });
   };
 
