@@ -120,7 +120,7 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
                   <p className='text-sm font-semibold text-gray-800'>{sale.reference.substring(0, 6)}</p>
                 </div>
                 <div className='flex flex-col'>
-                  <p className='text-xs text-gray-500'>Type</p>
+                  <p className='text-xs text-gray-500'>Ticket</p>
                   <p className='text-sm font-semibold text-gray-800'>{sale.ticketTitle.substring(0, 10)}</p>
                 </div>
                 <div className='flex flex-col'>
