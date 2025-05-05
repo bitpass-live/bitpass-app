@@ -146,7 +146,7 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
               disabled={isCheckedIn || isProcessing}
               className={`mt-4 w-full py-3 rounded-xl font-semibold transition-all ${
                 isCheckedIn
-                  ? 'bg-green-500 text-white'
+                  ? 'text-green-600 bg-white'
                   : isProcessing
                   ? 'bg-gray-300 text-gray-600'
                   : 'bg-primary text-background hover:bg-primary/90'

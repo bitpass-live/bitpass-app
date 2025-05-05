@@ -37,23 +37,21 @@ export default function CheckinPage() {
   return (
     <div className='container pt-40'>
       <h1 className='text-2xl font-bold mb-6 text-center mx-auto'>Check-in</h1>
-      <div className='container'>
-        <SearchBar
-          reference={reference}
-          setReference={setReference}
-          onSubmit={handleManualCheckin}
-          isProcessing={isProcessing}
-          onStartCamera={startCamera}
-        />
+      <SearchBar
+        reference={reference}
+        setReference={setReference}
+        onSubmit={handleManualCheckin}
+        isProcessing={isProcessing}
+        onStartCamera={startCamera}
+      />
 
-        <div className='mb-8'>
-          <TicketsTable />
-        </div>
-
-        {showCameraModal && <CameraModal onClose={stopCamera} onScan={handleScan} />}
-
-        {lastResult && <ResultCard result={lastResult} />}
+      <div className='mb-8'>
+        <TicketsTable />
       </div>
+
+      {showCameraModal && <CameraModal onClose={stopCamera} onScan={handleScan} />}
+
+      {lastResult && <ResultCard result={lastResult} />}
     </div>
   );
 }
