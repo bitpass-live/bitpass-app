@@ -26,7 +26,7 @@ export function NostrLoginForm() {
       const mockPubkey = 'npub1random' + Math.random().toString(36).substring(2, 10);
 
       login({ pubkey: mockPubkey, role: 'OWNER' });
-      router.push('/dashboard');
+      router.push('/checkin');
 
       toast({
         title: 'Connected successfully',
