@@ -5,12 +5,12 @@
 ## 🚀 Features
 
 - [ ] **Event Management**: Create and manage events with customizable details
-- [x]- **Ticket Sales**: Sell tickets with Bitcoin Lightning Network payments
-- [x]- **Check-in System**: Scan QR codes or manually enter ticket references
-- [x]- **Discount Codes**: Create and manage discount codes for your events
-- [ ]- **Team Management**: Invite team members with different roles
-- [ ]- **Payment Processing**: Accept payments via Lightning Network or others
-- [x]- **Responsive Design**: Works on desktop and mobile devices
+- [x] **Ticket Sales**: Sell tickets with Bitcoin Lightning Network payments
+- [x] **Check-in System**: Scan QR codes or manually enter ticket references
+- [x] **Discount Codes**: Create and manage discount codes for your events
+- [ ] **Team Management**: Invite team members with different roles
+- [ ] **Payment Processing**: Accept payments via Lightning Network or others
+- [x] **Responsive Design**: Works on desktop and mobile devices
 
 ## 🛠️ Technologies
 
