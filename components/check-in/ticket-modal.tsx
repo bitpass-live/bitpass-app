@@ -81,9 +81,9 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
         {/* Contenido principal del ticket */}
         <div className='bg-white rounded-t-3xl overflow-hidden'>
           {/* Imagen del evento */}
-          <div className='h-32 bg-gray-200 overflow-hidden'>
+          {/* <div className='h-32 bg-gray-200 overflow-hidden'>
             <img src='/community-event.png' alt='Event' className='w-full h-full object-cover' />
-          </div>
+          </div> */}
 
           {/* Información del evento */}
           <div className='p-6 pb-3'>
@@ -94,13 +94,13 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
               <div className='flex flex-col gap-4 w-full'>
                 {/* Nombre del usuario */}
                 <div className='flex flex-col'>
-                  <p className='text-xs text-gray-500'>Nombre</p>
-                  <p className='text-sm font-semibold text-gray-800 truncate'>{sale.userName || 'Sin nombre'}</p>
+                  <p className='text-xs text-gray-500'>Name</p>
+                  <p className='text-sm font-semibold text-gray-800 truncate'>{sale.userName || 'Unnamed'}</p>
                 </div>
 
                 {/* Email o Pubkey/Lightning Address */}
                 <div className='flex flex-col'>
-                  <p className='text-xs text-gray-500'>{sale.userEmail ? 'Email' : 'Identificador'}</p>
+                  <p className='text-xs text-gray-500'>{sale.userEmail ? 'Email' : 'ID'}</p>
                   <p className='text-sm font-semibold text-gray-800 truncate'>
                     {sale.userEmail ||
                       sale.lightningAddress ||
@@ -108,7 +108,7 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
                         ? `${sale.userPubkey.substring(0, 8)}...${sale.userPubkey.substring(
                             sale.userPubkey.length - 8,
                           )}`
-                        : 'No disponible')}
+                        : 'Not available')}
                   </p>
                 </div>
               </div>
@@ -116,16 +116,16 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
               {/* Detalles del ticket en 3 columnas */}
               <div className='flex flex-col gap-4'>
                 <div className='flex flex-col'>
-                  <p className='text-xs text-gray-500'>Referencia</p>
+                  <p className='text-xs text-gray-500'>Ref</p>
                   <p className='text-sm font-semibold text-gray-800'>{sale.reference.substring(0, 6)}</p>
                 </div>
                 <div className='flex flex-col'>
-                  <p className='text-xs text-gray-500'>Tipo</p>
+                  <p className='text-xs text-gray-500'>Type</p>
                   <p className='text-sm font-semibold text-gray-800'>{sale.ticketTitle.substring(0, 10)}</p>
                 </div>
                 <div className='flex flex-col'>
-                  <p className='text-xs text-gray-500'>Estado</p>
-                  <p className='text-sm font-semibold text-gray-800'>{isCheckedIn ? 'Usado' : 'Válido'}</p>
+                  <p className='text-xs text-gray-500'>State</p>
+                  <p className='text-sm font-semibold text-gray-800'>{isCheckedIn ? 'Used' : 'Valid'}</p>
                 </div>
               </div>
             </div>
@@ -152,7 +152,7 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
                   : 'bg-primary text-background hover:bg-primary/90'
               }`}
             >
-              {isCheckedIn ? '✓ Check-in completado' : isProcessing ? 'Procesando...' : 'Realizar Check-in'}
+              {isCheckedIn ? '✓ Check-in completed' : isProcessing ? 'Processing...' : 'Check-in'}
             </button>
           </div>
         </div>
