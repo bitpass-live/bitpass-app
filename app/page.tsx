@@ -17,11 +17,12 @@ export default function AuthPage() {
 
   const handleDemoLogin = () => {
     login({ email: 'demo@bitpass.com', role: 'OWNER' });
-    router.push('/checkin');
     toast({
       title: 'Demo mode activated',
       description: 'You are now using Bitpass in demo mode',
     });
+
+    router.push('/dashboard');
   };
 
   return (

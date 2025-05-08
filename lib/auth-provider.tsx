@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('bitpass-user');
 
     // Redirect to login page
-    router.push('/auth');
+    router.push('/');
   };
 
   return (
