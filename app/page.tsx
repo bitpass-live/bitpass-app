@@ -38,7 +38,7 @@ export default function AuthPage() {
 
       {/* Main content */}
       <main className='flex-1 flex items-center justify-center py-6'>
-        <div className='container space-y-4'>
+        <div className='flex flex-col gap-4 w-full max-w-md mx-auto px-4'>
           <div className='text-center'>
             <h1 className='text-2xl font-bold'>Welcome Back</h1>
             <p className='text-muted-foreground mt-2'>Sign in to your account to continue</p>
