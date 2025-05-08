@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useBitpassStore } from '@/lib/store';
+
 import { useToast } from '@/components/ui/use-toast';
+import { MOCK_SALES } from '@/mock/data';
 
 export interface CheckInResult {
   success: boolean;
@@ -11,13 +12,13 @@ export interface CheckInResult {
 }
 
 export function useCheckIn() {
+  const { toast } = useToast();
+
   const [reference, setReference] = useState('');
   const [lastResult, setLastResult] = useState<CheckInResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const checkInTicket = useBitpassStore((state) => state.checkInTicket);
-  const sales = useBitpassStore((state) => state.sales);
-  const { toast } = useToast();
+  const sales = MOCK_SALES;
 
   // Función para verificar si un ticket existe y hacer check-in
   const handleManualCheckin = async (ref = reference) => {
@@ -33,9 +34,9 @@ export function useCheckIn() {
     setIsProcessing(true);
 
     try {
-      // En una implementación real, aquí haríamos una llamada a la API
-      // Por ahora, usamos la función del store para simular
-      const success = checkInTicket(ref.toUpperCase());
+      // TO-DO
+      // CHECKIN TICKET
+      const success = true;
 
       if (success) {
         setLastResult({

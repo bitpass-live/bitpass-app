@@ -1,18 +1,20 @@
 'use client';
 
-import { CheckIcon, XIcon } from 'lucide-react';
 import { useEffect } from 'react';
-import { useBitpassStore } from '@/lib/store';
+import { CheckIcon, XIcon } from 'lucide-react';
+
 import { useToast } from '@/components/ui/use-toast';
 import type { CheckInResult } from './hooks/use-check-in';
+import { MOCK_SALES } from '@/mock/data';
 
 interface ResultCardProps {
   result: CheckInResult;
 }
 
 export function ResultCard({ result }: ResultCardProps) {
-  const sales = useBitpassStore((state) => state.sales);
   const { toast } = useToast();
+
+  const sales = MOCK_SALES;
 
   useEffect(() => {
     if (!result) return;
@@ -45,7 +47,6 @@ export function ResultCard({ result }: ResultCardProps) {
       ),
       variant: result.success ? 'default' : 'destructive',
       duration: result.success ? 5000 : 7000, // Duración más larga para errores
-      icon: result.success ? <CheckIcon className='h-4 w-4' /> : <XIcon className='h-4 w-4' />,
     });
   }, [result, sales, toast]);
 

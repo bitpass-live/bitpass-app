@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { X } from 'lucide-react';
-import { useBitpassStore } from '@/lib/store';
+
 import { useToast } from '@/components/ui/use-toast';
 
 interface TicketModalProps {
@@ -11,10 +11,10 @@ interface TicketModalProps {
 }
 
 export function TicketModal({ sale, onClose }: TicketModalProps) {
+  const { toast } = useToast();
+
   const [isCheckedIn, setIsCheckedIn] = useState(sale.checkIn);
   const [isProcessing, setIsProcessing] = useState(false);
-  const checkInTicket = useBitpassStore((state) => state.checkInTicket);
-  const { toast } = useToast();
 
   const handleCheckIn = () => {
     if (isCheckedIn) return;
@@ -23,7 +23,9 @@ export function TicketModal({ sale, onClose }: TicketModalProps) {
 
     // Simular un pequeño retraso para la experiencia de usuario
     setTimeout(() => {
-      const success = checkInTicket(sale.reference);
+      // TO-DO
+      // CHECKIN TICKET
+      const success = true;
 
       if (success) {
         setIsCheckedIn(true);

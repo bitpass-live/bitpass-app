@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useBitpassStore } from '@/lib/store';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TicketRow } from './ticket-row';
 import { TicketModal } from '../ticket-modal';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { MOCK_SALES } from '@/mock/data';
 
 export function TicketsTable() {
-  const sales = useBitpassStore((state) => state.sales);
+  const sales = MOCK_SALES;
+
   const [filter, setFilter] = useState<'all' | 'checked-in' | 'not-checked-in'>('not-checked-in');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
