@@ -131,14 +131,12 @@ export function EventManagement({ eventId }: { eventId: string }) {
   return (
     <div className='space-y-6'>
       <div className='flex flex-col md:flex-row justify-between gap-4'>
-        <h1 className='text-3xl font-bold'>{event.title}</h1>
+        <div className='w-full'>
+          <h1 className='text-3xl font-bold'>{event.title}</h1>
+        </div>
         <div className='flex gap-2'>
-          <Button className='w-full' variant={event.published ? 'outline' : 'default'} onClick={handlePublishToggle}>
-            {event.published ? 'Unpublish' : 'Publish'}
-          </Button>
-          <Button className='w-full' onClick={handleShareEvent}>
-            <Share2Icon className='mr-2 h-4 w-4' />
-            Share
+          <Button variant='secondary' size='icon' onClick={handleShareEvent}>
+            <Share2Icon className='h-4 w-4' />
           </Button>
         </div>
       </div>
