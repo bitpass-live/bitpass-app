@@ -31,7 +31,6 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
   const [editingCode, setEditingCode] = useState<DiscountCode | null>(null);
 
   const [code, setCode] = useState('');
-  const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
   const [value, setValue] = useState('');
   const [maxUses, setMaxUses] = useState('');
   const [active, setActive] = useState(true);
@@ -45,7 +44,6 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
   const handleOpenDialog = useCallback(() => {
     setEditingCode(null);
     setCode('');
-    setDiscountType('PERCENTAGE');
     setValue('');
     setMaxUses('');
     setActive(true);
@@ -135,17 +133,14 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
 
                 <div className='grid grid-cols-2 gap-4'>
                   <div className='grid gap-2'>
-                    <Label htmlFor='value'>
-                      {discountType === 'PERCENTAGE' ? 'Porcentaje de Descuento' : 'Monto de Descuento'}
-                    </Label>
+                    <Label htmlFor='value'>{'Monto de Descuento'}</Label>
                     <Input
                       id='value'
                       type='number'
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder={discountType === 'PERCENTAGE' ? 'Ej: 20' : 'Ej: 1500'}
+                      placeholder={'Ej: 1500'}
                       min='0'
-                      max={discountType === 'PERCENTAGE' ? '100' : undefined}
                       required
                     />
                   </div>
@@ -195,7 +190,6 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Código</TableHead>
-                  <TableHead>Tipo</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Usos</TableHead>
                   <TableHead>Estado</TableHead>
@@ -209,12 +203,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                   return (
                     <TableRow key={discountCode.id}>
                       <TableCell className='font-medium'>{discountCode.code}</TableCell>
-                      <TableCell>{discountCode.discountType === 'PERCENTAGE' ? 'Porcentaje' : 'Monto Fijo'}</TableCell>
-                      <TableCell>
-                        {discountCode.discountType === 'PERCENTAGE'
-                          ? `${discountCode.value}%`
-                          : `$${discountCode.value}`}
-                      </TableCell>
+                      <TableCell>{`${discountCode.value}%`}</TableCell>
                       <TableCell>
                         {discountCode.used}
                         {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
