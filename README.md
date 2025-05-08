@@ -11,12 +11,6 @@
 - [x] **Discount Codes**: Create and manage discount codes for your events
 - [x] **Responsive Design**: Works on desktop and mobile devices
 
-### Pages
-
-- [Home / Checkout pge](https://bitpass.vercel.app/)
-- [Auth page](https://bitpass.vercel.app/auth)
-- [Checkin page](https://bitpass.vercel.app/checkin)
-
 ## 🚀 Soon
 - [ ] **Event Management**: Create and manage events with customizable details
 - [ ] **Team Management**: Invite team members with different roles
