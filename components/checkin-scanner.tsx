@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useBitpassStore } from '@/lib/store';
+
+import { useToast } from '@/components/ui/use-toast';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { QrCodeIcon as QrScanIcon, CheckIcon, XIcon, CameraIcon, SearchIcon, FilterIcon } from 'lucide-react';
 import { TicketsTable } from './tickets-table';
 
@@ -25,12 +26,9 @@ export function CheckinScanner() {
 
   const { toast } = useToast();
 
-  const checkInTicket = useBitpassStore((state) => state.checkInTicket);
-  const sales = useBitpassStore((state) => state.sales);
-
   // Check if camera is available
   useEffect(() => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (navigator.mediaDevices) {
       setHasCamera(true);
     }
   }, []);
@@ -107,22 +105,15 @@ export function CheckinScanner() {
       // For this demo, we'll simulate finding a QR code after a delay
       setTimeout(() => {
         if (isScanning) {
+          // TO-DO
           // Simulate finding a random valid ticket
-          const validSales = sales.filter((s) => s.status === 'paid' && !s.checkIn);
 
-          if (validSales.length > 0) {
-            const randomSale = validSales[Math.floor(Math.random() * validSales.length)];
-            setReference(randomSale.reference);
-            handleManualCheckin(randomSale.reference);
-            stopCamera();
-          } else {
-            toast({
-              title: 'No valid tickets',
-              description: 'No valid tickets found to scan.',
-              variant: 'destructive',
-            });
-            stopCamera();
-          }
+          toast({
+            title: 'No valid tickets',
+            description: 'No valid tickets found to scan.',
+            variant: 'destructive',
+          });
+          stopCamera();
         }
       }, 2000);
     }
@@ -143,74 +134,27 @@ export function CheckinScanner() {
       return;
     }
 
-    const success = checkInTicket(ref.toUpperCase());
+    // TO-DO
+    // CHECKIN TICKET
 
-    if (success) {
-      const sale = sales.find((s) => s.reference === ref.toUpperCase());
+    setLastResult({
+      success: false,
+      message: 'Invalid or already used ticket.',
+      reference: ref.toUpperCase(),
+    });
 
-      setLastResult({
-        success: true,
-        message: 'Ticket checked in successfully!',
-        reference: ref.toUpperCase(),
-      });
+    toast({
+      title: 'Check-in failed',
+      description: 'Invalid or already used ticket.',
+      variant: 'destructive',
+    });
 
-      toast({
-        title: 'Check-in successful',
-        description: `Ticket ${ref.toUpperCase()} has been checked in.`,
-      });
-
-      // Close camera modal if open
-      if (showCameraModal) {
-        stopCamera();
-      }
-    } else {
-      setLastResult({
-        success: false,
-        message: 'Invalid or already used ticket.',
-        reference: ref.toUpperCase(),
-      });
-
-      toast({
-        title: 'Check-in failed',
-        description: 'Invalid or already used ticket.',
-        variant: 'destructive',
-      });
+    // Close camera modal if open
+    if (showCameraModal) {
+      stopCamera();
     }
 
     setReference('');
-  };
-
-  const handleSimulateScan = () => {
-    setIsScanning(true);
-
-    // Simulate scanning process
-    setTimeout(() => {
-      // Get a random valid ticket reference
-      const validSales = sales.filter((s) => s.status === 'paid' && !s.checkIn);
-
-      if (validSales.length > 0) {
-        const randomSale = validSales[Math.floor(Math.random() * validSales.length)];
-        setReference(randomSale.reference);
-
-        setTimeout(() => {
-          handleManualCheckin(randomSale.reference);
-          setIsScanning(false);
-        }, 500);
-      } else {
-        setLastResult({
-          success: false,
-          message: 'No valid tickets found to simulate scanning.',
-        });
-
-        toast({
-          title: 'Simulation failed',
-          description: 'No valid tickets found to simulate scanning.',
-          variant: 'destructive',
-        });
-
-        setIsScanning(false);
-      }
-    }, 1500);
   };
 
   return (
@@ -265,13 +209,6 @@ export function CheckinScanner() {
               className='bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white border-0'
             >
               Start Camera
-            </Button>
-            <Button
-              variant='outline'
-              onClick={handleSimulateScan}
-              className='border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white'
-            >
-              Simulate Scan
             </Button>
           </div>
         </div>
@@ -344,25 +281,6 @@ export function CheckinScanner() {
             {lastResult.success && (
               <div className='mt-4 p-2 bg-gray-800 rounded text-sm'>
                 <p className='font-medium text-gray-300'>Ticket Details:</p>
-                {(() => {
-                  const sale = sales.find((s) => s.reference === lastResult.reference);
-                  if (sale) {
-                    return (
-                      <>
-                        <p className='text-gray-400'>
-                          Type: <span className='text-white'>{sale.ticketTitle}</span>
-                        </p>
-                        <p className='text-gray-400'>
-                          Quantity: <span className='text-white'>{sale.quantity}</span>
-                        </p>
-                        <p className='text-gray-400'>
-                          Buyer: <span className='text-white'>{sale.buyer.substring(0, 8)}...</span>
-                        </p>
-                      </>
-                    );
-                  }
-                  return <p className='text-gray-400'>No details available</p>;
-                })()}
               </div>
             )}
           </CardContent>

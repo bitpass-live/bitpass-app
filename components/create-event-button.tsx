@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
-import { useBitpassStore } from '@/lib/store';
+
 import {
   Dialog,
   DialogContent,
@@ -39,7 +39,6 @@ export function CreateEventButton() {
   const [endDate, setEndDate] = useState(formattedDate);
   const [endTime, setEndTime] = useState('');
 
-  const addEvent = useBitpassStore((state) => state.addEvent);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -50,14 +49,9 @@ export function CreateEventButton() {
     const start = new Date(`${startDate}T${startTime}`).toISOString();
     const end = new Date(`${endDate}T${endTime}`).toISOString();
 
-    // Create event
-    const eventId = addEvent({
-      title,
-      description,
-      location,
-      start,
-      end,
-    });
+    // TO-DO
+    // Create Event
+    const eventId = '123'; // Replace with actual event ID after creation
 
     toast({
       title: 'Event created',

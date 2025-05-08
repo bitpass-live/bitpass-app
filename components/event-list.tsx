@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useBitpassStore } from '@/lib/store';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,8 +9,10 @@ import { CalendarIcon, MapPinIcon, Users } from 'lucide-react';
 import { formatDate, isEventLive } from '@/lib/utils';
 import { CreateEventButton } from '@/components/create-event-button';
 
+import { MOCK_EVENTS } from '@/mock/data';
+
 export function EventList() {
-  const events = useBitpassStore((state) => state.events);
+  const events = MOCK_EVENTS;
 
   if (events.length === 0) {
     return (
@@ -32,7 +34,9 @@ export function EventList() {
       {events.map((event) => {
         const totalSold = event.tickets.reduce((acc, ticket) => acc + (ticket.sold || 0), 0);
         const totalCapacity = event.tickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
-        const live = isEventLive(event);
+        // TO-DO
+        // REVIEW LIVE FUNCTION
+        const live = true;
 
         return (
           <Card key={event.id} className='overflow-hidden w-full'>
@@ -68,10 +72,10 @@ export function EventList() {
             </CardContent>
             <CardFooter className='flex justify-between pt-3 border-t'>
               <Button asChild variant='outline' size='sm'>
-                <Link href={`/events/${event.id}/manage`}>Manage</Link>
+                <Link href={`/event/${event.id}/manage`}>Manage</Link>
               </Button>
               <Button asChild size='sm'>
-                <Link href={`/events/${event.id}`}>{event.published ? 'Register' : 'Preview'}</Link>
+                <Link href={`/event/${event.id}`}>{event.published ? 'Register' : 'Preview'}</Link>
               </Button>
             </CardFooter>
           </Card>

@@ -4,15 +4,18 @@ import type React from 'react';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBitpassStore, type DiscountCode } from '@/lib/store';
+
+import { useToast } from '@/components/ui/use-toast';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
 import { LightningPayment } from '@/components/lightning-payment';
 import { PaymentSuccess } from '@/components/payment-success';
-import { Zap, CreditCard } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+import { DiscountCode } from '@/types';
+import { MOCK_EVENT } from '@/mock/data';
 
 interface CheckoutFormProps {
   eventId: string;
@@ -37,10 +40,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
   const router = useRouter();
   const { toast } = useToast();
 
-  const event = useBitpassStore((state) => state.events.find((e) => e.id === eventId));
-  const createSale = useBitpassStore((state) => state.createSale);
-  const completeSale = useBitpassStore((state) => state.completeSale);
-  const applyDiscountCode = useBitpassStore((state) => state.applyDiscountCode);
+  const event = MOCK_EVENT;
 
   if (!event) return null;
 
@@ -62,18 +62,10 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
   const totalTickets = Object.values(selectedTickets).reduce((sum, qty) => sum + qty, 0);
 
   // Calcular el descuento
-  const calculateDiscount = () => {
-    if (!appliedDiscount) return 0;
-
-    if (appliedDiscount.discountType === 'PERCENTAGE') {
-      return Math.round((totalAmount * appliedDiscount.value) / 100);
-    } else {
-      return Math.min(appliedDiscount.value, totalAmount); // El descuento no puede ser mayor que el total
-    }
-  };
+  const calculateDiscount = () => {};
 
   // Calcular el total con descuento
-  const discountAmount = appliedDiscount ? calculateDiscount() : 0;
+  const discountAmount = 0;
   const totalWithDiscount = totalAmount - discountAmount;
 
   const isFormValid = () => {
@@ -105,21 +97,9 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
       const firstItem = ticketItems[0];
       const buyer = activeTab === 'email' ? email : nostrId;
 
-      const newSaleId = createSale({
-        buyer,
-        eventId,
-        ticketId: firstItem.ticket.id,
-        ticketTitle: firstItem.ticket.title,
-        quantity: firstItem.quantity,
-        amount: totalWithDiscount, // Usar el total con descuento
-        currency: 'ARS',
-        reference: '',
-      });
-
-      // Si hay un código de descuento aplicado, incrementar su contador de uso
-      if (appliedDiscount) {
-        applyDiscountCode(appliedDiscount.id);
-      }
+      // TO-DO
+      // CREATE SALE
+      const newSaleId = 'sale123'; // Simulación de ID de venta
 
       setSaleId(newSaleId);
       setIsSubmitting(false);
@@ -130,7 +110,8 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
 
   const handlePaymentSuccess = () => {
     if (saleId) {
-      completeSale(saleId);
+      // TO-DO
+      // COMPLETE SALE
       setCurrentStep('success');
 
       toast({

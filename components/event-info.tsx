@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import type { Event, DiscountCode } from '@/lib/store';
-import { formatCurrency, formatDate } from '@/lib/utils';
 import { CalendarIcon, MapPinIcon, MinusIcon, PlusIcon } from 'lucide-react';
+
+import { formatCurrency, formatDate } from '@/lib/utils';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useBitpassStore } from '@/lib/store';
+import { Event, DiscountCode } from '@/types';
 
 interface EventInfoProps {
   event: Event;
@@ -25,49 +26,14 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
   const [showCouponInput, setShowCouponInput] = useState(false);
 
   // Obtener la función de validación de códigos de descuento
-  const validateDiscountCode = useBitpassStore((state) => state.validateDiscountCode);
+  //TO-DO
 
-  const handleDecrement = (ticketId: string) => {
-    const currentQuantity = selectedTickets[ticketId] || 0;
-    if (currentQuantity > 0) {
-      onTicketChange(ticketId, currentQuantity - 1);
-    }
-  };
+  const handleDecrement = (ticketId: string) => {};
 
-  const handleIncrement = (ticketId: string) => {
-    const ticket = event.tickets.find((t) => t.id === ticketId);
-    if (!ticket) return;
+  const handleIncrement = (ticketId: string) => {};
 
-    const currentQuantity = selectedTickets[ticketId] || 0;
-    const availableQuantity = ticket.quantity - (ticket.sold || 0);
-
-    if (currentQuantity < availableQuantity) {
-      onTicketChange(ticketId, currentQuantity + 1);
-    }
-  };
-
-  // Calcular el total de tickets y el monto total
-  const ticketItems = Object.entries(selectedTickets)
-    .map(([ticketId, quantity]) => {
-      const ticket = event.tickets.find((t) => t.id === ticketId);
-      if (!ticket || quantity <= 0) return null;
-
-      return {
-        ticket,
-        quantity,
-        subtotal: ticket.amount * quantity,
-      };
-    })
-    .filter(Boolean) as { ticket: any; quantity: number; subtotal: number }[];
-
-  const totalAmount = ticketItems.reduce((sum, item) => sum + item.subtotal, 0);
-  const totalTickets = Object.values(selectedTickets).reduce((sum, qty) => sum + qty, 0);
-
-  // Obtener códigos de descuento activos
-  const allDiscountCodes = useBitpassStore((state) => state.discountCodes);
-  const activeDiscountCodes = allDiscountCodes.filter(
-    (dc) => dc.eventId === event.id && dc.active && (!dc.maxUses || dc.used < dc.maxUses),
-  );
+  const totalAmount = 0;
+  const totalTickets = 0;
 
   // Función para validar el código de descuento
   const handleValidateCode = () => {
@@ -79,49 +45,22 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
       return;
     }
 
-    // Obtener los IDs de los tickets seleccionados
-    const selectedTicketIds = Object.keys(selectedTickets).filter((ticketId) => selectedTickets[ticketId] > 0);
-
-    const result = validateDiscountCode(code.trim().toUpperCase(), event.id, selectedTicketIds);
-
-    if (result.valid && result.discountCode) {
-      setValidatedCode(result.discountCode);
-      onDiscountValidated(result.discountCode);
-      setDiscountMessage({
-        type: 'success',
-        message: `Applied code: ${
-          result.discountCode.discountType === 'PERCENTAGE'
-            ? `${result.discountCode.value}% discount`
-            : `$${result.discountCode.value} discount`
-        }`,
-      });
-    } else {
-      setValidatedCode(null);
-      onDiscountValidated(null);
-      setDiscountMessage({
-        type: 'error',
-        message: result.message || 'Invalid discount code',
-      });
-    }
+    setValidatedCode(null);
+    onDiscountValidated(null);
+    setDiscountMessage({
+      type: 'error',
+      message: 'Invalid discount code',
+    });
   };
 
   // Calcular el descuento
   const calculateDiscount = () => {
     if (!validatedCode) return 0;
-
-    if (validatedCode.discountType === 'PERCENTAGE') {
-      return Math.round((totalAmount * validatedCode.value) / 100);
-    } else {
-      return Math.min(validatedCode.value, totalAmount); // El descuento no puede ser mayor que el total
-    }
   };
 
   // Calcular el total con descuento
-  const discountAmount = validatedCode ? calculateDiscount() : 0;
+  const discountAmount = 0;
   const totalWithDiscount = totalAmount - discountAmount;
-
-  // Verificar si todos los tickets seleccionados son gratuitos
-  const hasOnlyFreeTickets = ticketItems.length > 0 && ticketItems.every((item) => item.ticket.amount === 0);
 
   return (
     <div className='space-y-4'>
@@ -235,51 +174,50 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
       </div>
 
       {/* Resumen de precios - solo mostrar si hay tickets pagos */}
-      {!hasOnlyFreeTickets && ticketItems.length > 0 && (
-        <div className='mt-6 px-4'>
-          <div className='flex justify-between text-sm mb-2'>
-            <span className='text-white'>Subtotal:</span>
-            <span className='text-white'>${totalAmount.toLocaleString()}</span>
-          </div>
+      <div className='mt-6 px-4'>
+        <div className='flex justify-between text-sm mb-2'>
+          <span className='text-white'>Subtotal:</span>
+          <span className='text-white'>${totalAmount.toLocaleString()}</span>
+        </div>
 
-          {!validatedCode ? (
-            <>
-              {showCouponInput ? (
-                <div className='flex gap-2 mt-2'>
-                  <Input
-                    id='discount-code'
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder='Enter your code'
-                    className='bg-[#1A1A1A] border-border-gray text-white'
-                  />
-                  <Button type='button' variant='outline' onClick={handleValidateCode} disabled={!code.trim()}>
-                    Apply
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant='link'
-                  className='p-0 h-auto text-fluorescent-yellow'
-                  onClick={() => setShowCouponInput(true)}
-                >
-                  Add coupon
+        {!validatedCode ? (
+          <>
+            {showCouponInput ? (
+              <div className='flex gap-2 mt-2'>
+                <Input
+                  id='discount-code'
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder='Enter your code'
+                  className='bg-[#1A1A1A] border-border-gray text-white'
+                />
+                <Button type='button' variant='outline' onClick={handleValidateCode} disabled={!code.trim()}>
+                  Apply
                 </Button>
-              )}
-            </>
-          ) : (
-            <div className='flex justify-between items-center text-sm mb-2'>
-              <div className='flex flex-col'>
-                <span className='text-fluorescent-yellow'>Discount ({validatedCode.code}):</span>
-                <p className='text-sm text-green-500'>
-                  {validatedCode.discountType === 'PERCENTAGE'
-                    ? `${validatedCode.value}% discount`
-                    : `$${validatedCode.value} discount`}
-                </p>
               </div>
-              <div className='flex items-center gap-2'>
-                <span className='text-fluorescent-yellow'>-${discountAmount.toLocaleString()}</span>
-                {/* <Button
+            ) : (
+              <Button
+                variant='link'
+                className='p-0 h-auto text-fluorescent-yellow'
+                onClick={() => setShowCouponInput(true)}
+              >
+                Add coupon
+              </Button>
+            )}
+          </>
+        ) : (
+          <div className='flex justify-between items-center text-sm mb-2'>
+            <div className='flex flex-col'>
+              <span className='text-fluorescent-yellow'>Discount ({validatedCode.code}):</span>
+              <p className='text-sm text-green-500'>
+                {validatedCode.discountType === 'PERCENTAGE'
+                  ? `${validatedCode.value}% discount`
+                  : `$${validatedCode.value} discount`}
+              </p>
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='text-fluorescent-yellow'>-${discountAmount.toLocaleString()}</span>
+              {/* <Button
                   variant='ghost'
                   size='sm'
                   className='h-6 px-2 text-xs'
@@ -291,16 +229,15 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                 >
                   Delete
                 </Button> */}
-              </div>
             </div>
-          )}
-
-          <div className='flex justify-between text-base font-medium mt-2 pt-2 border-t border-border-gray'>
-            <span className='text-white'>Total to pay:</span>
-            <span className='text-white'>${(validatedCode ? totalWithDiscount : totalAmount).toLocaleString()}</span>
           </div>
+        )}
+
+        <div className='flex justify-between text-base font-medium mt-2 pt-2 border-t border-border-gray'>
+          <span className='text-white'>Total to pay:</span>
+          <span className='text-white'>${(validatedCode ? totalWithDiscount : totalAmount).toLocaleString()}</span>
         </div>
-      )}
+      </div>
     </div>
   );
 }

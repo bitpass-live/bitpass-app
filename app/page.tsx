@@ -1,65 +1,71 @@
 'use client';
 
-import { useState } from 'react';
-import { useBitpassStore, type DiscountCode } from '@/lib/store';
-import { EventInfo } from '@/components/event-info';
-import { CheckoutForm } from '@/components/checkout-form';
-import { Logo } from '@/components/logo';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-export default function HomePage() {
-  // ID del evento hardcodeado para la demo
-  const eventId = 'event123';
+import { useAuth } from '@/lib/auth-provider';
+import { useToast } from '@/components/ui/use-toast';
 
-  const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({});
-  const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
+import { LoginForm } from '@/components/login-form';
+// import { Logo } from '@/components/logo';
+import { Button } from '@/components/ui/button';
 
-  const event = useBitpassStore((state) => state.events.find((e) => e.id === eventId));
+export default function AuthPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const { login } = useAuth();
 
-  const handleTicketChange = (ticketId: string, quantity: number) => {
-    setSelectedTickets((prev) => ({
-      ...prev,
-      [ticketId]: quantity,
-    }));
+  const handleDemoLogin = () => {
+    login({ email: 'demo@bitpass.com', role: 'OWNER' });
+    router.push('/checkin');
+    toast({
+      title: 'Demo mode activated',
+      description: 'You are now using Bitpass in demo mode',
+    });
   };
-
-  const handleDiscountValidated = (discountCode: DiscountCode | null) => {
-    setAppliedDiscount(discountCode);
-  };
-
-  if (!event) {
-    return (
-      <div className='flex items-center justify-center h-screen'>
-        <p>Event not found</p>
-      </div>
-    );
-  }
 
   return (
     <div className='min-h-screen flex flex-col'>
-      {/* Main content */}
-      <div className='flex-1 flex flex-col md:flex-row'>
-        {/* Left side - Event info and tickets */}
-        <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 md:border-r bg-[#151515]'>
-          <div className='container'>
-            <div className='flex items-center gap-2 w-full pb-4 border-b text-lg'>
-              <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
-            </div>
-            <EventInfo
-              event={event}
-              selectedTickets={selectedTickets}
-              onTicketChange={handleTicketChange}
-              onDiscountValidated={handleDiscountValidated}
-            />
-          </div>
+      {/* Header */}
+      {/* <header className='border-b'>
+        <div className='container flex h-16 items-center justify-between py-4'>
+          <Link href='/' className='flex items-center'>
+            <Logo className='text-xl' />
+          </Link>
         </div>
+      </header> */}
 
-        {/* Right side - Checkout form */}
-        <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 bg-[#0A0A0A]'>
-          <div className='container'>
-            <CheckoutForm eventId={eventId} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
+      {/* Main content */}
+      <main className='flex-1 flex items-center justify-center py-6'>
+        <div className='container space-y-4'>
+          <div className='text-center'>
+            <h1 className='text-2xl font-bold'>Welcome Back</h1>
+            <p className='text-muted-foreground mt-2'>Sign in to your account to continue</p>
           </div>
+
+          <LoginForm />
+
+          <div className='text-center text-sm text-muted-foreground'>
+            <p>
+              Don&apos;t have an account?{' '}
+              <Link href='/' className='text-primary hover:underline'>
+                Go to homepage
+              </Link>
+            </p>
+          </div>
+
+          <Button className='w-full mt-0' variant='ghost' onClick={handleDemoLogin}>
+            Try Demo Mode
+          </Button>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      {/* <footer className='py-6 border-t'>
+        <div className='container text-center text-sm text-muted-foreground'>
+          <p>© {new Date().getFullYear()} NotPass. All rights reserved.</p>
+        </div>
+      </footer> */}
     </div>
   );
 }

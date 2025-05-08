@@ -1,9 +1,11 @@
 'use client';
 
-import { useBitpassStore } from '@/lib/store';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
+
+import { Card, CardContent } from '@/components/ui/card';
+
+import { Event, TicketSale } from '@/types';
+import { MOCK_EVENT, MOCK_SALES } from '@/mock/data';
 
 interface PaymentSuccessProps {
   eventId: string;
@@ -12,8 +14,8 @@ interface PaymentSuccessProps {
 }
 
 export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccessProps) {
-  const event = useBitpassStore((state) => state.events.find((e) => e.id === eventId));
-  const sale = useBitpassStore((state) => state.sales.find((s) => s.id === saleId));
+  const event: Event = MOCK_EVENT;
+  const sale: TicketSale = MOCK_SALES[0];
 
   if (!event || !sale) return null;
 
@@ -40,15 +42,15 @@ export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccess
             </div>
             <div className='flex justify-between text-sm'>
               <span className='text-muted-foreground'>Ticket:</span>
-              <span className='text-white font-medium'>{sale.ticketTitle}</span>
+              <span className='text-white font-medium'>{sale?.ticketTitle}</span>
             </div>
             <div className='flex justify-between text-sm'>
               <span className='text-muted-foreground'>Quantity:</span>
-              <span className='text-white font-medium'>{sale.quantity}</span>
+              <span className='text-white font-medium'>{sale?.quantity}</span>
             </div>
             <div className='flex justify-between text-sm'>
               <span className='text-muted-foreground'>Ref:</span>
-              <span className='text-white font-medium'>{sale.reference}</span>
+              <span className='text-white font-medium'>{sale?.reference}</span>
             </div>
           </div>
 
