@@ -1,123 +1,101 @@
-"use client"
+// OTPVerificationForm.tsx
+'use client';
 
-import type React from "react"
-
-import { useState, useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/components/ui/use-toast"
-import { ArrowLeft } from "lucide-react"
+import React, { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
+import { ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/lib/auth-provider';
 
 interface OTPVerificationFormProps {
-  email: string
-  onSuccess: () => void
-  onBack: () => void
+  email: string;
+  onSuccess: () => void;
+  onBack: () => void;
 }
 
 export function OTPVerificationForm({ email, onSuccess, onBack }: OTPVerificationFormProps) {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""])
-  const [isLoading, setIsLoading] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(120) // 2 minutes countdown
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-  const { toast } = useToast()
+  const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const { toast } = useToast();
+  const { requestOTPCode, verifyOTPCode } = useAuth();
 
-  // Set up countdown timer
+  // Countdown timer
   useEffect(() => {
-    if (timeLeft <= 0) return
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [timeLeft])
-
-  // Format time as MM:SS
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleOtpChange = (index: number, value: string) => {
-    // Only allow numbers
-    if (value && !/^\d*$/.test(value)) return
-
-    const newOtp = [...otp]
-    // Take only the last character if multiple are pasted
-    newOtp[index] = value.slice(-1)
-    setOtp(newOtp)
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus()
+    if (value && !/^[0-9]$/.test(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+    if (value && index < otp.length - 1) {
+      inputRefs.current[index + 1]?.focus();
     }
-  }
+  };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Move to previous input on backspace if current input is empty
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus()
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
     }
-  }
+  };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    const pastedData = e.clipboardData.getData("text")
-    if (!/^\d+$/.test(pastedData)) return
-
-    const digits = pastedData.split("").slice(0, 6)
-    const newOtp = [...otp]
-
-    digits.forEach((digit, index) => {
-      if (index < 6) newOtp[index] = digit
-    })
-
-    setOtp(newOtp)
-
-    // Focus the input after the last pasted digit
-    if (digits.length < 6) {
-      inputRefs.current[digits.length]?.focus()
-    }
-  }
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').slice(0, 6);
+    if (!/^[0-9]+$/.test(pasted)) return;
+    const digits = pasted.split('');
+    const newOtp = [...otp];
+    digits.forEach((d, i) => { if (i < newOtp.length) newOtp[i] = d; });
+    setOtp(newOtp);
+    const nextIndex = digits.length < newOtp.length ? digits.length : newOtp.length - 1;
+    inputRefs.current[nextIndex]?.focus();
+  };
 
   const handleResendOTP = async () => {
-    setIsLoading(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    setTimeLeft(120) // Reset timer
-    setIsLoading(false)
-
-    toast({
-      title: "OTP resent",
-      description: "A new verification code has been sent to your email",
-    })
-  }
+    setIsLoading(true);
+    try {
+      await requestOTPCode(email);
+      setTimeLeft(120);
+      toast({ title: 'OTP resent', description: 'A new verification code has been sent to your email' });
+    } catch (err: any) {
+      toast({ title: 'Error resending OTP', description: err.message || 'Please try again', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleVerify = async () => {
-    const otpValue = otp.join("")
-
-    if (otpValue.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter all 6 digits of the verification code",
-        variant: "destructive",
-      })
-      return
+    const code = otp.join('');
+    if (code.length !== 6) {
+      toast({ title: 'Invalid OTP', description: 'Please enter all 6 digits of the verification code', variant: 'destructive' });
+      return;
     }
 
-    setIsLoading(true)
-
-    // For demo purposes, any 6-digit code works
-    // In a real app, you would verify this with your backend
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    setIsLoading(false)
-    onSuccess()
-  }
+    setIsLoading(true);
+    try {
+      await verifyOTPCode(email, code);
+      onSuccess();
+      toast({ title: 'Logged in', description: 'You have been successfully authenticated' });
+    } catch (err: any) {
+      console.log(err.message)
+      toast({ title: 'Verification failed', description: err.message || 'Please check the code and try again', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-4 mt-4">
@@ -134,19 +112,19 @@ export function OTPVerificationForm({ email, onSuccess, onBack }: OTPVerificatio
       <div className="space-y-2">
         <Label htmlFor="otp-input">Verification Code</Label>
         <div className="flex gap-2">
-          {otp.map((digit, index) => (
+          {otp.map((digit, idx) => (
             <Input
-              key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
+              key={idx}
+              ref={el => (inputRefs.current[idx] = el)}
               type="text"
               inputMode="numeric"
               maxLength={1}
               value={digit}
-              onChange={(e) => handleOtpChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onPaste={index === 0 ? handlePaste : undefined}
+              onChange={e => handleOtpChange(idx, e.target.value)}
+              onKeyDown={e => handleKeyDown(idx, e)}
+              onPaste={idx === 0 ? handlePaste : undefined}
               className="w-10 h-12 text-center text-lg"
-              autoFocus={index === 0}
+              autoFocus={idx === 0}
             />
           ))}
         </div>
@@ -154,22 +132,16 @@ export function OTPVerificationForm({ email, onSuccess, onBack }: OTPVerificatio
 
       <div className="flex justify-between items-center text-sm">
         <span className="text-muted-foreground">
-          {timeLeft > 0 ? <>Code expires in {formatTime(timeLeft)}</> : <>Code expired</>}
+          {timeLeft > 0 ? `Code expires in ${formatTime(timeLeft)}` : 'Code expired'}
         </span>
-        <Button
-          variant="link"
-          size="sm"
-          onClick={handleResendOTP}
-          disabled={isLoading || timeLeft > 0}
-          className="p-0 h-auto"
-        >
+        <Button variant="link" size="sm" onClick={handleResendOTP} disabled={isLoading || timeLeft > 0} className="p-0 h-auto">
           Resend code
         </Button>
       </div>
 
-      <Button onClick={handleVerify} className="w-full" disabled={isLoading || otp.some((digit) => !digit)}>
-        {isLoading ? "Verifying..." : "Verify and Sign In"}
+      <Button onClick={handleVerify} className="w-full" disabled={isLoading || otp.some(d => !d)}>
+        {isLoading ? 'Verifying...' : 'Verify and Sign In'}
       </Button>
     </div>
-  )
+  );
 }

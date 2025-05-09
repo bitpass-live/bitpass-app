@@ -14,16 +14,16 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function PaymentSettings() {
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [lightningAddress, setLightningAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (user?.lightningAddress) {
-      setLightningAddress(user.lightningAddress);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user?.lightningAddress) {
+  //     setLightningAddress(user.lightningAddress);
+  //   }
+  // }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +41,7 @@ export function PaymentSettings() {
     setIsLoading(true);
 
     try {
-      await updateUser({ lightningAddress });
+      // await updateUser({ lightningAddress });
       toast({
         title: 'Payment settings updated',
         description: 'Your Lightning Address has been saved successfully.',

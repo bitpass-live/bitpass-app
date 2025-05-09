@@ -1,7 +1,6 @@
 'use client';
 
 import type React from 'react';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -17,59 +16,42 @@ export function EmailLoginForm() {
   const [otpSent, setOtpSent] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { requestOTPCode } = useAuth();
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email || !email.includes('@')) {
-      toast({
-        title: 'Invalid email',
-        description: 'Please enter a valid email address',
-        variant: 'destructive',
-      });
+    if (!email.includes('@')) {
+      toast({ title: 'Invalid email', description: 'Please enter a valid email address', variant: 'destructive' });
       return;
     }
 
     setIsLoading(true);
-
-    // Simulate API call to send OTP
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    toast({
-      title: 'OTP sent',
-      description: 'Check your email for the verification code',
-    });
-
-    setIsLoading(false);
-    setOtpSent(true);
-  };
-
-  const handleVerificationSuccess = () => {
-    login({ email, role: 'OWNER' });
-    router.push('/checkin');
-    toast({
-      title: 'Logged in successfully',
-      description: 'Welcome to Bitpass!',
-    });
+    try {
+      await requestOTPCode(email);
+      toast({ title: 'OTP sent', description: 'Check your email for the verification code' });
+      setOtpSent(true);
+    } catch (err: any) {
+      toast({ title: 'Error sending OTP', description: err.message || 'Please try again', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (otpSent) {
-    return <OTPVerificationForm email={email} onSuccess={handleVerificationSuccess} onBack={() => setOtpSent(false)} />;
+    return (
+      <OTPVerificationForm
+        email={email}
+        onSuccess={() => router.push('/dashboard')}
+        onBack={() => setOtpSent(false)}
+      />
+    );
   }
 
   return (
     <form onSubmit={handleSendOTP} className='space-y-4 mt-4'>
       <div className='space-y-2'>
         <Label htmlFor='email'>Email</Label>
-        <Input
-          id='email'
-          type='email'
-          placeholder='you@example.com'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <Input id='email' type='email' placeholder='you@example.com' value={email} onChange={e => setEmail(e.target.value)} required />
       </div>
       <Button type='submit' className='w-full' disabled={isLoading}>
         {isLoading ? 'Sending verification code...' : 'Continue with Email'}

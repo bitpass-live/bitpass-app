@@ -6,18 +6,21 @@ import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-provider';
 
+const PROTECTED_ROUTES: string[] = ['/checkin', '/dashboard']
+
 // Simplificar el AuthGuard para proteger solo la ruta de checkin
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Solo proteger la ruta de checkin
-    if (pathname === '/checkin' && !isAuthenticated) {
-      router.push('/auth');
+    if (!user.loaded) return;
+    
+    if (PROTECTED_ROUTES.includes(pathname) && !isAuthenticated) {
+      router.push('/');
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isAuthenticated, user, pathname]);
 
   return <>{children}</>;
 }
