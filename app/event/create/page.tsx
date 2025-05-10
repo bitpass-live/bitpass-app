@@ -158,9 +158,10 @@ export default function CreateEventPage() {
               </div>
             </div>
           </div>
-          <Button className='w-full' type='submit'>
-            Create Event
+          <Button className='w-full' type='submit' disabled={isSubmitting}>
+            {isSubmitting ? 'Creating...' : 'Create Event'}
           </Button>
+
         </form>
       </div>
     </div>
