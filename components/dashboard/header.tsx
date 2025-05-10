@@ -51,12 +51,9 @@ export function Header() {
         <div className='flex items-center gap-4'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='gap-2'>
+              <Button className='gap-2' variant='secondary' size='icon'>
                 <User className='h-4 w-4' />
-                <span className='hidden sm:inline'>
-                  {user?.name || user?.email || (user?.pubkey && `${user.pubkey.substring(0, 8)}...`) || 'User'}
-                </span>
-                <ChevronDown className='h-4 w-4' />
+                {/* <ChevronDown className='h-4 w-4' /> */}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
