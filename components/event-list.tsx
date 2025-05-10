@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, MapPinIcon, Users } from 'lucide-react';
 import { formatDate, isEventLive } from '@/lib/utils';
-import { CreateEventButton } from '@/components/create-event-button';
 
 import { MOCK_EVENTS } from '@/mock/data';
 
@@ -24,7 +23,6 @@ export function EventList() {
         <p className='text-muted-foreground max-w-md mb-6'>
           Create your first event to start selling tickets and managing attendees.
         </p>
-        <CreateEventButton />
       </div>
     );
   }
