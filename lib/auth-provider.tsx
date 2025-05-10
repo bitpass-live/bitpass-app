@@ -5,6 +5,8 @@ import { createContext, useContext, useState, useEffect, type ReactNode, use } f
 import { useRouter } from 'next/navigation';
 import { Bitpass } from './bitpass-sdk/src'; //TODO: usar libreria real
 import { AuthResponse, User } from './bitpass-sdk/src/types/user';
+import { getEventHash, NostrEvent, UnsignedEvent } from 'nostr-tools';
+import NDK, { NDKEvent, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk'
 
 export type UserRole = 'OWNER' | 'MODERATOR' | 'CHECKIN';
 
@@ -26,6 +28,8 @@ export interface AuthContextType {
   login: (user: User, token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  loginWithNostrExtension: () => Promise<void>;
+  loginWithPrivateKey: (privateKey: string) => Promise<void>;
   requestOTPCode: (email: string) => Promise<void>;
   verifyOTPCode: (email: string, code: string) => Promise<void>;
 }
@@ -34,10 +38,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<ExtendedUser>(DEFAULT_USER);
-  const [bitpassAPI] = useState(new Bitpass({ baseUrl: 'http://localhost:4000'}));
+  const [bitpassAPI] = useState(new Bitpass({ baseUrl: 'https://api.bitpass.live' }));
   const router = useRouter();
 
-  // Load stored user
   useEffect(() => {
     loadStoragedUser();
   }, []);
@@ -45,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadStoragedUser = async () => {
     const userToken = localStorage.getItem('bitpass_access_token');
     if (!userToken) {
-      setUser((prev) => ({...prev, loaded: true }));
+      setUser((prev) => ({ ...prev, loaded: true }));
       return;
     }
 
@@ -54,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const user = await bitpassAPI.getUserProfile();
       login(user, userToken)
     } catch {
-      setUser((prev) => ({...prev, loaded: true }));
+      setUser((prev) => ({ ...prev, loaded: true }));
       return;
     }
   }
@@ -75,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('bitpass_access_token');
-    setUser({...DEFAULT_USER, loaded: true})
+    setUser({ ...DEFAULT_USER, loaded: true })
     router.push('/');
   };
 
@@ -93,13 +96,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login(user, token);
   };
 
+  async function loginWithNostrExtension() {
+    const nostr = window.nostr
+    if (!nostr?.getPublicKey || !nostr.signEvent) {
+      throw new Error('No se detectó ninguna extensión Nostr')
+    }
+
+    const pubkey = await nostr.getPublicKey();
+
+    const templateEvent: UnsignedEvent = {
+      kind: 27235,
+      pubkey,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [],
+      content: '',
+    }
+
+
+    const signedEvent: NostrEvent = {
+      ...templateEvent,
+      id: getEventHash(templateEvent),
+      ...await nostr.signEvent(templateEvent)
+    }
+
+    const { user, token } = await bitpassAPI.verifyNostr(signedEvent)
+    login(user, token)
+  }
+
+  async function loginWithPrivateKey(privateKey: string) {
+    const signer = new NDKPrivateKeySigner(privateKey)
+    
+    const templateEvent: UnsignedEvent = {
+      kind: 27235,
+      pubkey: signer.pubkey,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [],
+      content: '',
+    }
+
+
+    const signedEvent: NostrEvent = {
+      ...templateEvent,
+      id: getEventHash(templateEvent),
+      sig: await signer.sign(templateEvent)
+    }
+
+    const { user, token } = await bitpassAPI.verifyNostr(signedEvent)
+    login(user, token)
+  }
+
   return (
     <AuthContext.Provider
       value={{
         user,
         login,
         logout,
-        isAuthenticated: !!user,
+        isAuthenticated: Boolean(user.id),
+        loginWithNostrExtension,
+        loginWithPrivateKey,
         requestOTPCode,
         verifyOTPCode,
       }}

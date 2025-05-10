@@ -90,7 +90,6 @@ export function OTPVerificationForm({ email, onSuccess, onBack }: OTPVerificatio
       onSuccess();
       toast({ title: 'Logged in', description: 'You have been successfully authenticated' });
     } catch (err: any) {
-      console.log(err.message)
       toast({ title: 'Verification failed', description: err.message || 'Please check the code and try again', variant: 'destructive' });
     } finally {
       setIsLoading(false);

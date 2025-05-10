@@ -16,7 +16,7 @@ export default function AuthPage() {
   const { login } = useAuth();
 
   const handleDemoLogin = () => {
-    login({ email: 'demo@bitpass.com', role: 'OWNER' });
+    // login({ email: 'demo@bitpass.com', role: 'OWNER' });
     toast({
       title: 'Demo mode activated',
       description: 'You are now using Bitpass in demo mode',

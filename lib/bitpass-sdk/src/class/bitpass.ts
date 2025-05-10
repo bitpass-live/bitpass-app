@@ -94,7 +94,7 @@ export class Bitpass {
    * @param event Nostr NIP-98 event to verify.
    * @returns Authenticated user.
    */
-  async verifyNostr(event: NostrEvent): Promise<User> {
+  async verifyNostr(event: NostrEvent): Promise<AuthResponse> {
     const res = await fetch(`${this.baseUrl}/auth/verify-nostr`, {
       method: "POST",
       headers: this.headers,
@@ -106,7 +106,7 @@ export class Bitpass {
     }
     const data: AuthResponse = await res.json();
     this.token = data.token;
-    return data.user;
+    return data;
   }
 
   /**

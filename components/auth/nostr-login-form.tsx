@@ -13,19 +13,13 @@ export function NostrLoginForm() {
   const [isConnecting, setIsConnecting] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { loginWithNostrExtension } = useAuth();
 
   const handleConnectExtension = async () => {
     setIsConnecting(true);
 
     try {
-      // Simulate connecting to Alby or other extension
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock successful connection
-      const mockPubkey = 'npub1random' + Math.random().toString(36).substring(2, 10);
-
-      login({ pubkey: mockPubkey, role: 'OWNER' });
+      await loginWithNostrExtension();
       router.push('/checkin');
 
       toast({
@@ -43,17 +37,8 @@ export function NostrLoginForm() {
     }
   };
 
-  const handlePrivateKeySuccess = (pubkey: string) => {
-    login({ pubkey, role: 'OWNER' });
-    router.push('/checkin');
-    toast({
-      title: 'Logged in successfully',
-      description: 'Welcome to Bitpass!',
-    });
-  };
-
   if (showPrivateKeyForm) {
-    return <NostrPrivateKeyForm onSuccess={handlePrivateKeySuccess} onBack={() => setShowPrivateKeyForm(false)} />;
+    return <NostrPrivateKeyForm onBack={() => setShowPrivateKeyForm(false)} />;
   }
 
   return (

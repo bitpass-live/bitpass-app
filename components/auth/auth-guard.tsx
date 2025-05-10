@@ -17,8 +17,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user.loaded) return;
     
-    if (PROTECTED_ROUTES.includes(pathname) && !isAuthenticated) {
-      router.push('/');
+    switch (true) {
+      case (PROTECTED_ROUTES.includes(pathname) && !isAuthenticated):
+        router.push('/');
+        break;
+        
+      case (pathname === '/' && isAuthenticated): // login
+        router.push('/dashboard');
+        break;
     }
   }, [isAuthenticated, user, pathname]);
 
