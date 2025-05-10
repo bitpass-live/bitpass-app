@@ -24,6 +24,7 @@ const DEFAULT_USER: ExtendedUser = {
 }
 
 export interface AuthContextType {
+  bitpassAPI: Bitpass;
   user: ExtendedUser;
   login: (user: User, token: string) => void;
   logout: () => void;
@@ -113,12 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
 
-    const signedEvent: NostrEvent = {
-      ...templateEvent,
-      id: getEventHash(templateEvent),
-      ...await nostr.signEvent(templateEvent)
-    }
-
+    const signedEvent: NostrEvent = await nostr.signEvent(templateEvent)
     const { user, token } = await bitpassAPI.verifyNostr(signedEvent)
     login(user, token)
   }
@@ -148,6 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        bitpassAPI,
         user,
         login,
         logout,

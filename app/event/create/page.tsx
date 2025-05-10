@@ -18,6 +18,9 @@ import { Header } from '@/components/dashboard/header';
 import { MobileNav } from '@/components/dashboard/mobile-nav';
 
 export default function CreateEventPage() {
+  const { bitpassAPI } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Obtener la fecha actual en formato YYYY-MM-DD
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
@@ -38,25 +41,39 @@ export default function CreateEventPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     // Combine date and time
-    const start = new Date(`${startDate}T${startTime}`).toISOString();
-    const end = new Date(`${endDate}T${endTime}`).toISOString();
 
-    // TO-DO
-    // Create Event
-    const eventId = '123'; // Replace with actual event ID after creation
+    try {
+      const event = await bitpassAPI.createDraftEvent({
+        title,
+        description,
+        location,
+        startDate,
+        startTime,
+        endDate,
+        endTime
+      });
 
-    toast({
-      title: 'Event created',
-      description: 'Your event has been created successfully.',
-    });
+      toast({
+        title: 'Event created',
+        description: 'Your event has been created successfully.',
+      });
 
-    // Close dialog and redirect
-    setOpen(false);
-    router.push(`/events/${eventId}/manage`);
+      setOpen(false)
+      router.push(`/event/${event.id}/manage`);
+    } catch (err: any) {
+      toast({
+        title: 'Error creating event',
+        description: err.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
