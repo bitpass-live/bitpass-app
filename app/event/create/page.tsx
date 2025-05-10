@@ -82,7 +82,7 @@ export default function CreateEventPage() {
       <div className='container'>
         <form onSubmit={handleSubmit}>
           <div className='flex flex-col gap-2 w-full mt-4'>
-            <h2 className='text-lg font-semibold leading-none tracking-tight'>Create a new event</h2>
+            <h2 className='text-xl font-semibold leading-none tracking-tight'>Create a new event</h2>
             <p className='text-sm text-muted-foreground'>Fill in the details to create your event.</p>
           </div>
           <div className='grid gap-4 py-4'>

@@ -12,7 +12,7 @@ export default function DashboardPage() {
       <Header />
       <main className='container py-6 space-y-8 pb-20 md:pb-6'>
         <div className='flex items-center justify-between'>
-          <h1 className='text-3xl font-bold'>Your Events</h1>
+          <h1 className='text-2xl font-bold'>Your Events</h1>
 
           <Button asChild>
             <Link href='/event/create'>
