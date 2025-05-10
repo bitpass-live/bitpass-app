@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CalendarIcon, ExternalLink, MapPinIcon, Share2Icon } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
@@ -138,7 +138,7 @@ export function EventManagement({ eventId }: { eventId: string }) {
         <div className='flex gap-2'>
           <Button variant='secondary' size='icon' onClick={handleShareEvent} asChild>
             <Link target='_blank' href={`/event/${event.id}`}>
-              <ExternalLink className='h-4 w-4' />
+              <ArrowUpRight className='h-4 w-4' />
             </Link>
           </Button>
         </div>
