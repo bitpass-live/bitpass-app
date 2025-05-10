@@ -28,55 +28,39 @@ export function EventList() {
   }
 
   return (
-    <div className='flex flex-col gap-6'>
+    <div className='flex flex-col gap-4'>
       {events.map((event) => {
         const totalSold = event.tickets.reduce((acc, ticket) => acc + (ticket.sold || 0), 0);
         const totalCapacity = event.tickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
         // TO-DO
         // REVIEW LIVE FUNCTION
-        const live = true;
+        const live = false;
 
         return (
-          <Card key={event.id} className='overflow-hidden w-full'>
-            <CardHeader className='pb-3'>
-              <div className='flex justify-between items-start'>
-                {live ? (
-                  <Badge variant='destructive' className='mb-2'>
-                    Live Now
-                  </Badge>
-                ) : (
-                  <Badge variant={event.published ? 'default' : 'outline'} className='mb-2'>
-                    {event.published ? 'Published' : 'Draft'}
-                  </Badge>
-                )}
+          <Link className='rounded-lg' href={`/event/${event.id}/manage`} key={event.id}>
+            <Card className='overflow-hidden w-full'>
+              <div className='flex flex-col gap-2 p-6 pb-2'>
+                <div className='flex gap-2 items-center'>
+                  {/* TO-DO */}
+                  {/* CHANGE THIS FOR COMPARATION DATE  */}
+                  {event?.id === 'event123' && (
+                    <div className='flex items-center gap-2'>
+                      <div className='w-2 h-2 bg-fluorescent-yellow rounded-full animate-pulse'></div>
+                      <p className='font-semibold text-fluorescent-yellow'>Live now</p>
+                    </div>
+                  )}
+                  <p className='text-sm text-text-secondary'>14:00</p>
+                </div>
+                <h2 className='text-lg font-semibold leading-none tracking-tight'>{event.title}</h2>
               </div>
-              <CardTitle className='line-clamp-1'>{event.title}</CardTitle>
-              <CardDescription className='flex items-center gap-1'>
-                <CalendarIcon className='h-3 w-3' />
-                <span>{formatDate(event.start)}</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className='pb-3'>
-              <div className='flex items-center gap-1 text-sm text-muted-foreground mb-2'>
-                <MapPinIcon className='h-3 w-3' />
-                <span>{event.location}</span>
-              </div>
-              <div className='flex items-center gap-1 text-sm'>
-                <Users className='h-3 w-3' />
-                <span>
-                  {totalSold} / {totalCapacity} attendees
-                </span>
-              </div>
-            </CardContent>
-            <CardFooter className='flex justify-between pt-3 border-t'>
-              <Button asChild variant='outline' size='sm'>
-                <Link href={`/event/${event.id}/manage`}>Manage</Link>
-              </Button>
-              <Button asChild size='sm'>
-                <Link href={`/event/${event.id}`}>{event.published ? 'Register' : 'Preview'}</Link>
-              </Button>
-            </CardFooter>
-          </Card>
+              <CardContent className='pb-3'>
+                <div className='flex items-center gap-1 text-sm text-muted-foreground mb-2'>
+                  <MapPinIcon className='h-4 w-4' />
+                  <span>{event.location}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         );
       })}
     </div>

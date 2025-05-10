@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CalendarIcon, MapPinIcon, Share2Icon } from 'lucide-react';
+import { CalendarIcon, ExternalLink, MapPinIcon, Share2Icon } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
@@ -19,6 +19,7 @@ import { SalesOverview } from './sales-overview';
 import { DiscountCodeManagement } from './discount-code-management';
 
 import { MOCK_EVENT } from '@/mock/data';
+import Link from 'next/link';
 
 export function EventManagement({ eventId }: { eventId: string }) {
   const router = useRouter();
@@ -129,19 +130,21 @@ export function EventManagement({ eventId }: { eventId: string }) {
   }
 
   return (
-    <div className='space-y-6'>
-      <div className='flex flex-col md:flex-row justify-between gap-4'>
+    <div className='flex flex-col gap-4'>
+      <div className='container flex flex-row items-center justify-between gap-4'>
         <div className='w-full'>
-          <h1 className='text-3xl font-bold'>{event.title}</h1>
+          <h1 className='text-xl md:text-3xl font-bold'>{event.title}</h1>
         </div>
         <div className='flex gap-2'>
-          <Button variant='secondary' size='icon' onClick={handleShareEvent}>
-            <Share2Icon className='h-4 w-4' />
+          <Button variant='secondary' size='icon' onClick={handleShareEvent} asChild>
+            <Link target='_blank' href={`/event/${event.id}`}>
+              <ExternalLink className='h-4 w-4' />
+            </Link>
           </Button>
         </div>
       </div>
 
-      <div className='flex flex-col gap-2 text-sm text-muted-foreground'>
+      {/* <div className='flex flex-col gap-2 text-sm text-muted-foreground'>
         <div className='flex items-center gap-1'>
           <CalendarIcon className='h-4 w-4' />
           <span>
@@ -152,19 +155,33 @@ export function EventManagement({ eventId }: { eventId: string }) {
           <MapPinIcon className='h-4 w-4' />
           <span>{event.location}</span>
         </div>
-      </div>
+      </div> */}
 
       <Tabs defaultValue='details'>
         {/* Modificar el componente TabsList para agregar la pestaña de códigos de descuento */}
-        <TabsList className='grid w-full grid-cols-5'>
-          <TabsTrigger value='details'>Details</TabsTrigger>
-          <TabsTrigger value='tickets'>Tickets</TabsTrigger>
-          <TabsTrigger value='team'>Team</TabsTrigger>
-          <TabsTrigger value='discounts'>Descuentos</TabsTrigger>
-          <TabsTrigger value='sales'>Sales</TabsTrigger>
-        </TabsList>
+        <div className='border-b'>
+          <div className='container px-0 overflow-hidden'>
+            <TabsList className='overflow-x-scroll flex flex-1 justify-start gap-4 w-full h-auto px-4 py-0 bg-transparent rounded-none pb-2'>
+              <TabsTrigger className='w-auto bg-transparent rounded-md text-md' value='details'>
+                Details
+              </TabsTrigger>
+              <TabsTrigger className='w-auto bg-transparent rounded-md text-md' value='tickets'>
+                Tickets
+              </TabsTrigger>
+              <TabsTrigger className='w-auto bg-transparent rounded-md text-md' value='team'>
+                Team
+              </TabsTrigger>
+              <TabsTrigger className='w-auto bg-transparent rounded-md text-md' value='discounts'>
+                Descuentos
+              </TabsTrigger>
+              <TabsTrigger className='w-auto bg-transparent rounded-md text-md' value='sales'>
+                Sales
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
 
-        <TabsContent value='details' className='mt-6'>
+        <TabsContent value='details' className='container mt-6'>
           <div className='flex flex-col gap-8'>
             <div className='flex flex-col gap-2'>
               <CardTitle>Event Details</CardTitle>
@@ -217,20 +234,20 @@ export function EventManagement({ eventId }: { eventId: string }) {
           </div>
         </TabsContent>
 
-        <TabsContent value='tickets' className='mt-6'>
+        <TabsContent value='tickets' className='container mt-6'>
           <TicketManagement eventId={eventId} />
         </TabsContent>
 
         {/* Agregar el contenido de la pestaña de códigos de descuento después de la pestaña de equipo */}
-        <TabsContent value='team' className='mt-6'>
+        <TabsContent value='team' className='container mt-6'>
           <TeamManagement eventId={eventId} />
         </TabsContent>
 
-        <TabsContent value='discounts' className='mt-6'>
+        <TabsContent value='discounts' className='container mt-6'>
           <DiscountCodeManagement eventId={eventId} />
         </TabsContent>
 
-        <TabsContent value='sales' className='mt-6'>
+        <TabsContent value='sales' className='container mt-6'>
           <SalesOverview eventId={eventId} />
         </TabsContent>
       </Tabs>

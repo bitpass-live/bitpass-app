@@ -6,7 +6,7 @@ export default function EventManagePage({ params }: { params: { id: string } }) 
   return (
     <>
       <Header />
-      <main className='container py-6 pb-20 md:pb-6'>
+      <main className='py-6 pb-20 md:pb-6'>
         <EventManagement eventId={params.id} />
       </main>
       <MobileNav />

@@ -66,7 +66,7 @@ export default function CreateEventPage() {
         <form onSubmit={handleSubmit}>
           <div className='flex gap-4'>
             <div className='mt-4'>
-              <Button variant='outline' size='icon' asChild>
+              <Button variant='secondary' size='icon' asChild>
                 <Link href='/dashboard'>
                   <ArrowLeft className='h-4 w-4' />
                 </Link>
