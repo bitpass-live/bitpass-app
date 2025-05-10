@@ -105,8 +105,8 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => handleOpenDialog()}>
-              <PlusIcon className='mr-2 h-4 w-4' />
-              Crear Código
+              <PlusIcon className='h-4 w-4' />
+              Create
             </Button>
           </DialogTrigger>
           <DialogContent className='sm:max-w-[550px]'>
@@ -182,62 +182,57 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
         </Card>
       ) : (
         <Card>
-          <CardHeader>
-            <CardTitle>Códigos de Descuento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Código</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Usos</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className='text-right'>Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {discountCodes.map((discountCode) => {
-                  const isActive = discountCode.active;
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Código</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Usos</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead className='text-right'>Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {discountCodes.map((discountCode) => {
+                const isActive = discountCode.active;
 
-                  return (
-                    <TableRow key={discountCode.id}>
-                      <TableCell className='font-medium'>{discountCode.code}</TableCell>
-                      <TableCell>{`${discountCode.value}%`}</TableCell>
-                      <TableCell>
-                        {discountCode.used}
-                        {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
-                      </TableCell>
-                      <TableCell>
-                        <div className='flex items-center'>
-                          <Switch
-                            checked={discountCode.active}
-                            onCheckedChange={(checked) => handleToggleActive(discountCode.id, !checked)}
-                            className='mr-2'
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <div className='flex justify-end gap-2'>
-                          <Button variant='outline' size='icon' onClick={() => handleOpenDialog()} title='Editar'>
-                            <Pencil className='h-4 w-4' />
-                          </Button>
-                          <Button
-                            variant='outline'
-                            size='icon'
-                            onClick={() => handleDeleteCode(discountCode.id)}
-                            title='Eliminar'
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
+                return (
+                  <TableRow key={discountCode.id}>
+                    <TableCell className='font-medium'>{discountCode.code}</TableCell>
+                    <TableCell>{`${discountCode.value}%`}</TableCell>
+                    <TableCell>
+                      {discountCode.used}
+                      {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
+                    </TableCell>
+                    <TableCell>
+                      <div className='flex items-center'>
+                        <Switch
+                          checked={discountCode.active}
+                          onCheckedChange={(checked) => handleToggleActive(discountCode.id, !checked)}
+                          className='mr-2'
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      <div className='flex justify-end gap-2'>
+                        <Button variant='outline' size='icon' onClick={() => handleOpenDialog()} title='Editar'>
+                          <Pencil className='h-4 w-4' />
+                        </Button>
+                        <Button
+                          variant='destructive'
+                          size='icon'
+                          onClick={() => handleDeleteCode(discountCode.id)}
+                          title='Eliminar'
+                        >
+                          <Trash2 className='h-4 w-4' />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </Card>
       )}
     </div>

@@ -112,8 +112,8 @@ export function TicketManagement({ eventId }: { eventId: string }) {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => handleOpenDialog()}>
-              <PlusIcon className='mr-2 h-4 w-4' />
-              Add Ticket
+              <PlusIcon className='h-4 w-4' />
+              Create
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -237,42 +237,33 @@ export function TicketManagement({ eventId }: { eventId: string }) {
           </CardContent>
         </Card>
       ) : (
-        <div className='grid gap-4'>
+        <Card>
           {tickets.map((ticket) => (
-            <Card key={ticket.id}>
-              <CardContent className='p-6'>
-                <div className='flex items-center justify-between'>
-                  <div>
+            <div className='border-b last:border-none' key={ticket.id}>
+              <div className='p-6'>
+                <div className='flex items-center justify-between gap-4'>
+                  <div className='flex items-center gap-2 w-full'>
                     <h3 className='text-lg font-semibold'>{ticket.title}</h3>
-                    <div className='flex flex-col gap-1 mt-1'>
-                      <p className='text-sm text-muted-foreground flex items-center gap-1'>
-                        <span className='font-medium text-foreground'>Precio:</span>
-                        {ticket.amount === 0 ? 'Gratis' : 0}
-                      </p>
-                      <p className='text-sm text-muted-foreground flex items-center gap-1'>
-                        <span className='font-medium text-foreground'>Cupo:</span>
-                        {ticket.quantity === -1 ? 'Ilimitado' : `${ticket.sold || 0} / ${ticket.quantity} vendidos`}
-                      </p>
-                    </div>
+                    <p className='text-text-secondary'>{ticket?.amount === 0 ? 'Gratis' : '$' + ticket?.amount}</p>
+                  </div>
+                  <div className='hidden md:flex whitespace-nowrap'>
+                    <p className='text-muted-foreground text-sm'>
+                      {ticket.quantity === -1 ? 'Ilimitado' : `${ticket.sold || 0} / ${ticket.quantity} vendidos`}
+                    </p>
                   </div>
                   <div className='flex gap-2'>
                     <Button variant='outline' size='icon' onClick={() => handleOpenDialog()}>
                       <Pencil className='h-4 w-4' />
                     </Button>
-                    <Button
-                      variant='outline'
-                      size='icon'
-                      onClick={() => handleDeleteTicket(ticket.id)}
-                      className='text-red-500 hover:text-red-700 hover:bg-red-100'
-                    >
+                    <Button variant='destructive' size='icon' onClick={() => handleDeleteTicket(ticket.id)}>
                       <Trash2 className='h-4 w-4' />
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
-        </div>
+        </Card>
       )}
     </div>
   );

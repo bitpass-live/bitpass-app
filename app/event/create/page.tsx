@@ -141,16 +141,9 @@ export default function CreateEventPage() {
               </div>
             </div>
           </div>
-          {/* CTA Desktop */}
-          <Button className='hidden md:block w-full' type='submit'>
+          <Button className='w-full' type='submit'>
             Create Event
           </Button>
-          {/* CTA Mobile */}
-          <MobileNav>
-            <Button className='w-full' type='submit'>
-              Create Event
-            </Button>
-          </MobileNav>
         </form>
       </div>
     </div>

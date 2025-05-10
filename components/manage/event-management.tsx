@@ -165,12 +165,12 @@ export function EventManagement({ eventId }: { eventId: string }) {
         </TabsList>
 
         <TabsContent value='details' className='mt-6'>
-          <Card>
-            <CardHeader>
+          <div className='flex flex-col gap-8'>
+            <div className='flex flex-col gap-2'>
               <CardTitle>Event Details</CardTitle>
               <CardDescription>Edit your event information</CardDescription>
-            </CardHeader>
-            <CardContent className='space-y-4'>
+            </div>
+            <div className='space-y-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='title'>Event Title</Label>
                 <Input id='title' value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -208,13 +208,13 @@ export function EventManagement({ eventId }: { eventId: string }) {
                   <Input id='endTime' type='time' value={endTime} onChange={(e) => setEndTime(e.target.value)} />
                 </div>
               </div>
-            </CardContent>
-            <CardFooter>
+            </div>
+            <div className='w-full'>
               <Button className='w-full' onClick={handleSaveDetails}>
                 Save Changes
               </Button>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value='tickets' className='mt-6'>

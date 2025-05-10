@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '../ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -88,8 +89,8 @@ export function TeamManagement({ eventId }: { eventId: string }) {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <PlusIcon className='mr-2 h-4 w-4' />
-              Add Member
+              <PlusIcon className='h-4 w-4' />
+              Create
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -157,40 +158,37 @@ export function TeamManagement({ eventId }: { eventId: string }) {
           </CardContent>
         </Card>
       ) : (
-        <div className='grid gap-4'>
+        <Card className='overflow-hidden gap-[1px] bg-background'>
           {MOCK_ROLES.map((roleItem) => (
-            <Card key={roleItem.pubkey}>
-              <CardContent className='p-6'>
+            <div className='bg-card border-b last:border-none' key={roleItem.pubkey}>
+              <div className='p-6'>
                 <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-3'>
+                  <div className='flex items-center gap-3 w-full'>
                     <div className='rounded-full bg-muted p-2'>
                       <UserIcon className='h-5 w-5' />
                     </div>
-                    <div>
-                      <p className='font-medium'>{roleItem.pubkey.substring(0, 8)}...</p>
-                      <div
-                        className={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${getRoleBadgeClass(
-                          roleItem.role,
-                        )}`}
-                      >
-                        {roleItem.role === 'OWNER' ? 'Creador' : 'Moderador'}
-                      </div>
-                    </div>
+                    <p className='font-medium'>{roleItem.pubkey.substring(0, 8)}...</p>
                   </div>
-                  {roleItem.role !== 'OWNER' && (
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={() => handleRemoveRole(roleItem.pubkey, roleItem.role)}
-                    >
-                      <Trash2 className='h-4 w-4' />
-                    </Button>
-                  )}
+
+                  <div className='flex items-center gap-4'>
+                    <div className='hidden md:flex'>
+                      <Badge variant='secondary'>{roleItem.role === 'OWNER' ? 'Creador' : 'Moderador'}</Badge>
+                    </div>
+                    {roleItem.role !== 'OWNER' && (
+                      <Button
+                        variant='destructive'
+                        size='icon'
+                        onClick={() => handleRemoveRole(roleItem.pubkey, roleItem.role)}
+                      >
+                        <Trash2 className='h-4 w-4' />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
-        </div>
+        </Card>
       )}
     </div>
   );
