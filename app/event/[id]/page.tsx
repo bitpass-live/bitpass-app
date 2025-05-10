@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 import { EventInfo } from '@/components/event-info';
 import { CheckoutForm } from '@/components/checkout-form';
 import { Logo } from '@/components/logo';
+import { Button } from '@/components/ui/button';
 
 import { DiscountCode } from '@/types';
 import { MOCK_EVENT } from '@/mock/data';
@@ -44,8 +46,13 @@ export default function HomePage() {
         {/* Left side - Event info and tickets */}
         <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 md:border-r bg-[#151515]'>
           <div className='w-full max-w-md mx-auto px-4'>
-            <div className='flex items-center gap-2 w-full pb-4 border-b text-lg'>
-              <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
+            <div className='flex items-center justify-between gap-2 w-full pb-4 border-b text-lg'>
+              <div className='flex gap-2'>
+                <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
+              </div>
+              <Button variant='secondary' size='sm' asChild>
+                <Link href='/dashboard'>Sign in</Link>
+              </Button>
             </div>
             <EventInfo
               event={event}
