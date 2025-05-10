@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 import { useAuth } from '@/lib/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
@@ -12,8 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
 import { Header } from '@/components/dashboard/header';
+import { MobileNav } from '@/components/dashboard/mobile-nav';
 
 export default function CreateEventPage() {
   // Obtener la fecha actual en formato YYYY-MM-DD
@@ -62,11 +64,18 @@ export default function CreateEventPage() {
       <Header />
       <div className='container'>
         <form onSubmit={handleSubmit}>
-          <div className='flex flex-col gap-2 w-full my-4'>
-            <h2 className='text-lg font-semibold leading-none tracking-tight'>Create a new event</h2>
-            <p className='text-sm text-muted-foreground'>
-              Fill in the details to create your event. You can add tickets later.
-            </p>
+          <div className='flex gap-4'>
+            <div className='mt-4'>
+              <Button variant='outline' size='icon' asChild>
+                <Link href='/dashboard'>
+                  <ArrowLeft className='h-4 w-4' />
+                </Link>
+              </Button>
+            </div>
+            <div className='flex flex-col gap-2 w-full my-4'>
+              <h2 className='text-lg font-semibold leading-none tracking-tight'>Create a new event</h2>
+              <p className='text-sm text-muted-foreground'>Fill in the details to create your event.</p>
+            </div>
           </div>
           <div className='grid gap-4 py-4'>
             <div className='grid gap-2'>
@@ -132,11 +141,16 @@ export default function CreateEventPage() {
               </div>
             </div>
           </div>
-          {/* <DialogFooter>
-    </DialogFooter> */}
-          <Button className='w-full' type='submit'>
+          {/* CTA Desktop */}
+          <Button className='hidden md:block w-full' type='submit'>
             Create Event
           </Button>
+          {/* CTA Mobile */}
+          <MobileNav>
+            <Button className='w-full' type='submit'>
+              Create Event
+            </Button>
+          </MobileNav>
         </form>
       </div>
     </div>
