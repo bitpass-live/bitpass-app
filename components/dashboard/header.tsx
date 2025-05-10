@@ -25,7 +25,7 @@ export function Header() {
   if (pathname === '/') return null;
 
   return (
-    <header className='border-b'>
+    <header className='border-b bg-card'>
       <div className='container flex h-16 items-center justify-between py-4'>
         <Link href='/dashboard' className='flex items-center'>
           <Logo className='text-xl' />

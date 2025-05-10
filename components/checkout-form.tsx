@@ -200,11 +200,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
           </div>
         </Tabs>
 
-        <Button
-          type='submit'
-          className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray rounded-xl py-6 text-lg font-medium'
-          disabled={isSubmitting || !isFormValid()}
-        >
+        <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
           {isSubmitting ? 'Processing...' : 'Continue to payment'}
         </Button>
       </form>

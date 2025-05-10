@@ -2,9 +2,7 @@
 
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { CalendarIcon, MapPinIcon, Users } from 'lucide-react';
 import { formatDate, isEventLive } from '@/lib/utils';
 
@@ -30,8 +28,6 @@ export function EventList() {
   return (
     <div className='flex flex-col gap-4'>
       {events.map((event) => {
-        const totalSold = event.tickets.reduce((acc, ticket) => acc + (ticket.sold || 0), 0);
-        const totalCapacity = event.tickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
         // TO-DO
         // REVIEW LIVE FUNCTION
         const live = false;

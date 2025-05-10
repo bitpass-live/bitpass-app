@@ -39,11 +39,7 @@ export function EmailLoginForm() {
 
   if (otpSent) {
     return (
-      <OTPVerificationForm
-        email={email}
-        onSuccess={() => router.push('/dashboard')}
-        onBack={() => setOtpSent(false)}
-      />
+      <OTPVerificationForm email={email} onSuccess={() => router.push('/dashboard')} onBack={() => setOtpSent(false)} />
     );
   }
 
@@ -51,7 +47,14 @@ export function EmailLoginForm() {
     <form onSubmit={handleSendOTP} className='space-y-4 mt-4'>
       <div className='space-y-2'>
         <Label htmlFor='email'>Email</Label>
-        <Input id='email' type='email' placeholder='you@example.com' value={email} onChange={e => setEmail(e.target.value)} required />
+        <Input
+          id='email'
+          type='email'
+          placeholder='you@example.com'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </div>
       <Button type='submit' className='w-full' disabled={isLoading}>
         {isLoading ? 'Sending verification code...' : 'Continue with Email'}
