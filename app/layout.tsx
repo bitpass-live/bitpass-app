@@ -1,10 +1,12 @@
 import type React from 'react';
 import type { Metadata } from 'next';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
+
 import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/lib/auth-provider';
 import { AuthGuard } from '@/components/auth/auth-guard';
+
+import './globals.css';
 
 export const metadata: Metadata = {
   title: {
@@ -67,7 +69,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='es' className='scroll-smooth dark'>
-      <body className='bg-[#0A0A0A] font-sans'>
+      <body>
         <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false}>
           <AuthProvider>
             <AuthGuard>{children}</AuthGuard>
