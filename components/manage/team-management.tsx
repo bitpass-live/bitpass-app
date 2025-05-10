@@ -93,13 +93,13 @@ export function TeamManagement({ eventId }: { eventId: string }) {
               Create
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className='overflow-hidden p-0'>
             <form onSubmit={handleSubmit}>
-              <DialogHeader>
-                <DialogTitle>Agregar Miembro</DialogTitle>
+              <DialogHeader className='p-6 pb-0'>
+                <DialogTitle>New Member</DialogTitle>
                 <DialogDescription>Agrega un miembro para ayudar a gestionar tu evento.</DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 py-4'>
+              <div className='grid gap-4 p-6'>
                 <Tabs
                   defaultValue='EMAIL'
                   value={contactType}
@@ -107,39 +107,35 @@ export function TeamManagement({ eventId }: { eventId: string }) {
                 >
                   <TabsList className='grid w-full grid-cols-2 mb-4'>
                     <TabsTrigger value='EMAIL'>Email</TabsTrigger>
-                    <TabsTrigger value='NOSTR'>Nostr / Lightning</TabsTrigger>
+                    <TabsTrigger value='NOSTR'>Nostr</TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value='EMAIL' className='space-y-4 mt-0 p-0'>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='email'>Email</Label>
-                      <Input
-                        id='email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder='correo@ejemplo.com'
-                        type='email'
-                        required
-                      />
-                    </div>
+                  <TabsContent value='EMAIL'>
+                    <Input
+                      id='email'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder='your@email.com'
+                      type='email'
+                      required
+                    />
                   </TabsContent>
 
-                  <TabsContent value='NOSTR' className='space-y-4 mt-0 p-0'>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='pubkey'>Bitcoin Pubkey / Lightning Address</Label>
-                      <Input
-                        id='pubkey'
-                        value={pubkey}
-                        onChange={(e) => setPubkey(e.target.value)}
-                        placeholder='npub1... o usuario@lightning.address'
-                        required
-                      />
-                    </div>
+                  <TabsContent value='NOSTR'>
+                    <Input
+                      id='pubkey'
+                      value={pubkey}
+                      onChange={(e) => setPubkey(e.target.value)}
+                      placeholder='your@lightning.address or npub...'
+                      required
+                    />
                   </TabsContent>
                 </Tabs>
               </div>
-              <DialogFooter>
-                <Button type='submit'>Agregar Miembro</Button>
+              <DialogFooter className='p-6 border-t'>
+                <Button className='w-full' type='submit'>
+                  Add Member
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>

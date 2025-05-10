@@ -130,7 +130,7 @@ export function EventManagement({ eventId }: { eventId: string }) {
   }
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-2'>
       <div className='container flex flex-row items-center justify-between gap-4'>
         <div className='w-full'>
           <h1 className='text-xl md:text-3xl font-bold'>{event.title}</h1>
@@ -161,7 +161,7 @@ export function EventManagement({ eventId }: { eventId: string }) {
         {/* Modificar el componente TabsList para agregar la pestaña de códigos de descuento */}
         <div className='border-b'>
           <div className='container px-0 overflow-hidden'>
-            <TabsList className='overflow-x-scroll flex flex-1 justify-start gap-4 w-full h-auto px-4 py-0 bg-transparent rounded-none pb-2'>
+            <TabsList className='overflow-x-scroll flex flex-1 justify-start gap-4 w-full h-auto px-4 py-0 bg-transparent rounded-none p-2'>
               <TabsTrigger className='w-auto bg-transparent rounded-md text-md' value='details'>
                 Details
               </TabsTrigger>

@@ -109,9 +109,9 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
               Create
             </Button>
           </DialogTrigger>
-          <DialogContent className='sm:max-w-[550px]'>
+          <DialogContent className='overflow-hidden p-0'>
             <form onSubmit={handleSubmit}>
-              <DialogHeader>
+              <DialogHeader className='p-6 pb-0'>
                 <DialogTitle>{editingCode ? 'Editar Código de Descuento' : 'Crear Código de Descuento'}</DialogTitle>
                 <DialogDescription>
                   {editingCode
@@ -119,7 +119,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                     : 'Define un nuevo código de descuento para este evento'}
                 </DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 py-4'>
+              <div className='grid gap-4 p-6'>
                 <div className='grid gap-2'>
                   <Label htmlFor='code'>Código</Label>
                   <Input
@@ -145,19 +145,19 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                     />
                   </div>
                   <div className='grid gap-2'>
-                    <Label htmlFor='maxUses'>Límite de Usos (opcional)</Label>
+                    <Label htmlFor='maxUses'>Límite (opcional)</Label>
                     <Input
                       id='maxUses'
                       type='number'
                       value={maxUses}
                       onChange={(e) => setMaxUses(e.target.value)}
-                      placeholder='Vacío para uso ilimitado'
+                      placeholder='Vacío para ilimitado'
                       min='1'
                     />
                   </div>
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className='p-6 border-t'>
                 <Button className='w-full' type='submit'>
                   {editingCode ? 'Guardar Cambios' : 'Crear Código'}
                 </Button>

@@ -116,13 +116,13 @@ export function TicketManagement({ eventId }: { eventId: string }) {
               Create
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className='overflow-hidden p-0'>
             <form onSubmit={handleSubmit}>
-              <DialogHeader>
+              <DialogHeader className='p-6 pb-0'>
                 <DialogTitle>{editingTicket ? 'Edit Ticket Type' : 'Add Ticket Type'}</DialogTitle>
                 <DialogDescription>Define the details for this ticket type.</DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 py-4'>
+              <div className='grid gap-4 p-6'>
                 <div className='grid gap-2'>
                   <Label htmlFor='title'>Ticket Name</Label>
                   <Input
@@ -200,8 +200,10 @@ export function TicketManagement({ eventId }: { eventId: string }) {
                   )}
                 </div>
               </div>
-              <DialogFooter>
-                <Button type='submit'>{editingTicket ? 'Save Changes' : 'Add Ticket'}</Button>
+              <DialogFooter className='p-6 border-t'>
+                <Button className='w-full' type='submit'>
+                  {editingTicket ? 'Save Changes' : 'Add Ticket'}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
