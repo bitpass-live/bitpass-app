@@ -15,6 +15,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -90,16 +91,17 @@ export function TeamManagement({ eventId }: { eventId: string }) {
           <DialogTrigger asChild>
             <Button>
               <PlusIcon className='h-4 w-4' />
-              Create
+              Invite
             </Button>
           </DialogTrigger>
-          <DialogContent className='overflow-hidden p-0'>
-            <form onSubmit={handleSubmit}>
+          <DialogContent>
+            <form className='flex flex-col h-full' onSubmit={handleSubmit}>
               <DialogHeader className='p-6 pb-0'>
                 <DialogTitle>New Member</DialogTitle>
                 <DialogDescription>Agrega un miembro para ayudar a gestionar tu evento.</DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 p-6'>
+
+              <DialogBody>
                 <Tabs
                   defaultValue='EMAIL'
                   value={contactType}
@@ -131,10 +133,10 @@ export function TeamManagement({ eventId }: { eventId: string }) {
                     />
                   </TabsContent>
                 </Tabs>
-              </div>
-              <DialogFooter className='p-6 border-t'>
+              </DialogBody>
+              <DialogFooter>
                 <Button className='w-full' type='submit'>
-                  Add Member
+                  Send Invite
                 </Button>
               </DialogFooter>
             </form>

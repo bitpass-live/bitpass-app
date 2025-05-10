@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState, useCallback } from 'react';
-import { PlusIcon, Pencil, Trash2, Tag } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, Tag, Percent } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 
@@ -19,6 +19,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogBody,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
@@ -109,19 +110,18 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
               Create
             </Button>
           </DialogTrigger>
-          <DialogContent className='overflow-hidden p-0'>
-            <form onSubmit={handleSubmit}>
-              <DialogHeader className='p-6 pb-0'>
-                <DialogTitle>{editingCode ? 'Editar Código de Descuento' : 'Crear Código de Descuento'}</DialogTitle>
+          <DialogContent>
+            <form className='flex flex-col h-full' onSubmit={handleSubmit}>
+              <DialogHeader>
+                <DialogTitle>{editingCode ? 'Editar Código de Descuento' : 'New Discount Code'}</DialogTitle>
                 <DialogDescription>
                   {editingCode
                     ? 'Modifica los detalles del código de descuento'
                     : 'Define un nuevo código de descuento para este evento'}
                 </DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 p-6'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='code'>Código</Label>
+              <DialogBody>
+                <div>
                   <Input
                     id='code'
                     value={code}
@@ -131,35 +131,35 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                   />
                 </div>
 
-                <div className='grid grid-cols-2 gap-4'>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='value'>{'Monto de Descuento'}</Label>
+                <div className='flex gap-4'>
+                  <div className='flex h-10 w-full max-w-36'>
                     <Input
+                      className='rounded-r-none text-end'
                       id='value'
                       type='number'
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder={'Ej: 1500'}
+                      placeholder={'Discount'}
                       min='0'
                       required
                     />
+                    <div className='flex items-center justify-center h-full px-3 bg-border rounded-r-md border border-r-0 border-input'>
+                      <Percent className='w-4 h-4 text-muted-foreground' />
+                    </div>
                   </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='maxUses'>Límite (opcional)</Label>
-                    <Input
-                      id='maxUses'
-                      type='number'
-                      value={maxUses}
-                      onChange={(e) => setMaxUses(e.target.value)}
-                      placeholder='Vacío para ilimitado'
-                      min='1'
-                    />
-                  </div>
+                  <Input
+                    id='maxUses'
+                    type='number'
+                    value={maxUses}
+                    onChange={(e) => setMaxUses(e.target.value)}
+                    placeholder='Unlimited quota'
+                    min='1'
+                  />
                 </div>
-              </div>
-              <DialogFooter className='p-6 border-t'>
+              </DialogBody>
+              <DialogFooter>
                 <Button className='w-full' type='submit'>
-                  {editingCode ? 'Guardar Cambios' : 'Crear Código'}
+                  {editingCode ? 'Save' : 'Add'}
                 </Button>
               </DialogFooter>
             </form>

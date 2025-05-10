@@ -18,6 +18,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -116,23 +117,20 @@ export function TicketManagement({ eventId }: { eventId: string }) {
               Create
             </Button>
           </DialogTrigger>
-          <DialogContent className='overflow-hidden p-0'>
-            <form onSubmit={handleSubmit}>
-              <DialogHeader className='p-6 pb-0'>
-                <DialogTitle>{editingTicket ? 'Edit Ticket Type' : 'Add Ticket Type'}</DialogTitle>
-                <DialogDescription>Define the details for this ticket type.</DialogDescription>
+          <DialogContent>
+            <form className='flex flex-col h-full' onSubmit={handleSubmit}>
+              <DialogHeader>
+                <DialogTitle>{editingTicket ? 'Edit Ticket' : 'New Ticket'}</DialogTitle>
+                <DialogDescription>Define the details for this ticket.</DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 p-6'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='title'>Ticket Name</Label>
-                  <Input
-                    id='title'
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder='e.g., General Admission'
-                    required
-                  />
-                </div>
+              <DialogBody>
+                <Input
+                  id='title'
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder='e.g., General Admission'
+                  required
+                />
 
                 {/* Sección de precio - inspirada en Luma */}
                 <div className='grid gap-2'>
@@ -199,10 +197,10 @@ export function TicketManagement({ eventId }: { eventId: string }) {
                     />
                   )}
                 </div>
-              </div>
-              <DialogFooter className='p-6 border-t'>
+              </DialogBody>
+              <DialogFooter>
                 <Button className='w-full' type='submit'>
-                  {editingTicket ? 'Save Changes' : 'Add Ticket'}
+                  {editingTicket ? 'Save' : 'Add'}
                 </Button>
               </DialogFooter>
             </form>
