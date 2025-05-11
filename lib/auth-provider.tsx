@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response: AuthResponse = await bitpassAPI.verifyOtp(email, code);
     const { success, token, user } = response;
     if (!success) {
-      throw new Error('Ocurrió un error al verificar el código ingresado');
+      throw new Error('An error occurred while verifying the entered code');
     }
 
     login(user, token);
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function loginWithNostrExtension() {
     const nostr = window.nostr
     if (!nostr?.getPublicKey || !nostr.signEvent) {
-      throw new Error('No se detectó ninguna extensión Nostr')
+      throw new Error('No Nostr extension detected')
     }
 
     const pubkey = await nostr.getPublicKey();
