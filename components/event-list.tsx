@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { CalendarIcon, MapPinIcon } from 'lucide-react';
+import { MapPinIcon } from 'lucide-react';
 import { useUserData } from '@/hooks/use-user-data';
 
 export function EventList() {
@@ -12,9 +12,11 @@ export function EventList() {
   if (events.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center py-12 text-center'>
-        <div className='rounded-full bg-muted p-3 mb-4'>
-          <CalendarIcon className='h-10 w-10 text-muted-foreground' />
-        </div>
+        <img
+          className='w-full max-w-80 -my-12 select-none pointer-events-none'
+          alt='No events yet'
+          src='/no-events.png'
+        />
         <h2 className='text-xl font-semibold mb-2'>No events yet</h2>
         <p className='text-muted-foreground max-w-md mb-6'>
           Create your first event to start selling tickets and managing attendees.
