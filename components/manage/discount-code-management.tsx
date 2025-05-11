@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState, useCallback } from 'react';
-import { PlusIcon, Pencil, Trash2, Tag, Percent, EllipsisVertical, BadgePercent } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, Tag, Percent, EllipsisVertical, BadgePercent, TicketPercent } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 
@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { IconBackground } from '@/components/icon-background';
 
 import type { DiscountCode } from '@/types';
 import { MOCK_DISCOUNTS_CODES, MOCK_EVENT } from '@/mock/data';
@@ -170,15 +171,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
 
       {discountCodes.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-12 text-center'>
-          <img
-            className='w-full max-w-64 -my-12 select-none pointer-events-none'
-            alt='There are no discount codes'
-            src='/no-discounts.png'
-            width='256'
-            height='256'
-            loading='lazy'
-            decoding='async'
-          />
+          <IconBackground className='-my-12' icon={TicketPercent} size={240} />
           <h2 className='text-xl font-semibold mb-2'>There are no discount codes</h2>
           <p className='text-muted-foreground max-w-md mb-6'>
             Create discount codes to offer special promotions to your attendees.

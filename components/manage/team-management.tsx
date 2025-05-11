@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
-import { PlusIcon, UserIcon, Trash2, UserSearch } from 'lucide-react';
+import { PlusIcon, UserIcon, Trash2, UserSearch, UserCog } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 
@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { IconBackground } from '@/components/icon-background';
 
 import { Role } from '@/types';
 
@@ -149,15 +150,7 @@ export function TeamManagement({ eventId }: { eventId: string }) {
 
       {MOCK_ROLES.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-12 text-center'>
-          <img
-            className='w-full max-w-64 -my-12 select-none pointer-events-none'
-            alt='No team members yet'
-            src='/no-members.png'
-            width='256'
-            height='256'
-            loading='lazy'
-            decoding='async'
-          />
+          <IconBackground className='-my-12' icon={UserCog} size={240} />
           <h2 className='text-xl font-semibold mb-2'>No team members yet</h2>
           <p className='text-muted-foreground max-w-md mb-6'>Add team members to help manage your event.</p>
         </div>

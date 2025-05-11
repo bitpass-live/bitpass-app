@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MapPinIcon, PlusIcon } from 'lucide-react';
+import { CalendarOff, MapPinIcon, PlusIcon } from 'lucide-react';
 
 import { useUserData } from '@/hooks/use-user-data';
 
@@ -9,6 +9,7 @@ import { Header } from '@/components/dashboard/header';
 import { MobileNav } from '@/components/dashboard/mobile-nav';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { IconBackground } from '@/components/icon-background';
 
 export default function DashboardPage() {
   const { events } = useUserData();
@@ -30,11 +31,7 @@ export default function DashboardPage() {
 
         {events.length === 0 ? (
           <div className='flex flex-col items-center justify-center py-12 text-center'>
-            <img
-              className='w-full max-w-64 -my-12 select-none pointer-events-none'
-              alt='No events yet'
-              src='/no-events.png'
-            />
+            <IconBackground className='-my-12' icon={CalendarOff} size={240} />
             <h2 className='text-xl font-semibold mb-2'>No events yet</h2>
             <p className='text-muted-foreground max-w-md mb-6'>
               Create your first event to start selling tickets and managing attendees.

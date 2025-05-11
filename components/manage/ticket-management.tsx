@@ -4,7 +4,7 @@ import type React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlusIcon, Pencil, Trash2, AlertCircle, TicketIcon } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, AlertCircle, TicketIcon, TicketSlash } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/lib/auth-provider';
@@ -26,6 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { IconBackground } from '@/components/icon-background';
 
 import type { Ticket } from '@/types';
 
@@ -225,15 +226,7 @@ export function TicketManagement({ eventId }: { eventId: string }) {
 
       {tickets.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-12 text-center'>
-          <img
-            className='w-full max-w-64 -my-12 select-none pointer-events-none'
-            alt='No tickets yet'
-            src='/no-tickets.png'
-            width='256'
-            height='256'
-            loading='lazy'
-            decoding='async'
-          />
+          <IconBackground className='-my-12' icon={TicketSlash} size={240} />
           <h2 className='text-xl font-semibold mb-2'>No tickets yet</h2>
           <p className='text-muted-foreground max-w-md mb-6'>
             Add ticket types to start selling tickets for your event.
