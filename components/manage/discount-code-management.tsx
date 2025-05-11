@@ -169,18 +169,17 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
       </div>
 
       {discountCodes.length === 0 ? (
-        <Card>
-          <CardContent className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='rounded-full bg-muted p-3 mb-4'>
-              <Tag className='h-10 w-10 text-muted-foreground' />
-            </div>
-            <h3 className='text-lg font-semibold mb-2'>No hay códigos de descuento</h3>
-            <p className='text-muted-foreground max-w-md mb-6'>
-              Crea códigos de descuento para ofrecer promociones especiales a tus asistentes.
-            </p>
-            <Button onClick={() => handleOpenDialog()}>Crear tu Primer Código</Button>
-          </CardContent>
-        </Card>
+        <div className='flex flex-col items-center justify-center py-12 text-center'>
+          <img
+            className='w-full max-w-64 -my-12 select-none pointer-events-none'
+            alt='There are no discount codes'
+            src='/no-discounts.png'
+          />
+          <h2 className='text-xl font-semibold mb-2'>There are no discount codes</h2>
+          <p className='text-muted-foreground max-w-md mb-6'>
+            Create discount codes to offer special promotions to your attendees.
+          </p>
+        </div>
       ) : (
         <Card>
           <Table>
@@ -194,7 +193,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {discountCodes.map((discountCode) => {
+              {discountCodes.map((discountCode: DiscountCode) => {
                 const isActive = discountCode.active;
 
                 return (

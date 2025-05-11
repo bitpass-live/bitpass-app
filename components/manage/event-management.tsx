@@ -21,13 +21,7 @@ import { useDraftEvent } from '@/hooks/use-draft-event';
 
 export function EventManagement({ eventId }: { eventId: string }) {
   const { toast } = useToast();
-  const {
-    draftEvent,
-    loading,
-    error,
-    setDraftField,
-    saveDraftEvent,
-  } = useDraftEvent(eventId);
+  const { draftEvent, loading, error, setDraftField, saveDraftEvent } = useDraftEvent(eventId);
 
   const handleShareEvent = useCallback(() => {
     const eventUrl = `${window.location.origin}/events/${eventId}`;
@@ -38,11 +32,11 @@ export function EventManagement({ eventId }: { eventId: string }) {
   }, [eventId, toast]);
 
   if (error) {
-    return <div className="p-8 text-center text-red-600">{error}</div>;
+    return <div className='p-8 text-center text-red-600'>{error}</div>;
   }
 
   if (!draftEvent || loading) {
-    return <div className="p-8 text-center">Loading event data...</div>;
+    return <div className='p-8 text-center'>Loading event data...</div>;
   }
 
   return (
@@ -61,75 +55,71 @@ export function EventManagement({ eventId }: { eventId: string }) {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="details">
-        <div className="border-b">
-          <div className="container px-0 overflow-hidden">
-            <TabsList className="flex gap-4 overflow-x-auto px-4 py-2 bg-transparent rounded-none">
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="tickets">Tickets</TabsTrigger>
-              <TabsTrigger value="team">Team</TabsTrigger>
-              <TabsTrigger value="discounts">Descuentos</TabsTrigger>
-              <TabsTrigger value="sales">Sales</TabsTrigger>
+      <Tabs defaultValue='details'>
+        <div className='border-b'>
+          <div className='container px-0 overflow-y-hidden'>
+            <TabsList className='flex gap-4 overflow-x-auto px-4 py-2 bg-transparent rounded-none'>
+              <TabsTrigger value='details'>Details</TabsTrigger>
+              <TabsTrigger value='tickets'>Tickets</TabsTrigger>
+              <TabsTrigger value='team'>Team</TabsTrigger>
+              <TabsTrigger value='discounts'>Descuentos</TabsTrigger>
+              <TabsTrigger value='sales'>Sales</TabsTrigger>
             </TabsList>
           </div>
         </div>
 
         {/* Details Tab */}
-        <TabsContent value="details" className="container mt-6">
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-2">
+        <TabsContent value='details' className='container mt-6'>
+          <div className='flex flex-col gap-8'>
+            <div className='flex flex-col gap-2'>
               <CardTitle>Event Details</CardTitle>
               <CardDescription>Edit your event information</CardDescription>
             </div>
-            <div className="space-y-4">
-              <div className="grid gap-2">
-                <Label htmlFor="title">Event Title</Label>
-                <Input
-                  id="title"
-                  value={draftEvent.title}
-                  onChange={e => setDraftField('title', e.target.value)}
-                />
+            <div className='space-y-4'>
+              <div className='grid gap-2'>
+                <Label htmlFor='title'>Event Title</Label>
+                <Input id='title' value={draftEvent.title} onChange={(e) => setDraftField('title', e.target.value)} />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
+              <div className='grid gap-2'>
+                <Label htmlFor='description'>Description</Label>
                 <Textarea
-                  id="description"
+                  id='description'
                   rows={5}
                   value={draftEvent.description}
-                  onChange={e => setDraftField('description', e.target.value)}
+                  onChange={(e) => setDraftField('description', e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="location">Location</Label>
+              <div className='grid gap-2'>
+                <Label htmlFor='location'>Location</Label>
                 <Input
-                  id="location"
+                  id='location'
                   value={draftEvent.location}
-                  onChange={e => setDraftField('location', e.target.value)}
+                  onChange={(e) => setDraftField('location', e.target.value)}
                 />
               </div>
 
               {/* Start Date & Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="startDate">Start Date</Label>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='grid gap-2'>
+                  <Label htmlFor='startDate'>Start Date</Label>
                   <Input
-                    id="startDate"
-                    type="date"
+                    id='startDate'
+                    type='date'
                     value={draftEvent.startsAt.slice(0, 10)}
-                    onChange={e => {
+                    onChange={(e) => {
                       const date = e.target.value;
                       const time = draftEvent.startsAt.slice(11, 16);
                       setDraftField('startsAt', new Date(`${date}T${time}`).toISOString());
                     }}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="startTime">Start Time</Label>
+                <div className='grid gap-2'>
+                  <Label htmlFor='startTime'>Start Time</Label>
                   <Input
-                    id="startTime"
-                    type="time"
+                    id='startTime'
+                    type='time'
                     value={draftEvent.startsAt.slice(11, 16)}
-                    onChange={e => {
+                    onChange={(e) => {
                       const date = draftEvent.startsAt.slice(0, 10);
                       const time = e.target.value;
                       setDraftField('startsAt', new Date(`${date}T${time}`).toISOString());
@@ -139,27 +129,27 @@ export function EventManagement({ eventId }: { eventId: string }) {
               </div>
 
               {/* End Date & Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="endDate">End Date</Label>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='grid gap-2'>
+                  <Label htmlFor='endDate'>End Date</Label>
                   <Input
-                    id="endDate"
-                    type="date"
+                    id='endDate'
+                    type='date'
                     value={draftEvent.endsAt.slice(0, 10)}
-                    onChange={e => {
+                    onChange={(e) => {
                       const date = e.target.value;
                       const time = draftEvent.endsAt.slice(11, 16);
                       setDraftField('endsAt', new Date(`${date}T${time}`).toISOString());
                     }}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="endTime">End Time</Label>
+                <div className='grid gap-2'>
+                  <Label htmlFor='endTime'>End Time</Label>
                   <Input
-                    id="endTime"
-                    type="time"
+                    id='endTime'
+                    type='time'
                     value={draftEvent.endsAt.slice(11, 16)}
-                    onChange={e => {
+                    onChange={(e) => {
                       const date = draftEvent.endsAt.slice(0, 10);
                       const time = e.target.value;
                       setDraftField('endsAt', new Date(`${date}T${time}`).toISOString());
@@ -169,23 +159,23 @@ export function EventManagement({ eventId }: { eventId: string }) {
               </div>
             </div>
 
-            <Button className="w-full" onClick={saveDraftEvent}>
+            <Button className='w-full' onClick={saveDraftEvent}>
               Save Changes
             </Button>
           </div>
         </TabsContent>
 
         {/* Other Tabs */}
-        <TabsContent value="tickets" className="container mt-6">
+        <TabsContent value='tickets' className='container mt-6'>
           <TicketManagement eventId={eventId} />
         </TabsContent>
-        <TabsContent value="team" className="container mt-6">
+        <TabsContent value='team' className='container mt-6'>
           <TeamManagement eventId={eventId} />
         </TabsContent>
-        <TabsContent value="discounts" className="container mt-6">
+        <TabsContent value='discounts' className='container mt-6'>
           <DiscountCodeManagement eventId={eventId} />
         </TabsContent>
-        <TabsContent value="sales" className="container mt-6">
+        <TabsContent value='sales' className='container mt-6'>
           <SalesOverview eventId={eventId} />
         </TabsContent>
       </Tabs>

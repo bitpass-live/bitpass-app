@@ -24,6 +24,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+import { Role } from '@/types';
+
 import { MOCK_ROLES } from '@/mock/data';
 
 export function TeamManagement({ eventId }: { eventId: string }) {
@@ -146,19 +148,18 @@ export function TeamManagement({ eventId }: { eventId: string }) {
       </div>
 
       {MOCK_ROLES.length === 0 ? (
-        <Card>
-          <CardContent className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='rounded-full bg-muted p-3 mb-4'>
-              <UserIcon className='h-10 w-10 text-muted-foreground' />
-            </div>
-            <h3 className='text-lg font-semibold mb-2'>No team members yet</h3>
-            <p className='text-muted-foreground max-w-md mb-6'>Add team members to help manage your event.</p>
-            <Button onClick={() => setDialogOpen(true)}>Add Your First Team Member</Button>
-          </CardContent>
-        </Card>
+        <div className='flex flex-col items-center justify-center py-12 text-center'>
+          <img
+            className='w-full max-w-64 -my-12 select-none pointer-events-none'
+            alt='No team members yet'
+            src='/no-members.png'
+          />
+          <h2 className='text-xl font-semibold mb-2'>No team members yet</h2>
+          <p className='text-muted-foreground max-w-md mb-6'>Add team members to help manage your event.</p>
+        </div>
       ) : (
         <Card className='overflow-hidden gap-[1px] bg-background'>
-          {MOCK_ROLES.map((roleItem) => (
+          {MOCK_ROLES.map((roleItem: Role) => (
             <div className='bg-card border-b last:border-none' key={roleItem.pubkey}>
               <div className='p-6'>
                 <div className='flex items-center justify-between'>

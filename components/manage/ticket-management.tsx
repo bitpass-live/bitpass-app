@@ -4,7 +4,7 @@ import type React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlusIcon, Pencil, Trash2, AlertCircle, Ticket } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, AlertCircle, TicketIcon } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/lib/auth-provider';
@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/dialog';
 
 import type { Ticket } from '@/types';
+
 import { MOCK_EVENT } from '@/mock/data';
 
 export function TicketManagement({ eventId }: { eventId: string }) {
@@ -120,7 +121,7 @@ export function TicketManagement({ eventId }: { eventId: string }) {
           <DialogContent>
             <form className='flex flex-col h-full' onSubmit={handleSubmit}>
               <DialogHeader>
-                <Ticket className='w-8 h-8 mb-4' />
+                <TicketIcon className='w-8 h-8 mb-4' />
                 <DialogTitle>{editingTicket ? 'Edit Ticket' : 'New Ticket'}</DialogTitle>
                 <DialogDescription>Define the details for this ticket.</DialogDescription>
               </DialogHeader>
@@ -223,47 +224,45 @@ export function TicketManagement({ eventId }: { eventId: string }) {
       )}
 
       {tickets.length === 0 ? (
-        <Card>
-          <CardContent className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='rounded-full bg-muted p-3 mb-4'>
-              <PlusIcon className='h-10 w-10 text-muted-foreground' />
-            </div>
-            <h3 className='text-lg font-semibold mb-2'>No tickets yet</h3>
-            <p className='text-muted-foreground max-w-md mb-6'>
-              Add ticket types to start selling tickets for your event.
-            </p>
-            <Button onClick={() => handleOpenDialog()} disabled={!hasLightningAddress}>
-              Add Your First Ticket
-            </Button>
-          </CardContent>
-        </Card>
+        <div className='flex flex-col items-center justify-center py-12 text-center'>
+          <img
+            className='w-full max-w-64 -my-12 select-none pointer-events-none'
+            alt='No tickets yet'
+            src='/no-tickets.png'
+          />
+          <h2 className='text-xl font-semibold mb-2'>No tickets yet</h2>
+          <p className='text-muted-foreground max-w-md mb-6'>
+            Add ticket types to start selling tickets for your event.
+          </p>
+        </div>
       ) : (
         <Card>
-          {tickets.map((ticket) => (
-            <div className='border-b last:border-none' key={ticket.id}>
-              <div className='p-6'>
-                <div className='flex items-center justify-between gap-4'>
-                  <div className='flex items-center gap-2 w-full'>
-                    <h3 className='text-lg font-semibold'>{ticket.title}</h3>
-                    <p className='text-text-secondary'>{ticket?.amount === 0 ? 'Gratis' : '$' + ticket?.amount}</p>
-                  </div>
-                  <div className='hidden md:flex whitespace-nowrap'>
-                    <p className='text-muted-foreground text-sm'>
-                      {ticket.quantity === -1 ? 'Ilimitado' : `${ticket.sold || 0} / ${ticket.quantity} vendidos`}
-                    </p>
-                  </div>
-                  <div className='flex gap-2'>
-                    <Button variant='outline' size='icon' onClick={() => handleOpenDialog()}>
-                      <Pencil className='h-4 w-4' />
-                    </Button>
-                    <Button variant='destructive' size='icon' onClick={() => handleDeleteTicket(ticket.id)}>
-                      <Trash2 className='h-4 w-4' />
-                    </Button>
+          {tickets?.length > 0 &&
+            tickets?.map((ticket: Ticket) => (
+              <div className='border-b last:border-none' key={ticket.id}>
+                <div className='p-6'>
+                  <div className='flex items-center justify-between gap-4'>
+                    <div className='flex items-center gap-2 w-full'>
+                      <h3 className='text-lg font-semibold'>{ticket.title}</h3>
+                      <p className='text-text-secondary'>{ticket?.amount === 0 ? 'Gratis' : '$' + ticket?.amount}</p>
+                    </div>
+                    <div className='hidden md:flex whitespace-nowrap'>
+                      <p className='text-muted-foreground text-sm'>
+                        {ticket.quantity === -1 ? 'Ilimitado' : `${ticket.sold || 0} / ${ticket.quantity} vendidos`}
+                      </p>
+                    </div>
+                    <div className='flex gap-2'>
+                      <Button variant='outline' size='icon' onClick={() => handleOpenDialog()}>
+                        <Pencil className='h-4 w-4' />
+                      </Button>
+                      <Button variant='destructive' size='icon' onClick={() => handleDeleteTicket(ticket.id)}>
+                        <Trash2 className='h-4 w-4' />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </Card>
       )}
     </div>
