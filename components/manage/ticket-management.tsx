@@ -202,7 +202,7 @@ export function TicketManagement({ eventId }: { eventId: string }) {
               </DialogBody>
               <DialogFooter>
                 <Button className='w-full' type='submit'>
-                  {editingTicket ? 'Save' : 'Add'}
+                  {editingTicket ? 'Save' : 'Create'}
                 </Button>
               </DialogFooter>
             </form>

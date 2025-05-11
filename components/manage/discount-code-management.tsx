@@ -160,7 +160,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
               </DialogBody>
               <DialogFooter>
                 <Button className='w-full' type='submit'>
-                  {editingCode ? 'Save' : 'Add'}
+                  {editingCode ? 'Save' : 'Create'}
                 </Button>
               </DialogFooter>
             </form>
