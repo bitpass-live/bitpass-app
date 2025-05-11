@@ -4,7 +4,7 @@ import type React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlusIcon, Pencil, Trash2, AlertCircle } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, AlertCircle, Ticket } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/lib/auth-provider';
@@ -109,17 +109,18 @@ export function TicketManagement({ eventId }: { eventId: string }) {
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
-        <h2 className='text-xl font-semibold'>Ticket Types</h2>
+        <h2 className='text-xl font-semibold'>Tickets</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => handleOpenDialog()}>
               <PlusIcon className='h-4 w-4' />
-              Create
+              New
             </Button>
           </DialogTrigger>
           <DialogContent>
             <form className='flex flex-col h-full' onSubmit={handleSubmit}>
               <DialogHeader>
+                <Ticket className='w-8 h-8 mb-4' />
                 <DialogTitle>{editingTicket ? 'Edit Ticket' : 'New Ticket'}</DialogTitle>
                 <DialogDescription>Define the details for this ticket.</DialogDescription>
               </DialogHeader>

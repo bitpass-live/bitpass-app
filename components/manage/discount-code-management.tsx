@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState, useCallback } from 'react';
-import { PlusIcon, Pencil, Trash2, Tag, Percent } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, Tag, Percent, EllipsisVertical, BadgePercent } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 
@@ -107,12 +107,13 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
           <DialogTrigger asChild>
             <Button onClick={() => handleOpenDialog()}>
               <PlusIcon className='h-4 w-4' />
-              Create
+              New
             </Button>
           </DialogTrigger>
           <DialogContent>
             <form className='flex flex-col h-full' onSubmit={handleSubmit}>
               <DialogHeader>
+                <BadgePercent className='w-8 h-8 mb-4' />
                 <DialogTitle>{editingCode ? 'Editar Código de Descuento' : 'New Discount Code'}</DialogTitle>
                 <DialogDescription>
                   {editingCode
@@ -187,9 +188,9 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
               <TableRow>
                 <TableHead>Código</TableHead>
                 <TableHead>Valor</TableHead>
-                <TableHead>Usos</TableHead>
+                <TableHead className='hidden md:table-cell'>Usos</TableHead>
                 <TableHead>Estado</TableHead>
-                <TableHead className='text-right'>Acciones</TableHead>
+                <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -200,7 +201,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                   <TableRow key={discountCode.id}>
                     <TableCell className='font-medium'>{discountCode.code}</TableCell>
                     <TableCell>{`${discountCode.value}%`}</TableCell>
-                    <TableCell>
+                    <TableCell className='hidden md:table-cell'>
                       {discountCode.used}
                       {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
                     </TableCell>
@@ -213,9 +214,12 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                         />
                       </div>
                     </TableCell>
-                    <TableCell className='text-right'>
+                    <TableCell>
                       <div className='flex justify-end gap-2'>
-                        <Button variant='outline' size='icon' onClick={() => handleOpenDialog()} title='Editar'>
+                        <Button variant='secondary' size='icon'>
+                          <EllipsisVertical className='w-4 h-4' />
+                        </Button>
+                        {/* <Button variant='outline' size='icon' onClick={() => handleOpenDialog()} title='Editar'>
                           <Pencil className='h-4 w-4' />
                         </Button>
                         <Button
@@ -225,7 +229,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                           title='Eliminar'
                         >
                           <Trash2 className='h-4 w-4' />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>

@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
-import { PlusIcon, UserIcon, Trash2 } from 'lucide-react';
+import { PlusIcon, UserIcon, Trash2, UserSearch } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 
@@ -96,7 +96,8 @@ export function TeamManagement({ eventId }: { eventId: string }) {
           </DialogTrigger>
           <DialogContent>
             <form className='flex flex-col h-full' onSubmit={handleSubmit}>
-              <DialogHeader className='p-6 pb-0'>
+              <DialogHeader>
+                <UserSearch className='w-8 h-8 mb-4' />
                 <DialogTitle>New Member</DialogTitle>
                 <DialogDescription>Agrega un miembro para ayudar a gestionar tu evento.</DialogDescription>
               </DialogHeader>
