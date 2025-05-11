@@ -13,7 +13,7 @@ export function EventList() {
     return (
       <div className='flex flex-col items-center justify-center py-12 text-center'>
         <img
-          className='w-full max-w-80 -my-12 select-none pointer-events-none'
+          className='w-full max-w-64 -my-12 select-none pointer-events-none'
           alt='No events yet'
           src='/no-events.png'
         />
