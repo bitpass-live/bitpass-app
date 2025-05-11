@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { useAuth } from '@/lib/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
 
 import { LoginForm } from '@/components/login-form';
@@ -13,7 +12,6 @@ import { Button } from '@/components/ui/button';
 export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth();
 
   const handleDemoLogin = () => {
     // login({ email: 'demo@bitpass.com', role: 'OWNER' });

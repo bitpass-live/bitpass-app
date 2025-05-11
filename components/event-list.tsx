@@ -3,13 +3,11 @@
 import Link from 'next/link';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { CalendarIcon, MapPinIcon, Users } from 'lucide-react';
-import { formatDate, isEventLive } from '@/lib/utils';
-
-import { MOCK_EVENTS } from '@/mock/data';
+import { CalendarIcon, MapPinIcon } from 'lucide-react';
+import { useUserData } from '@/hooks/use-user-data';
 
 export function EventList() {
-  const events = MOCK_EVENTS;
+  const { events } = useUserData();
 
   if (events.length === 0) {
     return (

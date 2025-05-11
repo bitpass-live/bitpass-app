@@ -1,21 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
 
 import { useAuth } from '@/lib/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
 
-import { LoginForm } from '@/components/login-form';
-// import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Header } from '@/components/dashboard/header';
-import { MobileNav } from '@/components/dashboard/mobile-nav';
 
 export default function CreateEventPage() {
   const { bitpassAPI } = useAuth();

@@ -80,7 +80,7 @@ export class Bitpass {
       body: JSON.stringify({ email, code }),
     });
     const data = await res.json();
-    
+
     if (!res.ok) {
       throw new Error(data.error ?? "Failed to verify OTP");
     }
@@ -637,6 +637,27 @@ export class Bitpass {
       throw new Error(error ?? "Failed to fetch user profile");
     }
     return res.json();
+  }
+
+  /**
+   * Fetches all events for the authenticated user.
+   *
+   * @async
+   * @method getUserEvents
+   * @memberof Bitpass
+   * @returns {Promise<EventModel[]>} An array of Event objects.
+   * @throws {Error} If the network request fails or returns a non-OK response.
+   */
+  async getUserEvents(): Promise<EventModel[]> {
+    const res = await fetch(`${this.baseUrl}/users/me/events`, {
+      headers: this.headers,
+    });
+    if (!res.ok) {
+      throw new Error('Failed to fetch user events');
+    }
+    /** @type {EventModel[]} */
+    const events = await res.json();
+    return events;
   }
 
   /**

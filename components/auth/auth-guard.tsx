@@ -15,7 +15,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!user.loaded) return;
+    if (!user || !user.loaded) return;
     
     switch (true) {
       case (PROTECTED_ROUTES.includes(pathname) && !isAuthenticated):

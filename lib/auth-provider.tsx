@@ -39,7 +39,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<ExtendedUser>(DEFAULT_USER);
-  const [bitpassAPI] = useState(new Bitpass({ baseUrl: 'https://api.bitpass.live' }));
+  const [bitpassAPI] = useState(new Bitpass({ baseUrl: 'http://localhost:4000' }));
   const router = useRouter();
 
   useEffect(() => {
