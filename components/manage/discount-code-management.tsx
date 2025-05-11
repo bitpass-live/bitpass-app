@@ -23,7 +23,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { IconBackground } from '@/components/icon-background';
+import { EmptyState } from '@/components/empty-state';
 
 import type { DiscountCode } from '@/types';
 import { MOCK_DISCOUNTS_CODES, MOCK_EVENT } from '@/mock/data';
@@ -171,7 +171,7 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
 
       {discountCodes.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-12 text-center'>
-          <IconBackground className='-my-12' icon={TicketPercent} size={240} />
+          <EmptyState className='-my-12' icon={TicketPercent} size={240} />
           <h2 className='text-xl font-semibold mb-2'>There are no discount codes</h2>
           <p className='text-muted-foreground max-w-md mb-6'>
             Create discount codes to offer special promotions to your attendees.

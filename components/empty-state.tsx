@@ -9,7 +9,7 @@ interface IconBackgroundProps {
   className?: string;
 }
 
-export const IconBackground: React.FC<IconBackgroundProps> = ({ icon: Icon, size = 320, className = '' }) => {
+export const EmptyState: React.FC<IconBackgroundProps> = ({ icon: Icon, size = 320, className = '' }) => {
   const pulseAnimations = `
   @keyframes pulse-center {
     0%, 100% { transform: scale(1); }

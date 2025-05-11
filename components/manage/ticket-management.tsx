@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { IconBackground } from '@/components/icon-background';
+import { EmptyState } from '@/components/empty-state';
 
 import type { Ticket } from '@/types';
 
@@ -226,7 +226,7 @@ export function TicketManagement({ eventId }: { eventId: string }) {
 
       {tickets.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-12 text-center'>
-          <IconBackground className='-my-12' icon={TicketSlash} size={240} />
+          <EmptyState className='-my-12' icon={TicketSlash} size={240} />
           <h2 className='text-xl font-semibold mb-2'>No tickets yet</h2>
           <p className='text-muted-foreground max-w-md mb-6'>
             Add ticket types to start selling tickets for your event.
