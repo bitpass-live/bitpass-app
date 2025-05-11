@@ -6,7 +6,7 @@ export default async function EventManagePage({ params }: { params: Promise<{ id
   const { id: eventId } = await params;
   return (
     <>
-      <Header />
+      <Header backGoHome={true} />
       <main className='py-6 pb-20 md:pb-6'>
         <EventManagement eventId={eventId} />
       </main>

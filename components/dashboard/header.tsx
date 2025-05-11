@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogOut, User, ChevronDown, Settings } from 'lucide-react';
+import { LogOut, User, Settings, ArrowLeft } from 'lucide-react';
 
 import { useAuth } from '@/lib/auth-provider';
 
@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export function Header() {
+export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
@@ -26,10 +26,21 @@ export function Header() {
 
   return (
     <header className='border-b bg-card'>
-      <div className='container flex h-16 items-center justify-between py-4'>
-        <Link href='/dashboard' className='flex items-center'>
-          <Logo className='text-xl' />
-        </Link>
+      <div className='container flex gap-8 h-16 items-center justify-between py-4'>
+        <div className='min-w-10'>
+          {backGoHome && (
+            <Button className='gap-2' variant='secondary' size='icon' asChild>
+              <Link href='/dashboard'>
+                <ArrowLeft className='h-4 w-4' />
+              </Link>
+            </Button>
+          )}
+        </div>
+        <div className='flex justify-center w-full h-full'>
+          <Link href='/dashboard' className='flex items-center'>
+            <Logo className='text-xl' />
+          </Link>
+        </div>
 
         {/* <nav className='hidden md:flex items-center gap-6'>
           <Link
@@ -48,12 +59,11 @@ export function Header() {
           </Link>
         </nav> */}
 
-        <div className='flex items-center gap-4'>
+        <div className='w-10'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className='gap-2' variant='secondary' size='icon'>
                 <User className='h-4 w-4' />
-                {/* <ChevronDown className='h-4 w-4' /> */}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>

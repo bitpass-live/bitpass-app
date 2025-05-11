@@ -55,7 +55,7 @@ export default function CreateEventPage() {
         startDate,
         startTime,
         endDate,
-        endTime
+        endTime,
       });
 
       toast({
@@ -63,7 +63,7 @@ export default function CreateEventPage() {
         description: 'Your event has been created successfully.',
       });
 
-      setOpen(false)
+      setOpen(false);
       router.push(`/event/${event.id}/manage`);
     } catch (err: any) {
       toast({
@@ -78,21 +78,12 @@ export default function CreateEventPage() {
 
   return (
     <div className='min-h-screen flex flex-col'>
-      <Header />
+      <Header backGoHome={true} />
       <div className='container'>
         <form onSubmit={handleSubmit}>
-          <div className='flex gap-4'>
-            <div className='mt-4'>
-              <Button variant='secondary' size='icon' asChild>
-                <Link href='/dashboard'>
-                  <ArrowLeft className='h-4 w-4' />
-                </Link>
-              </Button>
-            </div>
-            <div className='flex flex-col gap-2 w-full my-4'>
-              <h2 className='text-lg font-semibold leading-none tracking-tight'>Create a new event</h2>
-              <p className='text-sm text-muted-foreground'>Fill in the details to create your event.</p>
-            </div>
+          <div className='flex flex-col gap-2 w-full mt-4'>
+            <h2 className='text-lg font-semibold leading-none tracking-tight'>Create a new event</h2>
+            <p className='text-sm text-muted-foreground'>Fill in the details to create your event.</p>
           </div>
           <div className='grid gap-4 py-4'>
             <div className='grid gap-2'>

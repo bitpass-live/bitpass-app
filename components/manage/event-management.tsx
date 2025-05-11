@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback } from 'react';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import { useCallback } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -46,15 +47,18 @@ export function EventManagement({ eventId }: { eventId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Header */}
-      <div className="container flex items-center justify-between gap-4">
-        <h1 className="text-xl md:text-3xl font-bold">{draftEvent.title}</h1>
-        <Button variant="secondary" size="icon" onClick={handleShareEvent} asChild>
-          <Link target="_blank" href={`/event/${draftEvent.id}`}>
-            <ExternalLink className="h-4 w-4" />
-          </Link>
-        </Button>
+    <div className='flex flex-col gap-2'>
+      <div className='container flex flex-row items-center justify-between gap-4'>
+        <div className='w-full'>
+          <h1 className='text-xl md:text-3xl font-bold'>{draftEvent.title}</h1>
+        </div>
+        <div className='flex gap-2'>
+          <Button variant='secondary' size='icon' onClick={handleShareEvent} asChild>
+            <Link target='_blank' href={`/event/${draftEvent.id}`}>
+              <ArrowUpRight className='h-4 w-4' />
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
