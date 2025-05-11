@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { ExternalLink } from 'lucide-react';
 import { useCallback } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
