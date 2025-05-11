@@ -174,6 +174,10 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
             className='w-full max-w-64 -my-12 select-none pointer-events-none'
             alt='There are no discount codes'
             src='/no-discounts.png'
+            width='256'
+            height='256'
+            loading='lazy'
+            decoding='async'
           />
           <h2 className='text-xl font-semibold mb-2'>There are no discount codes</h2>
           <p className='text-muted-foreground max-w-md mb-6'>
