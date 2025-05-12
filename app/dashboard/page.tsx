@@ -3,16 +3,15 @@
 import Link from 'next/link';
 import { CalendarOff, MapPinIcon, PlusIcon } from 'lucide-react';
 
-import { useUserData } from '@/hooks/use-user-data';
-
 import { Header } from '@/components/dashboard/header';
 import { MobileNav } from '@/components/dashboard/mobile-nav';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { EmptyState } from '@/components/empty-state';
+import { useAuth } from '@/lib/auth-provider';
 
 export default function DashboardPage() {
-  const { events } = useUserData();
+  const { events, loading } = useAuth();
 
   return (
     <>
@@ -32,10 +31,14 @@ export default function DashboardPage() {
         {events.length === 0 ? (
           <div className='flex flex-col items-center justify-center py-12 text-center'>
             <EmptyState className='-my-12' icon={CalendarOff} size={240} />
-            <h2 className='text-xl font-semibold mb-2'>No events yet</h2>
-            <p className='text-muted-foreground max-w-md mb-6'>
-              Create your first event to start selling tickets and managing attendees.
-            </p>
+            {loading
+              ? <h2 className='text-xl font-semibold mb-2'>Loading events...</h2>
+              : (<>
+                <h2 className='text-xl font-semibold mb-2'>No events yet</h2>
+                <p className='text-muted-foreground max-w-md mb-6'>
+                  Create your first event to start selling tickets and managing attendees.
+                </p>
+              </>)}
           </div>
         ) : (
           <div className='flex flex-col gap-4'>

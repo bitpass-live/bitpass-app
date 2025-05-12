@@ -6,7 +6,9 @@ import { useRouter } from 'next/navigation';
 import { Bitpass } from './bitpass-sdk/src'; //TODO: usar libreria real
 import { AuthResponse, User } from './bitpass-sdk/src/types/user';
 import { getEventHash, NostrEvent, UnsignedEvent } from 'nostr-tools';
-import NDK, { NDKEvent, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk'
+import { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk'
+import { Event as EventModel } from '@/lib/bitpass-sdk/src/types/event'
+import { PaymentMethod } from '@/lib/bitpass-sdk/src/types/payment'
 
 export type UserRole = 'OWNER' | 'MODERATOR' | 'CHECKIN';
 
@@ -26,6 +28,7 @@ const DEFAULT_USER: ExtendedUser = {
 export interface AuthContextType {
   bitpassAPI: Bitpass;
   user: ExtendedUser;
+  loading: boolean;
   login: (user: User, token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
@@ -33,12 +36,19 @@ export interface AuthContextType {
   loginWithPrivateKey: (privateKey: string) => Promise<void>;
   requestOTPCode: (email: string) => Promise<void>;
   verifyOTPCode: (email: string, code: string) => Promise<void>;
+  events: EventModel[];
+  paymentMethods: PaymentMethod[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<ExtendedUser>(DEFAULT_USER);
+  const [events, setEvents] = useState<EventModel[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
+
   const [bitpassAPI] = useState(new Bitpass({ baseUrl: 'https://api.bitpass.live' }));
   const router = useRouter();
 
@@ -63,18 +73,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const login = (user: User, token: string) => {
-    let authMethod: AuthMethods = 'none';
+  const loadUserData = async () => {
+    try {
+      const [evtList, methods] = await Promise.all([
+        bitpassAPI.getUserEvents(),
+        bitpassAPI.listPaymentMethods(),
+      ]);
+      setEvents(evtList);
+      setPaymentMethods(methods);
+      return;
+    } catch (err) {
+      console.error('Error loading user data', err);
+      return;
+    }
+  };
 
-    if (user.email) authMethod = 'email';
-    if (user.nostrPubKey) authMethod = 'nostr';
-
-    localStorage.setItem('bitpass_access_token', token)
-    setUser({
-      ...user,
-      authMethod,
-      loaded: true
-    });
+  const login = async (user: User, token: string) => {
+    setLoading(true);
+    try {
+      let authMethod: AuthMethods = 'none';
+  
+      if (user.email) authMethod = 'email';
+      if (user.nostrPubKey) authMethod = 'nostr';
+  
+      localStorage.setItem('bitpass_access_token', token)
+      setUser({
+        ...user,
+        authMethod,
+        loaded: true
+      });
+  
+      await loadUserData();
+      setLoading(false);
+    } catch {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
@@ -121,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function loginWithPrivateKey(privateKey: string) {
     const signer = new NDKPrivateKeySigner(privateKey)
-    
+
     const templateEvent: UnsignedEvent = {
       kind: 27235,
       pubkey: signer.pubkey,
@@ -146,6 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         bitpassAPI,
         user,
+        loading,
         login,
         logout,
         isAuthenticated: Boolean(user.id),
@@ -153,6 +187,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithPrivateKey,
         requestOTPCode,
         verifyOTPCode,
+        events,
+        paymentMethods
       }}
     >
       {children}
