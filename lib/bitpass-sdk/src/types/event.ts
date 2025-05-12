@@ -10,3 +10,14 @@ export interface Event {
     createdAt: string;
     updatedAt: string;
 }
+
+export type TicketType = {
+  id: string
+  eventId: string
+  name: string
+  price: number
+  currency: 'USD' | 'ARS' | 'SAT'
+  quantity: number
+  createdAt: string
+  updatedAt: string
+}

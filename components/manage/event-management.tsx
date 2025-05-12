@@ -17,11 +17,11 @@ import { TeamManagement } from './team-management';
 import { SalesOverview } from './sales-overview';
 import { DiscountCodeManagement } from './discount-code-management';
 
-import { useDraftEvent } from '@/hooks/use-draft-event';
+import { useDraftEventContext } from '@/lib/draft-event-context';
 
 export function EventManagement({ eventId }: { eventId: string }) {
   const { toast } = useToast();
-  const { draftEvent, loading, error, setDraftField, saveDraftEvent } = useDraftEvent(eventId);
+  const { draftEvent, loading, error, setDraftField, saveDraftEvent } = useDraftEventContext();
 
   const handleShareEvent = useCallback(() => {
     const eventUrl = `${window.location.origin}/events/${eventId}`;
@@ -167,7 +167,7 @@ export function EventManagement({ eventId }: { eventId: string }) {
 
         {/* Other Tabs */}
         <TabsContent value='tickets' className='container mt-6'>
-          <TicketManagement eventId={eventId} />
+          <TicketManagement />
         </TabsContent>
         <TabsContent value='team' className='container mt-6'>
           <TeamManagement eventId={eventId} />
