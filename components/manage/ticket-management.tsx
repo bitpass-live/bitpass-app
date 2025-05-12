@@ -27,6 +27,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { EmptyState } from '@/components/empty-state';
+import { SatoshiIcon } from '@/components/icon/satoshi';
 
 import type { Ticket } from '@/types';
 
@@ -38,7 +39,7 @@ export function TicketManagement({ eventId }: { eventId: string }) {
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState<'ARS' | 'SAT'>('ARS');
+  const [currency, setCurrency] = useState<'ARS' | 'SAT' | 'USD'>('ARS');
   const [quantity, setQuantity] = useState('');
   const [isFree, setIsFree] = useState(true);
   const [isLimited, setIsLimited] = useState(false);
@@ -136,70 +137,85 @@ export function TicketManagement({ eventId }: { eventId: string }) {
                 />
 
                 {/* Sección de precio - inspirada en Luma */}
-                <div className='grid gap-2'>
-                  <div className='flex items-center justify-between'>
-                    <Label>Precio</Label>
-                    <div className='flex items-center gap-2'>
-                      <Label htmlFor='free-ticket' className='text-sm text-muted-foreground'>
-                        {isFree ? 'Gratis' : 'De pago'}
-                      </Label>
-                      <Switch id='free-ticket' checked={isFree} onCheckedChange={setIsFree} />
+                <Card>
+                  <CardContent className='p-4'>
+                    <div className='flex items-center justify-between'>
+                      <Label>Precio</Label>
+                      <div className='flex items-center gap-2'>
+                        <Label htmlFor='free-ticket' className='text-sm text-muted-foreground'>
+                          Free
+                        </Label>
+                        <Switch id='free-ticket' checked={isFree} onCheckedChange={setIsFree} />
+                      </div>
                     </div>
-                  </div>
-
-                  {!isFree && (
-                    <div className='flex gap-2 items-center'>
-                      <Input
-                        id='amount'
-                        type='number'
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder='0'
-                        min='0'
-                        required
-                        className='flex-1'
-                      />
-                      <Select value={currency} onValueChange={(value) => setCurrency(value as 'ARS' | 'SAT')}>
-                        <SelectTrigger id='currency' className='w-24'>
-                          <SelectValue placeholder='Moneda' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value='ARS'>ARS</SelectItem>
-                          <SelectItem value='SAT'>SAT</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </div>
+                    {!isFree && (
+                      <div className='flex gap-2 items-center mt-4'>
+                        <div className='flex'>
+                          <div className='flex justify-center items-center min-w-11 bg-muted rounded-l-md border border-r-0 border-input'>
+                            {currency === 'SAT' ? (
+                              <SatoshiIcon className='w-4 h-4' />
+                            ) : (
+                              <span className='font-normal text-sm'>$</span>
+                            )}
+                          </div>
+                          <Input
+                            id='amount'
+                            type='number'
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            placeholder='0'
+                            min='0'
+                            required
+                            className='rounded-l-none'
+                          />
+                        </div>
+                        <Select value={currency} onValueChange={(value) => setCurrency(value as 'ARS' | 'SAT' | 'USD')}>
+                          <SelectTrigger id='currency' className='w-24'>
+                            <SelectValue placeholder='Currency' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value='SAT'>SAT</SelectItem>
+                            <SelectItem value='ARS'>ARS</SelectItem>
+                            <SelectItem value='USD'>USD</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
 
                 {/* Sección de cupo - inspirada en Luma */}
-                <div className='grid gap-2'>
-                  <div className='flex items-center justify-between'>
-                    <Label>Cupo</Label>
-                    <div className='flex items-center gap-2'>
-                      <Label htmlFor='limited-quantity' className='text-sm text-muted-foreground'>
-                        {!isLimited ? 'Ilimitado' : 'Limitado'}
-                      </Label>
-                      <Switch
-                        id='limited-quantity'
-                        checked={!isLimited}
-                        onCheckedChange={(checked) => setIsLimited(!checked)}
-                      />
+                <Card>
+                  <CardContent className='p-4'>
+                    <div className='flex items-center justify-between'>
+                      <Label>Cupo</Label>
+                      <div className='flex items-center gap-2'>
+                        <Label htmlFor='limited-quantity' className='text-sm text-muted-foreground'>
+                          Unlimited
+                        </Label>
+                        <Switch
+                          id='limited-quantity'
+                          checked={!isLimited}
+                          onCheckedChange={(checked) => setIsLimited(!checked)}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {isLimited && (
-                    <Input
-                      id='quantity'
-                      type='number'
-                      value={quantity}
-                      onChange={(e) => setQuantity(e.target.value)}
-                      placeholder='Cantidad de tickets disponibles'
-                      min='1'
-                      required
-                    />
-                  )}
-                </div>
+                    {isLimited && (
+                      <div className='mt-4'>
+                        <Input
+                          id='quantity'
+                          type='number'
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                          placeholder='Cantidad de tickets disponibles'
+                          min='1'
+                          required
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </DialogBody>
               <DialogFooter>
                 <Button className='w-full' type='submit'>
@@ -212,12 +228,12 @@ export function TicketManagement({ eventId }: { eventId: string }) {
       </div>
 
       {!hasLightningAddress && (
-        <Alert className='bg-amber-900/20 border-amber-700/50 text-amber-200'>
-          <AlertCircle className='h-4 w-4' />
+        <Alert variant='warning'>
+          <AlertCircle className='h-6 w-6' />
           <AlertTitle>Lightning Address Required</AlertTitle>
           <AlertDescription className='flex flex-col gap-2'>
             <p>You need to set up a Lightning Address in your settings before creating tickets.</p>
-            <Button variant='outline' size='sm' className='w-fit' onClick={handleNavigateToSettings}>
+            <Button variant='secondary' size='sm' className='w-fit' onClick={handleNavigateToSettings}>
               Go to Payment Settings
             </Button>
           </AlertDescription>
