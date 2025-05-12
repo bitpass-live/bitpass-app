@@ -48,7 +48,7 @@ export interface DiscountCode {
   id: string;
   code: string;
   description?: string;
-  discountType: 'PERCENTAGE' | 'FIXED';
+  discountType: string | 'PERCENTAGE' | 'FIXED';
   value: number;
   maxUses?: number;
   used: number;
