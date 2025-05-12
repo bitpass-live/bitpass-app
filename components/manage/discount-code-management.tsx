@@ -24,6 +24,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { EmptyState } from '@/components/empty-state';
+import { MenuOptions } from '@/components/menu-options';
 
 import type { DiscountCode } from '@/types';
 import { MOCK_DISCOUNTS_CODES, MOCK_EVENT } from '@/mock/data';
@@ -37,19 +38,30 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
   const [maxUses, setMaxUses] = useState('');
   const [active, setActive] = useState(true);
 
+  // Submenu
+  const [selectedCode, setSelectedCode] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState(false);
+
   const { toast } = useToast();
 
   // Get event data and discount codes from store
   const event = MOCK_EVENT;
   const discountCodes = MOCK_DISCOUNTS_CODES;
 
-  const handleOpenDialog = useCallback(() => {
-    setEditingCode(null);
-    setCode('');
-    setValue('');
-    setMaxUses('');
-    setActive(true);
-
+  const handleOpenDialog = useCallback((discountCode?: DiscountCode) => {
+    if (discountCode) {
+      setEditingCode(discountCode);
+      setCode(discountCode.code);
+      setValue(discountCode.value.toString());
+      setMaxUses(discountCode.maxUses ? discountCode.maxUses.toString() : '');
+      setActive(discountCode.active);
+    } else {
+      setEditingCode(null);
+      setCode('');
+      setValue('');
+      setMaxUses('');
+      setActive(true);
+    }
     setDialogOpen(true);
   }, []);
 
@@ -94,6 +106,39 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
       description: `El código de descuento ha sido ${currentActive ? 'desactivado' : 'activado'} correctamente`,
     });
   }, []);
+
+  const handleOpenMenu = (id: string) => {
+    setSelectedCode(id);
+    setOpenMenu(true);
+  };
+
+  const getOpcionesMenu = () => {
+    if (!selectedCode) return [];
+
+    const currentCode = discountCodes.find((code) => code.id === selectedCode);
+    if (!currentCode) return [];
+
+    return [
+      {
+        id: 'edit',
+        text: 'Edit',
+        action: () => handleOpenDialog(currentCode),
+        variant: 'outline' as const,
+      },
+      {
+        id: 'toggle',
+        text: currentCode.active ? 'Disable' : 'Active',
+        action: () => handleToggleActive(currentCode.id, currentCode.active),
+        variant: currentCode.active ? 'outline' : 'secondary',
+      },
+      {
+        id: 'delete',
+        text: 'Delete',
+        action: () => handleDeleteCode(currentCode.id),
+        variant: 'destructive' as const,
+      },
+    ];
+  };
 
   // Show loading state if event not found
   if (!event) {
@@ -178,14 +223,14 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
           </p>
         </div>
       ) : (
-        <Card>
+        <Card className='overflow-hidden'>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Código</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead className='hidden md:table-cell'>Usos</TableHead>
-                <TableHead>Estado</TableHead>
+                <TableHead className='w-4'></TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>Disc.</TableHead>
+                <TableHead className='hidden md:table-cell'>Uses</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -195,6 +240,11 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
 
                 return (
                   <TableRow key={discountCode.id}>
+                    <TableCell className='w-4'>
+                      <div
+                        className={`w-4 h-4 rounded-full ${discountCode?.active ? 'bg-primary' : 'bg-gray-600'}`}
+                      ></div>
+                    </TableCell>
                     <TableCell className='font-medium'>{discountCode.code}</TableCell>
                     <TableCell>{`${discountCode.value}%`}</TableCell>
                     <TableCell className='hidden md:table-cell'>
@@ -202,30 +252,10 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                       {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
                     </TableCell>
                     <TableCell>
-                      <div className='flex items-center'>
-                        <Switch
-                          checked={discountCode.active}
-                          onCheckedChange={(checked) => handleToggleActive(discountCode.id, !checked)}
-                          className='mr-2'
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell>
                       <div className='flex justify-end gap-2'>
-                        <Button variant='secondary' size='icon'>
+                        <Button variant='secondary' size='icon' onClick={() => handleOpenMenu(discountCode?.id)}>
                           <EllipsisVertical className='w-4 h-4' />
                         </Button>
-                        {/* <Button variant='outline' size='icon' onClick={() => handleOpenDialog()} title='Editar'>
-                          <Pencil className='h-4 w-4' />
-                        </Button>
-                        <Button
-                          variant='destructive'
-                          size='icon'
-                          onClick={() => handleDeleteCode(discountCode.id)}
-                          title='Eliminar'
-                        >
-                          <Trash2 className='h-4 w-4' />
-                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -235,6 +265,16 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
           </Table>
         </Card>
       )}
+
+      <MenuOptions
+        id={selectedCode || undefined}
+        // TO-DO
+        // Change by Discount Code for reference
+        title='[Change to Code]'
+        options={getOpcionesMenu()}
+        open={openMenu}
+        onOpenChange={setOpenMenu}
+      />
     </div>
   );
 }
