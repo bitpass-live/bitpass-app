@@ -160,7 +160,7 @@ export function EventManagement({ eventId }: { eventId: string }) {
             </div>
 
             <Button className='w-full' onClick={saveDraftEvent}>
-              Save Changes
+              Update Changes
             </Button>
           </div>
         </TabsContent>
