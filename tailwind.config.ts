@@ -18,11 +18,15 @@ const config = {
         heading: ['"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // Base
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+
+        // Brand
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -31,6 +35,12 @@ const config = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+
+        // States
+        success: '#4CAF50',
+        warning: '#FFAC07',
+        error: '#F44336',
+
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
@@ -51,6 +61,7 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+
         // Add specific color references
         'fluorescent-yellow': '#D8FF00',
         'fluorescent-yellow-hover': '#F3FF58',
