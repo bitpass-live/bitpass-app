@@ -48,6 +48,9 @@ body {
     --border: 0 0% 16%; /* #2A2A2A */
     --input: 0 0% 16%; /* #2A2A2A */
     --ring: 65 100% 50%; /* #D8FF00 */
+
+    /* States */
+    --warning: 40 100% 51%;
   }
 }
 
