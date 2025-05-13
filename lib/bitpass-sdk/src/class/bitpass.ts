@@ -679,6 +679,27 @@ export class Bitpass {
   }
 
   /**
+ * Link a payment method to an event.
+ * If a method of the same type already exists, it will be replaced.
+ * @param eventId Event to associate the method with.
+ * @param methodId Payment method to link.
+ */
+  async addPaymentMethodToEvent(eventId: string, methodId: string): Promise<void> {
+    if (!this.token) throw new Error("Unauthorized: please authenticate first");
+
+    const res = await fetch(`${this.baseUrl}/events/${eventId}/payment-methods`, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify({ methodId }),
+    });
+
+    if (!res.ok) {
+      const payload = await res.json();
+      throw new Error(payload.error ?? "Failed to add payment method to event");
+    }
+  }
+
+  /**
    * Configure a new Lightning payment method.
    * @param lightningAddress Lightning address (LUD16).
    * @returns Created payment method.

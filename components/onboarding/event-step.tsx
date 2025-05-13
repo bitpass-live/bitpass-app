@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { OnboardingLayout } from '@/components/onboarding/onboarding-layout';
 import { StepNavigation } from '@/components/onboarding/step-navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 
 import { useDraftEventContext } from '@/lib/draft-event-context';
 

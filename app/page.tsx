@@ -3,11 +3,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { useToast } from '@/components/ui/use-toast';
-
 import { LoginForm } from '@/components/login-form';
 // import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AuthPage() {
   const router = useRouter();

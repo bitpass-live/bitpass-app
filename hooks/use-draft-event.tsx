@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/auth-provider';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 import type { Event as EventModel, FullEvent, TicketType } from '@/lib/bitpass-sdk/src/types/event';
 
 export type CreateTicketInput = {

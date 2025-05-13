@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { Banknote, Zap } from 'lucide-react';
 
 import { useAuth } from '@/lib/auth-provider';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { useDraftEventContext } from '@/lib/draft-event-context';
 
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ interface PaymentsStepProps {
 
 export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
   const { bitpassAPI, paymentMethods } = useAuth();
+  const { draftEvent } = useDraftEventContext();
   const { toast } = useToast();
 
   const lightning = paymentMethods.find((m) => m.type === 'LIGHTNING');
@@ -45,16 +47,26 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
     setIsSubmitting(true);
 
     try {
+      let methodId: string;
+
       if (!lightning) {
-        await bitpassAPI.addLightningPaymentMethod(lightningAddress);
+        const newMethod = await bitpassAPI.addLightningPaymentMethod(lightningAddress);
+        methodId = newMethod.id;
       } else {
         await bitpassAPI.updateLightningPaymentMethod(lightning.id, lightningAddress);
+        methodId = lightning.id;
+      }
+
+      if (draftEvent?.id) {
+        await bitpassAPI.addPaymentMethodToEvent(draftEvent.id, methodId);
       }
 
       toast({
         title: 'Lightning Address saved',
-        description: 'Your Lightning Address has been configured successfully.',
+        description: 'Your Lightning Address has been configured and linked to the event.',
       });
+
+      onNext();
     } catch (err: any) {
       toast({
         title: 'Error saving payment method',
@@ -109,7 +121,7 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
           </CardContent>
         </Card>
 
-        <StepNavigation onNext={onNext} onBack={onBack} nextLabel='Next' />
+        <StepNavigation onNext={handleVerify} onBack={onBack} nextLabel='Next' />
       </div>
     </OnboardingLayout>
   );

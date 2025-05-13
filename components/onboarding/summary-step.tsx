@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { OnboardingLayout } from '@/components/onboarding/onboarding-layout';
 import { StepNavigation } from '@/components/onboarding/step-navigation';
+import { useToast } from '@/hooks/use-toast';
 
 interface SummaryStepProps {
   onFinish: () => void;
@@ -19,7 +20,8 @@ interface SummaryStepProps {
 
 export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
   const { draftEvent } = useDraftEventContext();
-  const { paymentMethods } = useAuth();
+  const { paymentMethods, bitpassAPI } = useAuth();
+  const { toast } = useToast();
 
   const lightningAddress = paymentMethods.find((m) => m.type === 'LIGHTNING')?.lightningAddress;
   const MOCK_DOMAIN_DEPLOY = 'domain-deploy.com';
@@ -33,6 +35,23 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
       day: 'numeric',
     });
   }, [draftEvent?.startsAt]);
+
+  const handleFinish = async () => {
+  try {
+    if (!draftEvent?.id) throw new Error('Missing event ID');
+    if (!draftEvent.ticketTypes?.length) throw new Error('You must create at least one ticket');
+    if (!lightningAddress) throw new Error('Lightning address not configured');
+
+    await bitpassAPI.publishEvent(draftEvent.id);
+    onFinish();
+  } catch (err: any) {
+    toast({
+      title: 'Error publishing event',
+      description: err.message || 'Something went wrong',
+      variant: 'destructive',
+    });
+  }
+};
 
   return (
     <OnboardingLayout
@@ -142,7 +161,7 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
           </Card>
         </div>
 
-        <StepNavigation onNext={onFinish} onBack={onBack} isLastStep={true} />
+        <StepNavigation onNext={handleFinish} onBack={onBack} isLastStep={true} />
       </div>
     </OnboardingLayout>
   );

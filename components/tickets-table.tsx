@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, XCircle, MoreVertical, CheckIcon, Copy, Mail, RefreshCw, UserRoundX } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 
 export function TicketsTable() {
   const { toast } = useToast();

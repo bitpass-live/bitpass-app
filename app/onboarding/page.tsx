@@ -22,7 +22,6 @@ export default function OnboardingPage() {
   };
 
   const handleFinish = () => {
-    // Redirect to dashboard or complete onboarding
     window.location.href = '/dashboard';
   };
 

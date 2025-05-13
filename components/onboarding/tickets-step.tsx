@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { TicketCheck, PlusIcon, TicketIcon, Pencil, Trash2 } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 import { useDraftEventContext } from '@/lib/draft-event-context';
 
 import { SatoshiIcon } from '@/components/icon/satoshi';

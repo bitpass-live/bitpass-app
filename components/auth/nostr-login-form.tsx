@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 import { useAuth } from '@/lib/auth-provider';
 import { NostrPrivateKeyForm } from './nostr-private-key-form';
 import { Zap, Key } from 'lucide-react';
