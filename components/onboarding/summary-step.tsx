@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { OnboardingLayout } from '@/components/onboarding/onboarding-layout';
 import { StepNavigation } from '@/components/onboarding/step-navigation';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 interface SummaryStepProps {
   onFinish: () => void;
@@ -37,21 +38,21 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
   }, [draftEvent?.startsAt]);
 
   const handleFinish = async () => {
-  try {
-    if (!draftEvent?.id) throw new Error('Missing event ID');
-    if (!draftEvent.ticketTypes?.length) throw new Error('You must create at least one ticket');
-    if (!lightningAddress) throw new Error('Lightning address not configured');
+    try {
+      if (!draftEvent?.id) throw new Error('Missing event ID');
+      if (!draftEvent.ticketTypes?.length) throw new Error('You must create at least one ticket');
+      if (!lightningAddress) throw new Error('Lightning address not configured');
 
-    await bitpassAPI.publishEvent(draftEvent.id);
-    onFinish();
-  } catch (err: any) {
-    toast({
-      title: 'Error publishing event',
-      description: err.message || 'Something went wrong',
-      variant: 'destructive',
-    });
-  }
-};
+      await bitpassAPI.publishEvent(draftEvent.id);
+      onFinish();
+    } catch (err) {
+      toast({
+        title: 'Error publishing event',
+        description: getErrorMessage(err, 'Failed to publish event'),
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <OnboardingLayout

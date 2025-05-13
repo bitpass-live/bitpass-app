@@ -15,6 +15,20 @@ export const requiredEnvVar = (key: string): string => {
   return envVar;
 };
 
+export function getErrorMessage(err: unknown, defaultMessage: string = 'Something went wrong'): string {
+  if (typeof err === 'object' && err !== null) {
+    const anyErr = err as any;
+    if (Array.isArray(anyErr.issues) && anyErr.issues[0]?.message) {
+      return anyErr.issues[0].message;
+    }
+    if (typeof anyErr.message === 'string') {
+      return anyErr.message;
+    }
+  }
+
+  return defaultMessage;
+}
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {

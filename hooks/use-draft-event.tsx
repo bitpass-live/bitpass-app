@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/auth-provider';
-import { useToast } from '@/hooks/use-toast';;
+import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import type { Event as EventModel, FullEvent, TicketType } from '@/lib/bitpass-sdk/src/types/event';
 
 export type CreateTicketInput = {
@@ -39,13 +40,15 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
         setDraftEvent(evt);
         setOriginalEvent(evt);
         setEventExists(true);
-      } catch (err: any) {
-        if (err.message.includes('not found')) {
-          setEventExists(false);
-        } else {
-          setError(err.message);
-          toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      } catch (err) {
+        const message = getErrorMessage(err, 'Failed to load event');
+        setError(message);
+
+        if (!message.includes('not found')) {
+          toast({ title: 'Error', description: message, variant: 'destructive' });
         }
+
+        setEventExists(false);
       } finally {
         setLoading(false);
       }
@@ -77,14 +80,15 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       setOriginalEvent(newEvent);
       setEventExists(true);
       toast({ title: 'Event created', description: 'Your event was created successfully.' });
-    } catch (err: any) {
+    } catch (err) {
+      const message = getErrorMessage(err, 'Failed to create event');
       console.error('Error creating event:', err);
-      setError(err.message);
-      throw err;
+      setError(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
-  }, [bitpassAPI, toast]);
+  }, [bitpassAPI, instanceId, toast]);
 
   const saveDraftEvent = useCallback(async () => {
     if (!draftEvent) return;
@@ -99,10 +103,11 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       setOriginalEvent(updated);
       setDraftEvent(prev => (prev ? { ...prev, ...updated } : prev));
       toast({ title: 'Saved', description: 'Your changes have been applied.' });
-    } catch (err: any) {
+    } catch (err) {
+      const message = getErrorMessage(err, 'Failed to save event');
       console.error('Error saving draft event:', err);
-      setError(err);
-      throw err;
+      setError(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -117,9 +122,11 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
         prev ? { ...prev, ticketTypes: [...(prev.ticketTypes || []), newTicket] } : prev
       );
       toast({ title: 'Ticket added', description: 'The ticket has been created successfully.' });
-    } catch (err: any) {
+    } catch (err) {
+      const message = getErrorMessage(err, 'Failed to create ticket');
       console.error('Error adding ticket:', err);
-      toast({ title: 'Error', description: err.message || 'Failed to create ticket', variant: 'destructive' });
+      setError(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   }, [bitpassAPI, draftEvent, toast]);
 
@@ -131,15 +138,17 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       setDraftEvent(prev =>
         prev
           ? {
-            ...prev,
-            ticketTypes: prev.ticketTypes.map(t => (t.id === ticketId ? updated : t)),
-          }
+              ...prev,
+              ticketTypes: prev.ticketTypes.map(t => (t.id === ticketId ? updated : t)),
+            }
           : prev
       );
       toast({ title: 'Ticket updated', description: 'Changes saved successfully.' });
-    } catch (err: any) {
+    } catch (err) {
+      const message = getErrorMessage(err, 'Failed to update ticket');
       console.error('Error updating ticket:', err);
-      toast({ title: 'Error', description: err.message || 'Failed to update ticket', variant: 'destructive' });
+      setError(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   }, [bitpassAPI, draftEvent, toast]);
 
@@ -151,15 +160,17 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       setDraftEvent(prev =>
         prev
           ? {
-            ...prev,
-            ticketTypes: prev.ticketTypes.filter(t => t.id !== ticketId),
-          }
+              ...prev,
+              ticketTypes: prev.ticketTypes.filter(t => t.id !== ticketId),
+            }
           : prev
       );
       toast({ title: 'Ticket deleted', description: 'The ticket was removed.' });
-    } catch (err: any) {
+    } catch (err) {
+      const message = getErrorMessage(err, 'Failed to delete ticket');
       console.error('Error deleting ticket:', err);
-      toast({ title: 'Error', description: err.message || 'Failed to delete ticket', variant: 'destructive' });
+      setError(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   }, [bitpassAPI, draftEvent, toast]);
 
@@ -167,6 +178,7 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
     draftEvent,
     loading,
     error,
+    eventExist,
     setDraftField,
     saveDraftEvent,
     createDraftEvent,

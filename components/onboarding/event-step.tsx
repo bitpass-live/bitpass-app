@@ -11,6 +11,7 @@ import { StepNavigation } from '@/components/onboarding/step-navigation';
 import { useToast } from '@/hooks/use-toast';;
 
 import { useDraftEventContext } from '@/lib/draft-event-context';
+import { getErrorMessage } from '@/lib/utils';
 
 interface EventStepProps {
   onNext: () => void;
@@ -79,17 +80,6 @@ export function EventStep({ onNext }: EventStepProps) {
       }
 
       onNext();
-    } catch (err: any) {
-      const message =
-        err?.issues?.[0]?.message ||
-        err?.message ||
-        'Failed to save event';
-
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
     } finally {
       setIsSubmitting(false);
     }

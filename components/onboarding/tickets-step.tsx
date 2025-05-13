@@ -72,52 +72,37 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      try {
-        const parsedPrice = isFree ? 0 : parseFloat(amount);
-        const parsedQuantity = isLimited ? parseInt(quantity) : -1;
 
-        if (editingTicket) {
-          await updateTicket(editingTicket.id, {
-            name: title,
-            price: parsedPrice,
-            currency,
-            quantity: parsedQuantity,
-          });
-        } else {
-          await addTicket({
-            name: title,
-            price: parsedPrice,
-            currency,
-            quantity: parsedQuantity,
-          });
-        }
+      const parsedPrice = isFree ? 0 : parseFloat(amount);
+      const parsedQuantity = isLimited ? parseInt(quantity) : -1;
 
-        setDialogOpen(false);
-      } catch (err: any) {
-        toast({
-          title: 'Error',
-          description: err?.message || 'Failed to save ticket',
-          variant: 'destructive',
+      if (editingTicket) {
+        await updateTicket(editingTicket.id, {
+          name: title,
+          price: parsedPrice,
+          currency,
+          quantity: parsedQuantity,
+        });
+      } else {
+        await addTicket({
+          name: title,
+          price: parsedPrice,
+          currency,
+          quantity: parsedQuantity,
         });
       }
+
+      setDialogOpen(false);
     },
-    [editingTicket, title, amount, currency, isFree, isLimited, quantity, toast, addTicket, updateTicket]
+    [editingTicket, title, amount, currency, isFree, isLimited, quantity, addTicket, updateTicket]
   );
 
-  const handleDeleteTicket = useCallback(
-    async (ticketId: string) => {
-      try {
-        await deleteTicket(ticketId);
-      } catch (err: any) {
-        toast({
-          title: 'Error',
-          description: err?.message || 'Failed to delete ticket',
-          variant: 'destructive',
-        });
-      }
-    },
-    [deleteTicket, toast]
-  );
+  const handleDeleteTicket = useCallback(async (ticketId: string) => {
+    const confirmed = confirm('Are you sure you want to delete this ticket?');
+    if (!confirmed) return;
+
+    await deleteTicket(ticketId);
+  }, [deleteTicket]);
 
   const handleNext = useCallback(() => {
     if (tickets.length === 0) {

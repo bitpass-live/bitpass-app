@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { OnboardingLayout } from '@/components/onboarding/onboarding-layout';
 import { StepNavigation } from '@/components/onboarding/step-navigation';
+import { getErrorMessage } from '@/lib/utils';
 
 interface PaymentsStepProps {
   onNext: () => void;
@@ -67,10 +68,10 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
       });
 
       onNext();
-    } catch (err: any) {
+    } catch (err) {
       toast({
         title: 'Error saving payment method',
-        description: err.message || 'Something went wrong.',
+        description: getErrorMessage(err, 'Failed to save payment method'),
         variant: 'destructive',
       });
     } finally {
