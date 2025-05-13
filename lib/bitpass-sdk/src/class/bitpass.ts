@@ -1,5 +1,5 @@
 import type { Event as NostrEvent } from "nostr-tools";
-import type { Event as EventModel } from "../types/event";
+import type { Event as EventModel, FullEvent } from "../types/event";
 import type {
   CreateEventInput,
   UpdateEventInput,
@@ -122,7 +122,7 @@ export class Bitpass {
    * @param input Data for the new event.
    * @returns The created Event record.
    */
-  async createDraftEvent(input: CreateEventInput): Promise<EventModel> {
+  async createDraftEvent(input: CreateEventInput): Promise<FullEvent> {
     CreateEventSchema.parse(input);
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(`${this.baseUrl}/events`, {
@@ -137,6 +137,24 @@ export class Bitpass {
         : payload.error ?? "Failed to create draft event";
       throw new Error(errorMsg);
     }
+    return res.json();
+  }
+
+  /**
+ * Get a draft event by instanceId, if it exists.
+ * @param instanceId Instance identifier
+ * @returns The event, or throws 404 if not found.
+ */
+  async getEventByInstanceId(instanceId: string): Promise<FullEvent> {
+    const res = await fetch(`${this.baseUrl}/events/instance/${instanceId}`, {
+      headers: this.headers,
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || 'Failed to fetch event by instanceId');
+    }
+
     return res.json();
   }
 
@@ -178,7 +196,7 @@ export class Bitpass {
    * @param eventId UUID of the draft event.
    * @returns Draft event details.
    */
-  async getDraftEvent(eventId: string): Promise<EventModel> {
+  async getDraftEvent(eventId: string): Promise<FullEvent> {
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(`${this.baseUrl}/events/${eventId}`, {
       method: "GET",
@@ -200,7 +218,7 @@ export class Bitpass {
   async updateEvent(
     eventId: string,
     input: UpdateEventInput
-  ): Promise<EventModel> {
+  ): Promise<FullEvent> {
     UpdateEventSchema.parse(input);
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(`${this.baseUrl}/events/${eventId}`, {

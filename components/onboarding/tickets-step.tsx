@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { TicketCheck, PlusIcon, TicketIcon, Pencil, Trash2 } from 'lucide-react';
 
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
+import { useDraftEventContext } from '@/lib/draft-event-context';
 
 import { SatoshiIcon } from '@/components/icon/satoshi';
 import { Button } from '@/components/ui/button';
@@ -25,27 +26,17 @@ import {
 import { OnboardingLayout } from '@/components/onboarding/onboarding-layout';
 import { StepNavigation } from '@/components/onboarding/step-navigation';
 
-import { MOCK_EVENT } from '@/mock/data';
-
 interface TicketsStepProps {
   onNext: () => void;
   onBack: () => void;
 }
 
-interface TicketType {
-  id: string;
-  title: string;
-  description: string;
-  amount: string;
-  currency: 'ARS' | 'SAT';
-  quantity: string;
-  limitPerBuyer: boolean;
-  maxPerBuyer: string;
-}
-
 export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
+  const { draftEvent, addTicket, updateTicket, deleteTicket } = useDraftEventContext();
+  const tickets = useMemo(() => draftEvent?.ticketTypes || [], [draftEvent]);
+
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTicket, setEditingTicket] = useState<TicketType | null>(null);
+  const [editingTicket, setEditingTicket] = useState<any | null>(null);
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
@@ -55,19 +46,17 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
   const [isLimited, setIsLimited] = useState(false);
 
   const { toast } = useToast();
-  const tickets = MOCK_EVENT.tickets;
 
-  const handleOpenDialog = useCallback((ticket?: TicketType) => {
+  const handleOpenDialog = useCallback((ticket?: any) => {
     if (ticket) {
       setEditingTicket(ticket);
-      setTitle(ticket.title);
-      setAmount(ticket.amount.toString());
-      setIsFree(Number(ticket.amount) === 0);
+      setTitle(ticket.name);
+      setAmount(ticket.price.toString());
+      setIsFree(ticket.price === 0);
       setCurrency(ticket.currency);
-      setIsLimited(Number(ticket.quantity) !== -1);
-      setQuantity(Number(ticket.quantity) !== -1 ? ticket.quantity.toString() : '');
+      setIsLimited(ticket.quantity !== -1);
+      setQuantity(ticket.quantity !== -1 ? ticket.quantity.toString() : '');
     } else {
-      // Modo creación
       setEditingTicket(null);
       setTitle('');
       setAmount('');
@@ -84,12 +73,23 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
     async (e: React.FormEvent) => {
       e.preventDefault();
       try {
+        const parsedPrice = isFree ? 0 : parseFloat(amount);
+        const parsedQuantity = isLimited ? parseInt(quantity) : -1;
+
         if (editingTicket) {
-          // TO-DO
-          // UPDATE TICKET
+          await updateTicket(editingTicket.id, {
+            name: title,
+            price: parsedPrice,
+            currency,
+            quantity: parsedQuantity,
+          });
         } else {
-          // TO-DO
-          // CREATE TICKET
+          await addTicket({
+            name: title,
+            price: parsedPrice,
+            currency,
+            quantity: parsedQuantity,
+          });
         }
 
         setDialogOpen(false);
@@ -101,7 +101,22 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
         });
       }
     },
-    [editingTicket, title, amount, currency, isFree, isLimited, quantity, toast],
+    [editingTicket, title, amount, currency, isFree, isLimited, quantity, toast, addTicket, updateTicket]
+  );
+
+  const handleDeleteTicket = useCallback(
+    async (ticketId: string) => {
+      try {
+        await deleteTicket(ticketId);
+      } catch (err: any) {
+        toast({
+          title: 'Error',
+          description: err?.message || 'Failed to delete ticket',
+          variant: 'destructive',
+        });
+      }
+    },
+    [deleteTicket, toast]
   );
 
   return (
@@ -230,35 +245,24 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
         </div>
 
         {tickets?.length === 0 && (
-          <Card className=''>
-            <div className='p-6'>
-              <div className='flex items-center justify-between gap-4'>
-                <div className='flex items-center gap-2 w-full'>
-                  <div className='w-32 h-8 bg-secondary border rounded-lg' />
-                  <div className='w-16 h-4 bg-secondary border rounded-lg' />
-                </div>
-                <div className='hidden md:flex whitespace-nowrap'>
-                  <div className='w-10 h-4 bg-secondary border rounded-lg' />
-                </div>
-                <div className='flex gap-2'>
-                  <div className='w-10 h-10 bg-secondary border rounded-lg' />
-                  <div className='w-10 h-10 bg-secondary border rounded-lg' />
-                </div>
-              </div>
+          <Card>
+            <div className='p-6 text-center text-muted-foreground'>
+              <p className='text-sm'>No tickets have been created for this event yet.</p>
+              <p className='text-sm'>Click <strong>"New"</strong> to add your first ticket.</p>
             </div>
           </Card>
         )}
-
-        <Card>
-          {tickets?.length > 0 &&
-            tickets?.map((ticket: any) => (
+        
+        {tickets?.length > 0 && (
+          <Card>
+            {tickets.map((ticket) => (
               <div className='border-b last:border-none' key={ticket.id}>
                 <div className='p-6'>
                   <div className='flex items-center justify-between gap-4'>
                     <div className='flex items-center gap-2 w-full'>
-                      <h3 className='text-lg font-semibold'>{ticket.title}</h3>
+                      <h3 className='text-lg font-semibold'>{ticket.name}</h3>
                       <p className='text-text-secondary'>
-                        {ticket?.amount === 0 ? 'Gratis' : `$${ticket?.amount} ${ticket?.currency}`}
+                        {ticket.price === 0 ? 'Gratis' : `$${ticket.price} ${ticket.currency}`}
                       </p>
                     </div>
                     <div className='hidden md:flex whitespace-nowrap'>
@@ -270,7 +274,7 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
                       <Button variant='outline' size='icon' onClick={() => handleOpenDialog(ticket)}>
                         <Pencil className='h-4 w-4' />
                       </Button>
-                      <Button variant='destructive' size='icon' onClick={() => null}>
+                      <Button variant='destructive' size='icon' onClick={() => handleDeleteTicket(ticket.id)}>
                         <Trash2 className='h-4 w-4' />
                       </Button>
                     </div>
@@ -278,7 +282,8 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
                 </div>
               </div>
             ))}
-        </Card>
+          </Card>
+        )}
 
         <StepNavigation onNext={onNext} onBack={onBack} nextLabel='Next' />
       </div>

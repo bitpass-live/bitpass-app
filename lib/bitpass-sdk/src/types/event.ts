@@ -1,14 +1,36 @@
+import { DiscountCode } from "./discount";
+import { PaymentMethod } from "./payment";
+
 export interface Event {
     id: string;
     title: string;
     description: string;
     location: string;
-    startsAt: string; // ISO
-    endsAt: string;   // ISO
+    startsAt: string;
+    endsAt: string;
     status: "DRAFT" | "PUBLISHED";
     creatorId: string;
     createdAt: string;
     updatedAt: string;
+}
+
+export type TeamMember = {
+  eventId: string;
+  userId: string;
+  role: 'OWNER' | 'MODERATOR' | 'COLLABORATOR';
+  createdAt: string;
+  user?: {
+    id: string;
+    name?: string;
+    email?: string;
+  };
+};
+
+export interface FullEvent extends Event {
+  ticketTypes: TicketType[];
+  discountCodes: DiscountCode[];
+  team: TeamMember[];
+  paymentMethods: PaymentMethod[];
 }
 
 export type TicketType = {

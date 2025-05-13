@@ -2,18 +2,30 @@
 
 import { createContext, useContext, useMemo } from 'react'
 import { CreateTicketInput, useDraftEvent } from '@/hooks/use-draft-event'
-import type { Event as EventModel, TicketType } from '@/lib/bitpass-sdk/src/types/event'
+import type { Event as EventModel, FullEvent, TicketType } from '@/lib/bitpass-sdk/src/types/event'
+
+type DraftEventProviderProps =
+  | { eventId: string; instanceId?: undefined, children: React.ReactNode }
+  | { eventId?: undefined; instanceId: string, children: React.ReactNode }
 
 interface DraftEventContextType {
-  draftEvent: EventModel | null
+  draftEvent: FullEvent | null
   loading: boolean
   error: string | null
   setDraftField: <K extends keyof EventModel>(field: K, value: EventModel[K]) => void
   saveDraftEvent: () => Promise<void>
-  tickets: TicketType[]
   addTicket(ticket: CreateTicketInput): Promise<void>
   updateTicket(id: string, updates: Partial<TicketType>): Promise<void>
   deleteTicket(id: string): Promise<void>
+  createDraftEvent: (data: {
+    title: string;
+    description: string;
+    location: string;
+    startDate: string;
+    startTime: string;
+    endDate: string;
+    endTime: string;
+  }) => Promise<void>
 }
 
 const DraftEventContext = createContext<DraftEventContextType | undefined>(undefined)
@@ -24,19 +36,13 @@ export function useDraftEventContext() {
   return ctx
 }
 
-export function DraftEventProvider({
-  eventId,
-  children,
-}: {
-  eventId: string
-  children: React.ReactNode
-}) {
-  const hook = useDraftEvent(eventId)
+export function DraftEventProvider(props: DraftEventProviderProps) {
+  const hook = useDraftEvent(props)
   const value = useMemo(() => hook, [hook])
 
   return (
     <DraftEventContext.Provider value={value}>
-      {children}
+      {props.children}
     </DraftEventContext.Provider>
   )
 }

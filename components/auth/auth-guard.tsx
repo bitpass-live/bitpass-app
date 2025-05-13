@@ -6,9 +6,8 @@ import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-provider';
 
-const PROTECTED_ROUTES: string[] = ['/checkin', '/dashboard']
+const PROTECTED_ROUTES: string[] = ['/checkin', '/onboarding', '/dashboard']
 
-// Simplificar el AuthGuard para proteger solo la ruta de checkin
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -22,7 +21,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         router.push('/');
         break;
         
-      case (pathname === '/' && isAuthenticated): // login
+      case (pathname === '/' && isAuthenticated):
         router.push('/dashboard');
         break;
     }

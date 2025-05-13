@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Banknote, Zap } from 'lucide-react';
+
+import { useAuth } from '@/lib/auth-provider';
+import { useToast } from '@/components/ui/use-toast';
 
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -16,7 +19,52 @@ interface PaymentsStepProps {
 }
 
 export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
-  const [lightning, setLightning] = useState('');
+  const { bitpassAPI, paymentMethods } = useAuth();
+  const { toast } = useToast();
+
+  const lightning = paymentMethods.find((m) => m.type === 'LIGHTNING');
+  const [lightningAddress, setLightningAddress] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (lightning?.lightningAddress) {
+      setLightningAddress(lightning.lightningAddress);
+    }
+  }, [lightning]);
+
+  const handleVerify = async () => {
+    if (!lightningAddress.includes('@')) {
+      toast({
+        title: 'Invalid Lightning Address',
+        description: 'Please enter a valid Lightning Address (e.g., you@domain.com)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      if (!lightning) {
+        await bitpassAPI.addLightningPaymentMethod(lightningAddress);
+      } else {
+        await bitpassAPI.updateLightningPaymentMethod(lightning.id, lightningAddress);
+      }
+
+      toast({
+        title: 'Lightning Address saved',
+        description: 'Your Lightning Address has been configured successfully.',
+      });
+    } catch (err: any) {
+      toast({
+        title: 'Error saving payment method',
+        description: err.message || 'Something went wrong.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <OnboardingLayout
@@ -28,7 +76,6 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
     >
       <div className='space-y-6'>
         <Card className='overflow-hidden'>
-          {/* Content */}
           <CardHeader className='flex flex-row justify-between items-center gap-4'>
             <div className='flex flex-col md:flex-row md:items-center gap-1 md:gap-2'>
               <div className='hidden md:flex justify-center items-center w-6 h-6'>
@@ -49,12 +96,15 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
               type='text'
               id='lightningAddress'
               placeholder='you@lightning.address'
-              defaultValue={lightning}
-              onChange={(e) => setLightning(e.target.value)}
+              value={lightningAddress}
+              onChange={(e) => setLightningAddress(e.target.value)}
             />
-
-            <Button variant={lightning ? 'default' : 'secondary'} disabled={!lightning}>
-              Verify
+            <Button
+              variant={lightningAddress ? 'default' : 'secondary'}
+              disabled={!lightningAddress || isSubmitting}
+              onClick={handleVerify}
+            >
+              {isSubmitting ? 'Saving...' : 'Verify'}
             </Button>
           </CardContent>
         </Card>

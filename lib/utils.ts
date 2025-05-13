@@ -7,6 +7,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const requiredEnvVar = (key: string): string => {
+  const envVar = process.env[key];
+  if (undefined === envVar) {
+    throw new Error(`Environment process ${key} must be defined`);
+  }
+  return envVar;
+};
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {

@@ -1,6 +1,10 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Check, Copy } from 'lucide-react';
+
+import { useDraftEventContext } from '@/lib/draft-event-context';
+import { useAuth } from '@/lib/auth-provider';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,27 +15,24 @@ import { StepNavigation } from '@/components/onboarding/step-navigation';
 interface SummaryStepProps {
   onFinish: () => void;
   onBack: () => void;
-  eventData?: {
-    name: string;
-    date: string;
-    ticketTypes: number;
-    paymentMethods: string[];
-    teamMembers: number;
-  };
 }
 
-export function SummaryStep({
-  onFinish,
-  onBack,
-  eventData = {
-    name: 'Mi Evento Bitcoin',
-    date: '15 de Diciembre, 2023',
-    ticketTypes: 2,
-    paymentMethods: ['Lightning Network'],
-    teamMembers: 1,
-  },
-}: SummaryStepProps) {
+export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
+  const { draftEvent } = useDraftEventContext();
+  const { paymentMethods } = useAuth();
+
+  const lightningAddress = paymentMethods.find((m) => m.type === 'LIGHTNING')?.lightningAddress;
   const MOCK_DOMAIN_DEPLOY = 'domain-deploy.com';
+
+  const formattedDate = useMemo(() => {
+    if (!draftEvent?.startsAt) return '';
+    const date = new Date(draftEvent.startsAt);
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }, [draftEvent?.startsAt]);
 
   return (
     <OnboardingLayout
@@ -44,13 +45,21 @@ export function SummaryStep({
       <div className='space-y-6'>
         <div className='bg-surface rounded-lg border border-border overflow-hidden'>
           <div className='p-4'>
-            <p className='text-muted-foreground'>{eventData.date}</p>
-            <h3 className='text-xl font-semibold'>{eventData.name}</h3>
+            <p className='text-muted-foreground'>{formattedDate}</p>
+            <h3 className='text-xl font-semibold'>{draftEvent?.title || 'Untitled Event'}</h3>
 
             <div className='mt-4 space-y-2'>
               <div className='flex justify-between'>
                 <span className='text-muted-foreground'>Lightning Address:</span>
-                <span>{'test@lawallet.ar'}</span>
+                <span>{lightningAddress || 'Not configured'}</span>
+              </div>
+              <div className='flex justify-between'>
+                <span className='text-muted-foreground'>Ticket types:</span>
+                <span>{draftEvent?.ticketTypes?.length ?? 0}</span>
+              </div>
+              <div className='flex justify-between'>
+                <span className='text-muted-foreground'>Team members:</span>
+                <span>{draftEvent?.team?.length ?? 1}</span>
               </div>
             </div>
           </div>
@@ -99,7 +108,7 @@ export function SummaryStep({
           <Card className='flex flex-row md:items-center justify-between p-3'>
             <div className='flex flex-col'>
               <span className='text-sm text-text-secondary'>Public URL of the event</span>
-              <code className=''>{MOCK_DOMAIN_DEPLOY}</code>
+              <code>{MOCK_DOMAIN_DEPLOY}</code>
             </div>
             <div className='flex items-center space-x-2'>
               <Button size='icon' variant='secondary'>
@@ -111,7 +120,7 @@ export function SummaryStep({
           <Card className='flex flex-row md:items-center justify-between p-3'>
             <div className='flex flex-col'>
               <span className='text-sm text-text-secondary'>Administration Panel</span>
-              <code className=''>{MOCK_DOMAIN_DEPLOY}/admin</code>
+              <code>{MOCK_DOMAIN_DEPLOY}/admin</code>
             </div>
             <div className='flex items-center space-x-2'>
               <Button size='icon' variant='secondary'>
@@ -123,7 +132,7 @@ export function SummaryStep({
           <Card className='flex flex-row md:items-center justify-between p-3'>
             <div className='flex flex-col'>
               <span className='text-sm text-text-secondary'>Check-in interface</span>
-              <code className=''>{MOCK_DOMAIN_DEPLOY}/checkin</code>
+              <code>{MOCK_DOMAIN_DEPLOY}/checkin</code>
             </div>
             <div className='flex items-center space-x-2'>
               <Button size='icon' variant='secondary'>

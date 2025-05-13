@@ -12,6 +12,7 @@ interface StepNavigationProps {
   isLastStep?: boolean;
   isFirstStep?: boolean;
   isOptionalStep?: boolean;
+  disabled?: boolean;
 }
 
 export function StepNavigation({
@@ -24,6 +25,7 @@ export function StepNavigation({
   isLastStep = false,
   isFirstStep = false,
   isOptionalStep = false,
+  disabled = false
 }: StepNavigationProps) {
   return (
     <div className={`flex ${isFirstStep ? 'justify-end' : 'justify-between'} gap-2 w-full`}>
@@ -38,7 +40,7 @@ export function StepNavigation({
             {skipLabel}
           </Button>
         )}
-        <Button className='w-full' variant={isLastStep ? 'default' : 'secondary'} onClick={onNext}>
+        <Button className='w-full' variant={isLastStep ? 'default' : 'secondary'} onClick={onNext} disabled={disabled}>
           {isLastStep ? 'Create' : nextLabel}
         </Button>
       </div>
