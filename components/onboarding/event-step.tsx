@@ -80,9 +80,14 @@ export function EventStep({ onNext }: EventStepProps) {
 
       onNext();
     } catch (err: any) {
+      const message =
+        err?.issues?.[0]?.message ||
+        err?.message ||
+        'Failed to save event';
+
       toast({
         title: 'Error',
-        description: err.message ?? 'Failed to save event',
+        description: message,
         variant: 'destructive',
       });
     } finally {

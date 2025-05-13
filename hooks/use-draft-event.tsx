@@ -79,8 +79,8 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       toast({ title: 'Event created', description: 'Your event was created successfully.' });
     } catch (err: any) {
       console.error('Error creating event:', err);
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
       setError(err.message);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -101,11 +101,8 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       toast({ title: 'Saved', description: 'Your changes have been applied.' });
     } catch (err: any) {
       console.error('Error saving draft event:', err);
-      toast({
-        title: 'Save failed',
-        description: err.message || 'Something went wrong',
-        variant: 'destructive',
-      });
+      setError(err);
+      throw err;
     } finally {
       setLoading(false);
     }

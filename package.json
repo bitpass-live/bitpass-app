@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-   "postinstall": "node scripts/generate-instance-id.js",
-    "dev": "next dev",
-    "build": "next build",
+    "generate-instance": "node .bitpass/generate-instance-id.js",
+    "dev": "pnpm generate-instance && next dev",
+    "build": "pnpm generate-instance && next build",
     "start": "next start",
     "lint": "next lint"
   },

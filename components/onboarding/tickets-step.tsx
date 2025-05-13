@@ -119,6 +119,19 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
     [deleteTicket, toast]
   );
 
+  const handleNext = useCallback(() => {
+    if (tickets.length === 0) {
+      toast({
+        title: 'No tickets added',
+        description: 'You must create at least one ticket to continue.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    onNext();
+  }, [tickets, toast, onNext]);
+
   return (
     <OnboardingLayout
       currentStep={1}
@@ -252,7 +265,7 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
             </div>
           </Card>
         )}
-        
+
         {tickets?.length > 0 && (
           <Card>
             {tickets.map((ticket) => (
@@ -285,7 +298,7 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
           </Card>
         )}
 
-        <StepNavigation onNext={onNext} onBack={onBack} nextLabel='Next' />
+        <StepNavigation onNext={handleNext} onBack={onBack} nextLabel='Next' />
       </div>
     </OnboardingLayout>
   );

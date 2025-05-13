@@ -7,8 +7,7 @@ import { TicketsStep } from '@/components/onboarding/tickets-step';
 import { PaymentsStep } from '@/components/onboarding/payments-step';
 import { SummaryStep } from '@/components/onboarding/summary-step';
 import { DraftEventProvider } from '@/lib/draft-event-context';
-
-const instanceId = process.env.NEXT_PUBLIC_INSTANCE_ID;
+import { INSTANCE_ID } from '@/lib/instance-id';
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -40,7 +39,7 @@ export default function OnboardingPage() {
     }
   };
 
-  return <DraftEventProvider instanceId={instanceId!}>
+  return <DraftEventProvider instanceId={INSTANCE_ID}>
     {renderStep()}
   </DraftEventProvider>
 }
