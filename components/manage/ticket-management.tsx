@@ -29,8 +29,6 @@ import {
 import { EmptyState } from '@/components/empty-state';
 import { SatoshiIcon } from '@/components/icon/satoshi';
 
-import type { Ticket } from '@/types';
-
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { TicketType } from '@/lib/bitpass-sdk/src/types/event';
 
@@ -38,8 +36,10 @@ export function TicketManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState<TicketType | null>(null);
 
-  const { tickets, loading, draftEvent, addTicket, updateTicket, deleteTicket } = useDraftEventContext();
+  const { loading, draftEvent, addTicket, updateTicket, deleteTicket } = useDraftEventContext();
   const { paymentMethods } = useAuth();
+
+  const tickets = useMemo(() => draftEvent?.ticketTypes ?? [], [])
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');

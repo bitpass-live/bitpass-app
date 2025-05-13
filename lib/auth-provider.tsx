@@ -220,7 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         paymentMethods,
       }}
     >
-      {children}
+      {user.loaded ? children : <p>Loading user...</p>} {/* TODO: Add loading view */}
     </AuthContext.Provider>
   );
 }
