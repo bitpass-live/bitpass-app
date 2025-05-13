@@ -16,7 +16,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-lib/isntance-id.ts
+lib/instance-id.ts
 
 # env files
 .env*
