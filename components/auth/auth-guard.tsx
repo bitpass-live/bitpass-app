@@ -5,11 +5,14 @@ import type React from 'react';
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-provider';
+import { useDraftEventContext } from '@/lib/draft-event-context';
 
-const PROTECTED_ROUTES: string[] = ['/checkin', '/onboarding', '/dashboard']
+const PROTECTED_ROUTES: string[] = ['/checkin', '/admin', '/onboarding', '/dashboard']
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated } = useAuth();
+  const { draftEvent } = useDraftEventContext();
+  
   const router = useRouter();
   const pathname = usePathname();
 
@@ -21,9 +24,12 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         router.push('/');
         break;
         
-      case (pathname === '/' && isAuthenticated):
-        router.push('/dashboard');
+      case (pathname === '/' && isAuthenticated): {
+        if (!draftEvent || draftEvent.status !== "PUBLISHED") {
+          router.push('/onboarding')
+        }
         break;
+      }
     }
   }, [isAuthenticated, user, pathname]);
 

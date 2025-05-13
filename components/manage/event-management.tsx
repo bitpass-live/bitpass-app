@@ -18,10 +18,19 @@ import { SalesOverview } from './sales-overview';
 import { DiscountCodeManagement } from './discount-code-management';
 
 import { useDraftEventContext } from '@/lib/draft-event-context';
+import { useAuth } from '@/lib/auth-provider';
+import { useRouter } from 'next/navigation';
 
 export function EventManagement({ eventId }: { eventId: string }) {
   const { toast } = useToast();
   const { draftEvent, loading, error, setDraftField, saveDraftEvent } = useDraftEventContext();
+
+  const { user } = useAuth();
+  const router = useRouter()
+
+  if (!user.loaded) return null;
+
+  if (!user.id) router.push('/login')
 
   const handleShareEvent = useCallback(() => {
     const eventUrl = `${window.location.origin}/events/${eventId}`;
