@@ -16,6 +16,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+lib/isntance-id.ts
+
 # env files
 .env*
 
