@@ -67,7 +67,7 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>
+              <DropdownMenuLabel className='pb-0'>
                 {user?.authMethod === 'email'
                   ? 'Email Account'
                   : user?.authMethod === 'nostr'
@@ -75,15 +75,15 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
                   : 'Demo Account'}
               </DropdownMenuLabel>
               <DropdownMenuItem disabled className='text-xs text-muted-foreground'>
-                {user?.email || user?.pubkey || 'demo@eventro.com'}
+                {user?.email || 'demo@eventro.com'}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              {/* <DropdownMenuItem asChild>
                 <Link href='/settings'>
                   <Settings className='mr-2 h-4 w-4' />
                   <span>Settings</span>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem onClick={logout}>
                 <LogOut className='mr-2 h-4 w-4' />
                 <span>Log out</span>
