@@ -38,6 +38,7 @@ export interface AuthContextType {
   loginWithPrivateKey: (privateKey: string) => Promise<void>;
   requestOTPCode: (email: string) => Promise<void>;
   verifyOTPCode: (email: string, code: string) => Promise<void>;
+  loadUserData: () => Promise<void>;
   events: EventModel[];
   paymentMethods: PaymentMethod[];
 }
@@ -219,6 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         verifyOTPCode,
         events,
         paymentMethods,
+        loadUserData
       }}
     >
       {user.loaded ? children : <LoaderView />}

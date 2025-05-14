@@ -8,6 +8,7 @@ import { AuthGuard } from '@/components/auth/auth-guard';
 import './globals.css';
 import { DraftEventProvider } from '@/lib/draft-event-context';
 import { INSTANCE_ID } from '@/lib/instance-id';
+import { YadioProvider } from '@/lib/yadio-context';
 
 export const metadata: Metadata = {
   title: {
@@ -73,8 +74,10 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <DraftEventProvider instanceId={INSTANCE_ID}>
-            <AuthGuard>{children}</AuthGuard>
-            <Toaster />
+            <YadioProvider>
+              <AuthGuard>{children}</AuthGuard>
+              <Toaster />
+            </YadioProvider>
           </DraftEventProvider>
         </AuthProvider>
       </body>

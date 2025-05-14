@@ -7,10 +7,10 @@ import { EventInfo } from '@/components/event-info';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 
-import { DiscountCode } from '@/types';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
 import { CheckoutForm } from './checkout-form';
+import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
 
 export default function CheckoutPage() {
   const { user, isAuthenticated } = useAuth();

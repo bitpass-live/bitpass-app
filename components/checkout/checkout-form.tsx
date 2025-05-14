@@ -1,164 +1,135 @@
-'use client';
-
 import type React from 'react';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useToast } from '@/hooks/use-toast';;
-
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LightningPayment } from '@/components/lightning-payment';
 import { PaymentSuccess } from '@/components/payment-success';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-import { DiscountCode } from '@/types';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
 import { LoginForm } from '../login-form';
+import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
+import { useCheckoutSummary } from '@/hooks/use-checkout-summary';
 
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
   appliedDiscount: DiscountCode | null;
 }
 
-// Definir los pasos del checkout
 type CheckoutStep = 'form' | 'payment' | 'success';
 
-// Simplificar el proceso de checkout
 export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormProps) {
-  const [activeTab, setActiveTab] = useState('email');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [nostrId, setNostrId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('form');
-  const [saleId, setSaleId] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'lightning' | 'mercadopago' | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [lnInvoice, setLnInvoice] = useState<string | null>(null);
+
+  const { displayTotal, displayDiscount, displayCurrency } = useCheckoutSummary(selectedTickets, appliedDiscount);
 
   const router = useRouter();
   const { toast } = useToast();
-
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, paymentMethods, bitpassAPI } = useAuth();
   const { draftEvent } = useDraftEventContext();
 
-  if (!draftEvent || !draftEvent.id) return null;
+  if (!draftEvent?.id) return null;
 
-  // Calculate total
-  const ticketItems = Object.entries(selectedTickets)
-    .map(([ticketId, quantity]) => {
-      const ticket = draftEvent.ticketTypes.find((t) => t.id === ticketId);
-      if (!ticket || quantity <= 0) return null;
-
-      return {
-        ticket,
-        quantity,
-        subtotal: ticket.price * quantity,
-      };
-    })
-    .filter(Boolean) as { ticket: any; quantity: number; subtotal: number }[];
-
-  const totalAmount = ticketItems.reduce((sum, item) => sum + item.subtotal, 0);
   const totalTickets = Object.values(selectedTickets).reduce((sum, qty) => sum + qty, 0);
-
-  // Calcular el descuento
-  const calculateDiscount = () => { };
-
-  // Calcular el total con descuento
-  const discountAmount = 0;
-  const totalWithDiscount = totalAmount - discountAmount;
-
-  const isFormValid = () => {
-    if (totalTickets === 0) return false;
-    if (user.loaded && isAuthenticated) return true;
-
-    if (activeTab === 'email') {
-      return email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    } else {
-      return nostrId.trim() !== '' && (nostrId.startsWith('npub1') || nostrId.includes('@'));
-    }
-  };
+  const isFormValid = () => isAuthenticated && totalTickets > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormValid()) return;
 
-    if (!isFormValid()) {
+    try {
+      setIsSubmitting(true);
+
+      const payload = {
+        eventId: draftEvent.id,
+        ticketTypes: Object.entries(selectedTickets)
+          .filter(([_, qty]) => qty > 0)
+          .map(([ticketTypeId, quantity]) => ({ ticketTypeId, quantity })),
+        discountCode: appliedDiscount?.code,
+        paymentMethodId: paymentMethods?.[0]?.id,
+      };
+
+      const order = await bitpassAPI.createOrder(payload);
+
+      setOrderId(order.orderId);
+      setLnInvoice(order.lnInvoice);
+      setCurrentStep('payment');
+    } catch (err: any) {
       toast({
-        title: 'Error in the form',
-        description: 'Please complete all required fields and select a payment method.',
+        title: 'Error creating order',
+        description: err.message || 'Something went wrong',
         variant: 'destructive',
       });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    // Create a sale for the first ticket (simplified)
-    if (ticketItems.length > 0) {
-      const firstItem = ticketItems[0];
-      const buyer = activeTab === 'email' ? email : nostrId;
-
-      // TO-DO
-      // CREATE SALE
-      const newSaleId = 'sale123'; // Simulación de ID de venta
-
-      setSaleId(newSaleId);
+    } finally {
       setIsSubmitting(false);
-
-      setCurrentStep('payment');
     }
   };
 
   const handlePaymentSuccess = () => {
-    if (saleId) {
-      // TO-DO
-      // COMPLETE SALE
-      setCurrentStep('success');
-
-      toast({
-        title: 'Payment successful!',
-        description: 'Your payment has been processed successfully.',
-      });
-    }
+    setCurrentStep('success');
+    toast({
+      title: 'Payment successful!',
+      description: 'Your payment has been processed successfully.',
+    });
   };
 
   const handleViewTicket = () => {
-    if (saleId) {
-      router.push(`/events/${draftEvent.id}/ticket/${saleId}`);
+    if (orderId) {
+      router.push(`/events/${draftEvent.id}/ticket/${orderId}`);
     }
   };
 
-  // Renderizar el paso actual
-  if (currentStep === 'payment' && saleId) {
-    return <LightningPayment amount={totalWithDiscount} onPaymentSuccess={handlePaymentSuccess} />;
+  if (currentStep === 'payment' && lnInvoice && displayTotal && displayCurrency) {
+    return <LightningPayment invoice={lnInvoice} amount={displayTotal} currency={displayCurrency} onPaymentSuccess={handlePaymentSuccess} />;
   }
 
-  if (currentStep === 'success' && saleId) {
-    return <PaymentSuccess eventId={draftEvent.id} saleId={saleId} onViewTicket={handleViewTicket} />;
+  if (currentStep === 'success' && orderId) {
+    return <PaymentSuccess eventId={draftEvent.id} saleId={orderId} onViewTicket={handleViewTicket} />;
   }
 
-  // Paso del formulario (por defecto)
   return (
     <div className='space-y-4'>
       <h2 className='text-xl font-semibold text-white'>Complete purchase</h2>
 
-      {!isAuthenticated
-        ? (<LoginForm />)
-        : (<form onSubmit={handleSubmit} className='space-y-6'>
-            <div className='space-y-4'>
-              <Label htmlFor='name' className='text-white'>
-                Already authenticated with {user.authMethod}
-              </Label>
+      {!isAuthenticated ? (
+        <LoginForm />
+      ) : (
+        <form onSubmit={handleSubmit} className='space-y-6'>
+          <div className='space-y-4'>
+            <Label className='text-white'>Logged in with {user.authMethod}</Label>
+            <p>{user.authMethod === 'email' ? user.email : user.nostrPubKey}</p>
 
-              <p>{user.authMethod === "email" ? user.email : user.nostrPubKey}</p>
+            {displayTotal !== null && (
+              <div className='text-sm text-muted-foreground'>
+                {displayDiscount > 0 && (
+                  <p>
+                    Discount applied: <span className='font-semibold'>-${displayDiscount}</span>
+                  </p>
+                )}
+                <p>
+                  Total estimated:{' '}
+                  <span className='font-semibold'>${displayTotal}</span>{' '}
+                  ({displayCurrency})
+                </p>
+              </div>
+            )}
 
-              <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
-                {isSubmitting ? 'Processing...' : 'Continue to payment'}
-              </Button>
-            </div>
-          </form>)}
+            <Button
+              size='lg'
+              type='submit'
+              className='w-full'
+              disabled={isSubmitting || !isFormValid()}
+            >
+              {isSubmitting ? 'Processing...' : 'Continue to payment'}
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

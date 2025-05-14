@@ -1,31 +1,28 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { Zap } from 'lucide-react';
+import { Currencies } from '@/types';
+import { useYadio } from '@/lib/yadio-context';
 
 interface LightningPaymentProps {
+  invoice: string;
   amount: number;
+  currency: Currencies;
   onPaymentSuccess: () => void;
 }
 
-export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentProps) {
+export function LightningPayment({ invoice, amount, currency, onPaymentSuccess }: LightningPaymentProps) {
   const [isChecking, setIsChecking] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(900); // 15 minutos en segundos
-  const [invoice, setInvoice] = useState('');
+  const [timeLeft, setTimeLeft] = useState(600);
+  const [fiatValue, setFiatValue] = useState<number | null>(null);
+  const [satsValue, setSatsValue] = useState<number | null>(null);
 
-  // Generar un invoice falso para la demo
+  const converter = useYadio();
+
   useEffect(() => {
-    // En una implementación real, aquí se llamaría a una API para generar el invoice
-    const demoInvoice = `lnbc${Math.floor(
-      amount * 100,
-    )}n1p3hkzgzpp5yndenv56xyr9rt8c0lx39z73mf6q3w96yvrj458qt6y70qtfwf82sdqqcqzpgxqyz5vqsp5usw0m4p8gqnl9yt6u7x97er2y7qefr4mpa9m04thazryd5nr6hs9qyyssqy5vk79nvv9xzq8jlq5m8vft46xgrn9t6n9xgmkpwkv5h3v3j4ssxrwjl9l3yqynplwp3snxwhx48a3y8ypnv6k22apct5a6ygycqwgzj25`;
-    setInvoice(demoInvoice);
-
-    // Iniciar el temporizador
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -35,9 +32,26 @@ export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentP
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [amount]);
+  }, []);
+
+  useEffect(() => {
+    const convert = async () => {
+      try {
+        const sats = currency === 'SAT'
+          ? amount
+          : await converter.convertCurrency({ amount, from: currency, to: 'SAT' });
+        setSatsValue(Math.round(sats));
+
+        const fiat = await converter.convertCurrency({ amount, from: currency, to: currency });
+        setFiatValue(Math.round(fiat));
+      } catch {
+        setSatsValue(null);
+        setFiatValue(null);
+      }
+    };
+    convert();
+  }, [amount, currency]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -47,8 +61,6 @@ export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentP
 
   const handleSimulatePayment = () => {
     setIsChecking(true);
-
-    // Simular verificación de pago
     setTimeout(() => {
       onPaymentSuccess();
     }, 2000);
@@ -70,8 +82,14 @@ export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentP
           </div>
 
           <div className='text-center mb-6'>
-            <p className='text-lg font-bold text-white mb-1'>{formatCurrency(amount, 'ARS')}</p>
-            <p className='text-sm text-muted-foreground'>≈ {Math.floor(amount * 100)} sats</p>
+            {fiatValue !== null && (
+              <p className='text-lg font-bold text-white mb-1'>
+                {formatCurrency(fiatValue, currency)} {currency}
+              </p>
+            )}
+            {satsValue !== null && (
+              <p className='text-sm text-muted-foreground'>≈ {satsValue.toLocaleString()} sats</p>
+            )}
           </div>
 
           <div className='w-full space-y-3'>
@@ -80,14 +98,7 @@ export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentP
               className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray'
               disabled={isChecking}
             >
-              {isChecking ? (
-                'Verifying payment...'
-              ) : (
-                <>
-                  <Zap className='mr-2 h-4 w-4' />
-                  Simulate payment
-                </>
-              )}
+              {isChecking ? 'Verifying payment...' : (<><Zap className='mr-2 h-4 w-4' />Simulate payment</>)}
             </Button>
 
             <Button

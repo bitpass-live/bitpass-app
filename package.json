@@ -66,6 +66,7 @@
     "use-sync-external-store": "latest",
     "uuid": "latest",
     "vaul": "^0.9.6",
+    "yadio-sdk": "^1.0.3",
     "zod": "^3.24.4",
     "zustand": "latest"
   },

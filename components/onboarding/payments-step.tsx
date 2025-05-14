@@ -21,7 +21,7 @@ interface PaymentsStepProps {
 }
 
 export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
-  const { bitpassAPI, paymentMethods } = useAuth();
+  const { bitpassAPI, paymentMethods, loadUserData } = useAuth();
   const { draftEvent } = useDraftEventContext();
   const { toast } = useToast();
 
@@ -54,13 +54,17 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
         const newMethod = await bitpassAPI.addLightningPaymentMethod(lightningAddress);
         methodId = newMethod.id;
       } else {
-        await bitpassAPI.updateLightningPaymentMethod(lightning.id, lightningAddress);
+        if (lightning.lightningAddress !== lightningAddress) {
+          await bitpassAPI.updateLightningPaymentMethod(lightning.id, lightningAddress);
+        }
         methodId = lightning.id;
       }
 
       if (draftEvent?.id) {
         await bitpassAPI.addPaymentMethodToEvent(draftEvent.id, methodId);
       }
+
+      await loadUserData();
 
       toast({
         title: 'Lightning Address saved',
@@ -78,6 +82,7 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <OnboardingLayout
