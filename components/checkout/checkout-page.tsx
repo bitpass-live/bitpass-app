@@ -4,13 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { EventInfo } from '@/components/event-info';
-import { CheckoutForm } from '@/components/checkout-form';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 
 import { DiscountCode } from '@/types';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
+import { CheckoutForm } from './checkout-form';
 
 export default function CheckoutPage() {
   const { user, isAuthenticated } = useAuth();
@@ -49,15 +49,10 @@ export default function CheckoutPage() {
               <div className='flex gap-2'>
                 <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
               </div>
-              {(user.loaded && !isAuthenticated) &&
-              <Button variant='secondary' size='sm' asChild>
-                <Link href='/login'>Sign in</Link>
-              </Button>}
-
               {(user.loaded && isAuthenticated && draftEvent.creatorId === user.id) &&
-              <Button variant='secondary' size='sm' asChild>
-                <Link href='/admin'>Admin panel</Link>
-              </Button>}
+                <Button variant='secondary' size='sm' asChild>
+                  <Link href='/admin'>Admin panel</Link>
+                </Button>}
             </div>
             <EventInfo
               event={draftEvent}

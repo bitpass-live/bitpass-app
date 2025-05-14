@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DiscountCode } from '@/types';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
+import { LoginForm } from '../login-form';
 
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
@@ -143,76 +144,21 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
     <div className='space-y-4'>
       <h2 className='text-xl font-semibold text-white'>Complete purchase</h2>
 
-      <form onSubmit={handleSubmit} className='space-y-6'>
-        {!isAuthenticated
-          ?
-          (<Tabs defaultValue='email' value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className='grid w-full grid-cols-2 mb-6'>
-              <TabsTrigger value='email'>Email</TabsTrigger>
-              <TabsTrigger value='nostr'>Nostr</TabsTrigger>
-            </TabsList>
-
+      {!isAuthenticated
+        ? (<LoginForm />)
+        : (<form onSubmit={handleSubmit} className='space-y-6'>
             <div className='space-y-4'>
-              {activeTab === 'email' && (
-                <div>
-                  <Label htmlFor='name' className='text-white'>
-                    Name
-                  </Label>
-                  <Input
-                    id='name'
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder='Your name'
-                    className='bg-[#1A1A1A] border-border-gray text-white mt-2'
-                  />
-                </div>
-              )}
+              <Label htmlFor='name' className='text-white'>
+                Already authenticated with {user.authMethod}
+              </Label>
 
-              <TabsContent value='email' className='space-y-4 mt-0 p-0'>
-                <div>
-                  <Label htmlFor='email' className='text-white'>
-                    Email (required)
-                  </Label>
-                  <Input
-                    id='email'
-                    type='email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder='your@email.com'
-                    required={activeTab === 'email'}
-                    className='bg-[#1A1A1A] border-border-gray text-white mt-2'
-                  />
-                </div>
-              </TabsContent>
+              <p>{user.authMethod === "email" ? user.email : user.nostrPubKey}</p>
 
-              <TabsContent value='nostr' className='space-y-4 mt-0 p-0'>
-                <div>
-                  <Label htmlFor='nostrId' className='text-white'>
-                    Pubkey Nostr (required)
-                  </Label>
-                  <Input
-                    id='nostrId'
-                    value={nostrId}
-                    onChange={(e) => setNostrId(e.target.value)}
-                    placeholder='npub1... o your@lightning.address'
-                    required={activeTab === 'nostr'}
-                    className='bg-[#1A1A1A] border-border-gray text-white mt-2'
-                  />
-                </div>
-              </TabsContent>
+              <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
+                {isSubmitting ? 'Processing...' : 'Continue to payment'}
+              </Button>
             </div>
-          </Tabs>) : <div className='space-y-4'>
-            <Label htmlFor='name' className='text-white'>
-              Already authenticated with {user.authMethod}
-            </Label>
-
-            <p>{user.authMethod === "email" ? user.email : user.nostrPubKey}</p>
-          </div>}
-
-        <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
-          {isSubmitting ? 'Processing...' : 'Continue to payment'}
-        </Button>
-      </form>
+          </form>)}
     </div>
   );
 }

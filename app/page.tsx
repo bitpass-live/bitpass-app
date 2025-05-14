@@ -37,7 +37,7 @@ export default function AuthPage() {
     );
   }
 
-  if (user.loaded && !isAuthenticated) {
+  if (user.loaded && !isAuthenticated && (!draftEvent || !draftEvent.id)) {
     return (
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 flex items-center justify-center py-6">

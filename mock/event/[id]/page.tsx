@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { EventInfo } from '@/components/event-info';
-import { CheckoutForm } from '@/components/checkout-form';
+import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 
