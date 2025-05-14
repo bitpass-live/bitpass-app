@@ -15,10 +15,9 @@ import { PaymentSuccess } from '@/components/payment-success';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { DiscountCode } from '@/types';
-import { MOCK_EVENT } from '@/mock/data';
+import { useDraftEventContext } from '@/lib/draft-event-context';
 
 interface CheckoutFormProps {
-  eventId: string;
   selectedTickets: Record<string, number>;
   appliedDiscount: DiscountCode | null;
 }
@@ -27,7 +26,7 @@ interface CheckoutFormProps {
 type CheckoutStep = 'form' | 'payment' | 'success';
 
 // Simplificar el proceso de checkout
-export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: CheckoutFormProps) {
+export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormProps) {
   const [activeTab, setActiveTab] = useState('email');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -40,20 +39,20 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
   const router = useRouter();
   const { toast } = useToast();
 
-  const event = MOCK_EVENT;
+  const { draftEvent } = useDraftEventContext();
 
-  if (!event) return null;
+  if (!draftEvent || !draftEvent.id) return null;
 
   // Calculate total
   const ticketItems = Object.entries(selectedTickets)
     .map(([ticketId, quantity]) => {
-      const ticket = event.tickets.find((t) => t.id === ticketId);
+      const ticket = draftEvent.ticketTypes.find((t) => t.id === ticketId);
       if (!ticket || quantity <= 0) return null;
 
       return {
         ticket,
         quantity,
-        subtotal: ticket.amount * quantity,
+        subtotal: ticket.price * quantity,
       };
     })
     .filter(Boolean) as { ticket: any; quantity: number; subtotal: number }[];
@@ -123,7 +122,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
 
   const handleViewTicket = () => {
     if (saleId) {
-      router.push(`/events/${eventId}/ticket/${saleId}`);
+      router.push(`/events/${draftEvent.id}/ticket/${saleId}`);
     }
   };
 
@@ -133,7 +132,7 @@ export function CheckoutForm({ eventId, selectedTickets, appliedDiscount }: Chec
   }
 
   if (currentStep === 'success' && saleId) {
-    return <PaymentSuccess eventId={eventId} saleId={saleId} onViewTicket={handleViewTicket} />;
+    return <PaymentSuccess eventId={draftEvent.id} saleId={saleId} onViewTicket={handleViewTicket} />;
   }
 
   // Paso del formulario (por defecto)
