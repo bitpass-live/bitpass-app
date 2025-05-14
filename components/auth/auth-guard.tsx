@@ -12,20 +12,16 @@ const PROTECTED_ROUTES: string[] = ['/admin', '/admin/checkin', '/admin/settings
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated } = useAuth();
   const { draftEvent } = useDraftEventContext();
-  
+
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     if (!user || !user.loaded) return;
-    
+
     switch (true) {
       case (PROTECTED_ROUTES.includes(pathname) && !isAuthenticated):
         router.push('/');
-        break;
-
-      case (pathname === '/admin' && (!draftEvent || !draftEvent.id)):
-        router.push('/onboarding');
         break;
 
       case (PROTECTED_ROUTES.includes(pathname) && isAuthenticated): {
@@ -40,7 +36,15 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
           break;
         }
       }
-        
+
+      case (pathname === '/onboarding' && (draftEvent && draftEvent.status === "PUBLISHED")):
+        router.push('/admin');
+        break;
+
+      case (pathname === '/admin' && (!draftEvent || !draftEvent.id)):
+        router.push('/onboarding');
+        break;
+
       case (pathname === '/login' && isAuthenticated): {
         router.push('/')
         break;
