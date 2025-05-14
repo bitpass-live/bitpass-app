@@ -67,8 +67,8 @@ export function useCheckoutSummary(
         ? (total * appliedDiscount.percentage) / 100
         : 0;
 
-      setDisplayDiscount(Math.round(discount));
-      setDisplayTotal(Math.round(total - discount));
+      setDisplayDiscount(parseFloat(discount.toFixed(2)));
+      setDisplayTotal(parseFloat((total - discount).toFixed(2)));
     };
 
     calculate();
