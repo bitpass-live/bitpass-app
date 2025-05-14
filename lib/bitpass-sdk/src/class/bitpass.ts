@@ -287,6 +287,43 @@ export class Bitpass {
   }
 
   /**
+ * Create a new order for the given event and selected ticket types.
+ *
+ * @param input - Order creation input
+ * @param input.eventId - ID of the event
+ * @param input.ticketTypes - List of ticket types and their quantities
+ * @param input.discountCode - (Optional) Discount code to apply
+ * @param input.paymentMethodId - (Optional) Payment method ID to use
+ * @returns The created order including Lightning invoice and metadata
+ *
+ * @throws If the request fails or the server returns an error
+ */
+  async createOrder(input: {
+    eventId: string;
+    ticketTypes: { ticketTypeId: string; quantity: number }[];
+    discountCode?: string;
+    paymentMethodId?: string;
+  }): Promise<{
+    orderId: string;
+    lnInvoice: string;
+    expiresAt: string;
+    totalAmount: number;
+  }> {
+    const res = await fetch(`${this.baseUrl}/orders`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error || 'Failed to create order');
+    }
+
+    return res.json();
+  }
+
+  /**
    * Fetch detailed ticket types for an event (admin view).
    * @param eventId UUID of the event.
    * @returns Array of ticket types with orders & tickets.
