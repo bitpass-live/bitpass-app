@@ -122,7 +122,7 @@ export function PaymentsStep({ onNext, onBack }: PaymentsStepProps) {
           </CardContent>
         </Card>
 
-        <StepNavigation onNext={handleVerify} onBack={onBack} nextLabel='Next' />
+        <StepNavigation onNext={handleVerify} onBack={onBack} nextLabel='Next' disabled={isSubmitting} />
       </div>
     </OnboardingLayout>
   );

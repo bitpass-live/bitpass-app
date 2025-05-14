@@ -143,7 +143,7 @@ export function EventStep({ onNext }: EventStepProps) {
           isFirstStep={true}
           onNext={handleNext}
           nextLabel={isSubmitting ? 'Saving...' : 'Next'}
-          disabled={loading}
+          disabled={loading || isSubmitting}
         />
       </div>
     </OnboardingLayout>
