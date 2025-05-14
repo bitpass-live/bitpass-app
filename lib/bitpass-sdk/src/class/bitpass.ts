@@ -179,7 +179,7 @@ export class Bitpass {
    * @param eventId UUID of the event.
    * @returns Event details.
    */
-  async getEvent(eventId: string): Promise<EventModel> {
+  async getEvent(eventId: string): Promise<FullEvent> {
     const res = await fetch(`${this.baseUrl}/events/${eventId}`, {
       method: "GET",
       headers: this.headers,

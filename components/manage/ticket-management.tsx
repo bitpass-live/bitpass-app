@@ -30,7 +30,7 @@ import { EmptyState } from '@/components/empty-state';
 import { SatoshiIcon } from '@/components/icon/satoshi';
 
 import { useDraftEventContext } from '@/lib/draft-event-context';
-import { TicketType } from '@/lib/bitpass-sdk/src/types/event';
+import { TicketType, TicketTypeWithSoldCount } from '@/lib/bitpass-sdk/src/types/event';
 
 export function TicketManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -278,7 +278,7 @@ export function TicketManagement() {
       ) : (
         <Card>
           {tickets?.length > 0 &&
-            tickets?.map((ticket: TicketType) => (
+            tickets?.map((ticket: TicketTypeWithSoldCount) => (
               <div className='border-b last:border-none' key={ticket.id}>
                 <div className='p-6'>
                   <div className='flex items-center justify-between gap-4'>
@@ -288,8 +288,7 @@ export function TicketManagement() {
                     </div>
                     <div className='hidden md:flex whitespace-nowrap'>
                       <p className='text-muted-foreground text-sm'>
-                        {/* TODO: add sold tickets amount */}
-                        {ticket.quantity === -1 ? 'Ilimitado' : `${0} / ${ticket.quantity} vendidos`}
+                        {ticket.quantity === -1 ? 'Ilimitado' : `${ticket.soldCount} / ${ticket.quantity} vendidos`}
                       </p>
                     </div>
                     <div className='flex gap-2'>

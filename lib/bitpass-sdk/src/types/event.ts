@@ -26,8 +26,12 @@ export type TeamMember = {
   };
 };
 
+export interface TicketTypeWithSoldCount extends TicketType {
+  soldCount: number;
+}
+
 export interface FullEvent extends Event {
-  ticketTypes: TicketType[];
+  ticketTypes: TicketTypeWithSoldCount[];
   discountCodes: DiscountCode[];
   team: TeamMember[];
   paymentMethods: PaymentMethod[];

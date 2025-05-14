@@ -104,7 +104,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
         <h2 className='text-xl font-semibold text-white'>Tickets</h2>
 
         {event.ticketTypes.map((ticket) => {
-          const availableQuantity = ticket.quantity - (0); //TODO: Add sold tickets
+          const availableQuantity = ticket.quantity - (ticket.soldCount);
           const isAvailable = availableQuantity > 0;
           const quantity = selectedTickets[ticket.id] || 0;
           const isFreeTicket = ticket.price === 0;
