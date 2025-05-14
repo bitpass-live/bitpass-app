@@ -7,7 +7,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-provider';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 
-const PROTECTED_ROUTES: string[] = ['/checkin', '/admin', '/onboarding', '/dashboard']
+const PROTECTED_ROUTES: string[] = ['/admin', '/admin/checkin', '/admin/settings', '/onboarding']
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated } = useAuth();
@@ -23,11 +23,26 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       case (PROTECTED_ROUTES.includes(pathname) && !isAuthenticated):
         router.push('/');
         break;
-        
-      case (pathname === '/' && isAuthenticated): {
-        if (!draftEvent || draftEvent.status !== "PUBLISHED") {
-          router.push('/onboarding')
+
+      case (pathname === '/admin' && (!draftEvent || !draftEvent.id)):
+        router.push('/onboarding');
+        break;
+
+      case (PROTECTED_ROUTES.includes(pathname) && isAuthenticated): {
+        if (!draftEvent) {
+          break;
         }
+
+        const isOwner = draftEvent?.creatorId === user.id
+        const isTeamMember = draftEvent?.team?.some((member) => member.userId === user.id);
+        if (!isOwner && !isTeamMember) {
+          router.push('/')
+          break;
+        }
+      }
+        
+      case (pathname === '/login' && isAuthenticated): {
+        router.push('/')
         break;
       }
     }

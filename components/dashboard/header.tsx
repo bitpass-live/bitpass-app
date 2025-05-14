@@ -30,14 +30,14 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
         <div className='min-w-10'>
           {backGoHome && (
             <Button className='gap-2' variant='secondary' size='icon' asChild>
-              <Link href='/dashboard'>
+              <Link href='/'>
                 <ArrowLeft className='h-4 w-4' />
               </Link>
             </Button>
           )}
         </div>
         <div className='flex justify-center w-full h-full'>
-          <Link href='/dashboard' className='flex items-center'>
+          <Link href='/' className='flex items-center'>
             <Logo className='text-xl' />
           </Link>
         </div>

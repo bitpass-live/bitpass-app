@@ -10,7 +10,6 @@ import { useToast } from "@/components/ui/use-toast"
 import { ArrowLeft, Eye, EyeOff, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useAuth } from "@/lib/auth-provider"
-import { useRouter } from "next/navigation"
 
 interface NostrPrivateKeyFormProps {
   onBack: () => void
@@ -22,8 +21,6 @@ export function NostrPrivateKeyForm({ onBack }: NostrPrivateKeyFormProps) {
   const [showKey, setShowKey] = useState(false)
   const { toast } = useToast()
   const { loginWithPrivateKey } = useAuth();
-
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,10 +47,8 @@ export function NostrPrivateKeyForm({ onBack }: NostrPrivateKeyFormProps) {
 
     try {
       await loginWithPrivateKey(privateKey);
-
       setIsLoading(false)
 
-      router.push('/checkin');
       toast({
         title: 'Logged in successfully',
         description: 'Welcome to Bitpass!',

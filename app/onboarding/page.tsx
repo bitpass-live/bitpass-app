@@ -19,7 +19,7 @@ export default function OnboardingPage() {
   };
 
   const handleFinish = () => {
-    window.location.href = '/dashboard';
+    window.location.href = '/admin';
   };
 
   const renderStep = () => {

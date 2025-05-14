@@ -18,9 +18,9 @@ export function MobileNav({ children }: any) {
         ) : (
           <>
             <Link
-              href='/dashboard'
+              href='/admin'
               className={`flex flex-col items-center justify-center gap-1 w-20 h-full ${
-                pathname === '/dashboard' ? 'text-primary' : 'text-muted-foreground'
+                pathname === '/admin' ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
               <LayoutDashboard className='h-5 w-5' />

@@ -39,7 +39,7 @@ export function EmailLoginForm() {
 
   if (otpSent) {
     return (
-      <OTPVerificationForm email={email} onSuccess={() => router.push('/dashboard')} onBack={() => setOtpSent(false)} />
+      <OTPVerificationForm email={email} onSuccess={() => router.push('/')} onBack={() => setOtpSent(false)} />
     );
   }
 

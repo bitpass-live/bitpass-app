@@ -8,10 +8,11 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Event, DiscountCode } from '@/types';
+import { DiscountCode } from '@/types';
+import { FullEvent } from '@/lib/bitpass-sdk/src/types/event';
 
 interface EventInfoProps {
-  event: Event;
+  event: FullEvent;
   selectedTickets: Record<string, number>;
   onTicketChange: (ticketId: string, quantity: number) => void;
   onDiscountValidated: (code: DiscountCode | null) => void;
@@ -71,7 +72,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
         <div className='flex flex-col gap-2 text-sm text-muted-foreground mb-4'>
           <div className='flex items-center gap-1'>
             <CalendarIcon className='h-4 w-4' />
-            <span>{formatDate(event.start)}</span>
+            <span>{formatDate(event.startsAt)}</span>
           </div>
           <div className='flex items-center gap-1'>
             <MapPinIcon className='h-4 w-4' />
@@ -86,11 +87,11 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
       <div className='space-y-2'>
         <h2 className='text-xl font-semibold text-white'>Tickets</h2>
 
-        {event.tickets.map((ticket) => {
-          const availableQuantity = ticket.quantity - (ticket.sold || 0);
+        {event.ticketTypes.map((ticket) => {
+          const availableQuantity = ticket.quantity - (0); //TODO: Add sold tickets
           const isAvailable = availableQuantity > 0;
           const quantity = selectedTickets[ticket.id] || 0;
-          const isFreeTicket = ticket.amount === 0;
+          const isFreeTicket = ticket.price === 0;
 
           return (
             <Card key={ticket.id} className='bg-[#0A0A0A] border-border-gray'>
@@ -99,25 +100,22 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                   quantity === 0 && isAvailable ? 'cursor-pointer' : ''
                 }`}
                 onClick={() => {
-                  // Solo permitir clics si hay tickets disponibles
                   if (!isAvailable) return;
 
-                  // Para tickets gratuitos, simplemente establecer la cantidad en 1
                   if (isFreeTicket && quantity === 0) {
                     onTicketChange(ticket.id, 1);
                     return;
                   }
 
-                  // Solo incrementar al hacer clic en la card si la cantidad es 0
                   if (quantity === 0) {
                     handleIncrement(ticket.id);
                   }
                 }}
               >
                 <div>
-                  <h3 className='font-medium text-white'>{ticket.title}</h3>
+                  <h3 className='font-medium text-white'>{ticket.name}</h3>
                   <p className={`${!isAvailable ? 'text-muted-foreground' : 'text-fluorescent-yellow'}`}>
-                    {ticket.amount === 0 ? 'Gratis' : formatCurrency(ticket.amount, ticket.currency)}
+                    {ticket.price === 0 ? 'Gratis' : formatCurrency(ticket.price, ticket.currency)}
                   </p>
                   {ticket.quantity !== -1 && (
                     <p className='text-xs text-muted-foreground'>

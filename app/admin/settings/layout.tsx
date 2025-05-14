@@ -4,10 +4,11 @@ import type React from "react"
 
 import { useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
+import { Loader } from "lucide-react"
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <SettingsLayoutContent>{children}</SettingsLayoutContent>
     </Suspense>
   )

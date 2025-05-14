@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';;
 import { useAuth } from '@/lib/auth-provider';
@@ -11,7 +10,6 @@ import { Zap, Key } from 'lucide-react';
 export function NostrLoginForm() {
   const [showPrivateKeyForm, setShowPrivateKeyForm] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const router = useRouter();
   const { toast } = useToast();
   const { loginWithNostrExtension } = useAuth();
 
@@ -20,7 +18,6 @@ export function NostrLoginForm() {
 
     try {
       await loginWithNostrExtension();
-      router.push('/checkin');
 
       toast({
         title: 'Connected successfully',
