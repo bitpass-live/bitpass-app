@@ -29,12 +29,24 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
   // Obtener la función de validación de códigos de descuento
   //TO-DO
 
-  const handleDecrement = (ticketId: string) => {};
+  const handleIncrement = (ticketId: string) => {
+    const currentQuantity = selectedTickets[ticketId] || 0;
+    onTicketChange(ticketId, currentQuantity + 1);
+  };
 
-  const handleIncrement = (ticketId: string) => {};
+  const handleDecrement = (ticketId: string) => {
+    const currentQuantity = selectedTickets[ticketId] || 0;
+    if (currentQuantity > 0) {
+      onTicketChange(ticketId, currentQuantity - 1);
+    }
+  };
 
-  const totalAmount = 0;
-  const totalTickets = 0;
+  const totalAmount = event.ticketTypes.reduce((total, ticket) => {
+    const quantity = selectedTickets[ticket.id] || 0;
+    return total + ticket.price * quantity;
+  }, 0);
+
+  const totalTickets = Object.values(selectedTickets).reduce((sum, q) => sum + q, 0);
 
   // Función para validar el código de descuento
   const handleValidateCode = () => {
@@ -54,13 +66,17 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
     });
   };
 
-  // Calcular el descuento
   const calculateDiscount = () => {
     if (!validatedCode) return 0;
+
+    if (validatedCode.discountType === 'PERCENTAGE') {
+      return (totalAmount * validatedCode.value) / 100;
+    }
+
+    return Math.min(validatedCode.value, totalAmount);
   };
 
-  // Calcular el total con descuento
-  const discountAmount = 0;
+  const discountAmount = calculateDiscount();
   const totalWithDiscount = totalAmount - discountAmount;
 
   return (
@@ -96,9 +112,8 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
           return (
             <Card key={ticket.id} className='bg-[#0A0A0A] border-border-gray'>
               <CardContent
-                className={`p-6 flex items-center justify-between ${
-                  quantity === 0 && isAvailable ? 'cursor-pointer' : ''
-                }`}
+                className={`p-6 flex items-center justify-between ${quantity === 0 && isAvailable ? 'cursor-pointer' : ''
+                  }`}
                 onClick={() => {
                   if (!isAvailable) return;
 

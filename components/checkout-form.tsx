@@ -71,6 +71,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
 
   const isFormValid = () => {
     if (totalTickets === 0) return false;
+    if (user.loaded && isAuthenticated) return true;
 
     if (activeTab === 'email') {
       return email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
