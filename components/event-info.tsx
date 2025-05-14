@@ -132,7 +132,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                         size='icon'
                         className='h-8 w-8 rounded-full border-border-gray'
                         onClick={(e) => {
-                          e.stopPropagation(); // Evitar que el clic se propague a la card
+                          e.stopPropagation();
                           handleDecrement(ticket.id);
                         }}
                         disabled={quantity === 0}

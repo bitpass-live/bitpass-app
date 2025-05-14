@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { DiscountCode } from '@/types';
 import { useDraftEventContext } from '@/lib/draft-event-context';
+import { useAuth } from '@/lib/auth-provider';
 
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
@@ -39,6 +40,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
   const router = useRouter();
   const { toast } = useToast();
 
+  const { user, isAuthenticated } = useAuth();
   const { draftEvent } = useDraftEventContext();
 
   if (!draftEvent || !draftEvent.id) return null;
@@ -61,7 +63,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
   const totalTickets = Object.values(selectedTickets).reduce((sum, qty) => sum + qty, 0);
 
   // Calcular el descuento
-  const calculateDiscount = () => {};
+  const calculateDiscount = () => { };
 
   // Calcular el total con descuento
   const discountAmount = 0;
@@ -141,63 +143,70 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
       <h2 className='text-xl font-semibold text-white'>Complete purchase</h2>
 
       <form onSubmit={handleSubmit} className='space-y-6'>
-        <Tabs defaultValue='email' value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className='grid w-full grid-cols-2 mb-6'>
-            <TabsTrigger value='email'>Email</TabsTrigger>
-            <TabsTrigger value='nostr'>Nostr</TabsTrigger>
-          </TabsList>
+        {!isAuthenticated
+          ?
+          (<Tabs defaultValue='email' value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className='grid w-full grid-cols-2 mb-6'>
+              <TabsTrigger value='email'>Email</TabsTrigger>
+              <TabsTrigger value='nostr'>Nostr</TabsTrigger>
+            </TabsList>
 
-          <div className='space-y-4'>
-            {/* Mostrar el campo de nombre solo cuando la pestaña Email está activa */}
-            {activeTab === 'email' && (
-              <div>
-                <Label htmlFor='name' className='text-white'>
-                  Name
-                </Label>
-                <Input
-                  id='name'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder='Your name'
-                  className='bg-[#1A1A1A] border-border-gray text-white mt-2'
-                />
-              </div>
-            )}
+            <div className='space-y-4'>
+              {activeTab === 'email' && (
+                <div>
+                  <Label htmlFor='name' className='text-white'>
+                    Name
+                  </Label>
+                  <Input
+                    id='name'
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder='Your name'
+                    className='bg-[#1A1A1A] border-border-gray text-white mt-2'
+                  />
+                </div>
+              )}
 
-            <TabsContent value='email' className='space-y-4 mt-0 p-0'>
-              <div>
-                <Label htmlFor='email' className='text-white'>
-                  Email (required)
-                </Label>
-                <Input
-                  id='email'
-                  type='email'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder='your@email.com'
-                  required={activeTab === 'email'}
-                  className='bg-[#1A1A1A] border-border-gray text-white mt-2'
-                />
-              </div>
-            </TabsContent>
+              <TabsContent value='email' className='space-y-4 mt-0 p-0'>
+                <div>
+                  <Label htmlFor='email' className='text-white'>
+                    Email (required)
+                  </Label>
+                  <Input
+                    id='email'
+                    type='email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder='your@email.com'
+                    required={activeTab === 'email'}
+                    className='bg-[#1A1A1A] border-border-gray text-white mt-2'
+                  />
+                </div>
+              </TabsContent>
 
-            <TabsContent value='nostr' className='space-y-4 mt-0 p-0'>
-              <div>
-                <Label htmlFor='nostrId' className='text-white'>
-                  Pubkey Nostr (required)
-                </Label>
-                <Input
-                  id='nostrId'
-                  value={nostrId}
-                  onChange={(e) => setNostrId(e.target.value)}
-                  placeholder='npub1... o your@lightning.address'
-                  required={activeTab === 'nostr'}
-                  className='bg-[#1A1A1A] border-border-gray text-white mt-2'
-                />
-              </div>
-            </TabsContent>
-          </div>
-        </Tabs>
+              <TabsContent value='nostr' className='space-y-4 mt-0 p-0'>
+                <div>
+                  <Label htmlFor='nostrId' className='text-white'>
+                    Pubkey Nostr (required)
+                  </Label>
+                  <Input
+                    id='nostrId'
+                    value={nostrId}
+                    onChange={(e) => setNostrId(e.target.value)}
+                    placeholder='npub1... o your@lightning.address'
+                    required={activeTab === 'nostr'}
+                    className='bg-[#1A1A1A] border-border-gray text-white mt-2'
+                  />
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>) : <div className='space-y-4'>
+            <Label htmlFor='name' className='text-white'>
+              Already authenticated with {user.authMethod}
+            </Label>
+
+            <p>{user.authMethod === "email" ? user.email : user.nostrPubKey}</p>
+          </div>}
 
         <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
           {isSubmitting ? 'Processing...' : 'Continue to payment'}

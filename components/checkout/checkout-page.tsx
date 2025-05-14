@@ -49,9 +49,14 @@ export default function CheckoutPage() {
               <div className='flex gap-2'>
                 <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
               </div>
-              {(user.loaded && !isAuthenticated) && 
+              {(user.loaded && !isAuthenticated) &&
               <Button variant='secondary' size='sm' asChild>
                 <Link href='/login'>Sign in</Link>
+              </Button>}
+
+              {(user.loaded && isAuthenticated && draftEvent.creatorId === user.id) &&
+              <Button variant='secondary' size='sm' asChild>
+                <Link href='/admin'>Admin panel</Link>
               </Button>}
             </div>
             <EventInfo
