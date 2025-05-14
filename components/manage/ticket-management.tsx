@@ -284,7 +284,7 @@ export function TicketManagement() {
                   <div className='flex items-center justify-between gap-4'>
                     <div className='flex items-center gap-2 w-full'>
                       <h3 className='text-lg font-semibold'>{ticket.name}</h3>
-                      <p className='text-text-secondary'>{ticket?.price === 0 ? 'Gratis' : '$' + ticket?.price}</p>
+                      <p className='text-text-secondary'>{ticket?.price === 0 ? 'Gratis' : '$' + ticket?.price + ' ' + ticket.currency}</p>
                     </div>
                     <div className='hidden md:flex whitespace-nowrap'>
                       <p className='text-muted-foreground text-sm'>
