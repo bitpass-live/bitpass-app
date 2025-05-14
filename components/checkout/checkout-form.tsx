@@ -85,7 +85,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
   };
 
   if (currentStep === 'payment' && lnInvoice && displayTotal && displayCurrency) {
-    return <LightningPayment invoice={lnInvoice} amount={displayTotal} currency={displayCurrency} onPaymentSuccess={handlePaymentSuccess} />;
+    return <LightningPayment invoice={lnInvoice} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} onPaymentSuccess={handlePaymentSuccess} />;
   }
 
   if (currentStep === 'success' && orderId) {

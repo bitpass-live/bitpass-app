@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
@@ -6,21 +8,28 @@ import { formatCurrency } from '@/lib/utils';
 import { Zap } from 'lucide-react';
 import { Currencies } from '@/types';
 import { useYadio } from '@/lib/yadio-context';
+import { useCheckoutSummary } from '@/hooks/use-checkout-summary';
+import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
 
 interface LightningPaymentProps {
   invoice: string;
-  amount: number;
-  currency: Currencies;
+  selectedTickets: Record<string, number>;
+  appliedDiscount: DiscountCode | null;
   onPaymentSuccess: () => void;
 }
 
-export function LightningPayment({ invoice, amount, currency, onPaymentSuccess }: LightningPaymentProps) {
+export function LightningPayment({
+  invoice,
+  selectedTickets,
+  appliedDiscount,
+  onPaymentSuccess,
+}: LightningPaymentProps) {
   const [isChecking, setIsChecking] = useState(false);
   const [timeLeft, setTimeLeft] = useState(600);
-  const [fiatValue, setFiatValue] = useState<number | null>(null);
   const [satsValue, setSatsValue] = useState<number | null>(null);
 
   const converter = useYadio();
+  const { displayTotal, displayCurrency } = useCheckoutSummary(selectedTickets, appliedDiscount);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,21 +46,26 @@ export function LightningPayment({ invoice, amount, currency, onPaymentSuccess }
 
   useEffect(() => {
     const convert = async () => {
-      try {
-        const sats = currency === 'SAT'
-          ? amount
-          : await converter.convertCurrency({ amount, from: currency, to: 'SAT' });
-        setSatsValue(Math.round(sats));
+      if (!displayTotal || !displayCurrency) return;
 
-        const fiat = await converter.convertCurrency({ amount, from: currency, to: currency });
-        setFiatValue(Math.round(fiat));
+      try {
+        if (displayCurrency === 'SAT') {
+          setSatsValue(displayTotal);
+        } else {
+          const btc = await converter.convertCurrency({
+            amount: displayTotal,
+            from: displayCurrency,
+            to: 'BTC',
+          });
+          setSatsValue(Math.round(btc * 100_000_000));
+        }
       } catch {
         setSatsValue(null);
-        setFiatValue(null);
       }
     };
+
     convert();
-  }, [amount, currency]);
+  }, [displayTotal, displayCurrency]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -78,13 +92,13 @@ export function LightningPayment({ invoice, amount, currency, onPaymentSuccess }
           </div>
 
           <div className='bg-white p-4 rounded-lg mb-4'>
-            <QRCodeSVG value={invoice} size={200} includeMargin={true} />
+            <QRCodeSVG value={invoice} size={200} />
           </div>
 
           <div className='text-center mb-6'>
-            {fiatValue !== null && (
+            {displayTotal !== null && (
               <p className='text-lg font-bold text-white mb-1'>
-                {formatCurrency(fiatValue, currency)} {currency}
+                {formatCurrency(displayTotal, displayCurrency)} {displayCurrency}
               </p>
             )}
             {satsValue !== null && (
