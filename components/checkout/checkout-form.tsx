@@ -1,6 +1,5 @@
 import type React from 'react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -17,11 +16,12 @@ import { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
   appliedDiscount: DiscountCode | null;
+  onLockChange: (locked: boolean) => void;
 }
 
 type CheckoutStep = 'form' | 'payment' | 'success';
 
-export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormProps) {
+export function CheckoutForm({ selectedTickets, appliedDiscount, onLockChange }: CheckoutFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('form');
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -30,7 +30,6 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
 
   const { displayTotal, displayDiscount, displayCurrency } = useCheckoutSummary(selectedTickets, appliedDiscount);
 
-  const router = useRouter();
   const { toast } = useToast();
   const { user, isAuthenticated, paymentMethods, bitpassAPI } = useAuth();
   const { draftEvent } = useDraftEventContext();
@@ -61,6 +60,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
       setOrderId(order.orderId);
       setLnInvoice(order.lnInvoice);
       setCurrentStep('payment');
+      onLockChange(true);
     } catch (err: any) {
       toast({
         title: 'Error creating order',
@@ -70,6 +70,14 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCancelOrder = () => {
+    setOrderId(null);
+    setLnInvoice(null);
+    setTickets(null);
+    setCurrentStep('form');
+    onLockChange(false);
   };
 
   const handlePaymentSuccess = (tickets: Ticket[]) => {
@@ -104,6 +112,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
         appliedDiscount={appliedDiscount}
         onPaymentSuccess={handlePaymentSuccess}
         onPaymentFailed={handlePaymentFailed}
+        onCancelOrder={handleCancelOrder}
       />
     );
   }

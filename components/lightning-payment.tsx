@@ -19,6 +19,7 @@ interface LightningPaymentProps {
   appliedDiscount: DiscountCode | null;
   onPaymentSuccess: (tickets: Ticket[]) => void;
   onPaymentFailed: () => void;
+  onCancelOrder: () => void;
 }
 
 export function LightningPayment({
@@ -28,6 +29,7 @@ export function LightningPayment({
   appliedDiscount,
   onPaymentSuccess,
   onPaymentFailed,
+  onCancelOrder
 }: LightningPaymentProps) {
   const [timeLeft, setTimeLeft] = useState(600);
   const [satsValue, setSatsValue] = useState<number | null>(null);
@@ -147,6 +149,16 @@ export function LightningPayment({
             onClick={() => navigator.clipboard.writeText(invoice)}
           >
             Copy invoice
+          </Button>
+
+
+          <Button
+            variant="destructive"
+            type="button"
+            className="w-full mt-4"
+            onClick={onCancelOrder}
+          >
+            Cancel order
           </Button>
         </CardContent>
       </Card>

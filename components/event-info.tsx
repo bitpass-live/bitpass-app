@@ -16,9 +16,10 @@ interface EventInfoProps {
   selectedTickets: Record<string, number>;
   onTicketChange: (ticketId: string, quantity: number) => void;
   onDiscountValidated: (code: DiscountCode | null) => void;
+  isLocked: boolean;
 }
 
-export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountValidated }: EventInfoProps) {
+export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountValidated, isLocked }: EventInfoProps) {
   const [code, setCode] = useState('');
   const [validatedCode, setValidatedCode] = useState<DiscountCode | null>(null);
   const [discountMessage, setDiscountMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -27,11 +28,15 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
   const { displayTotal, displayDiscount, displayCurrency } = useCheckoutSummary(selectedTickets, validatedCode);
 
   const handleIncrement = (ticketId: string) => {
+    if (isLocked) return;
+
     const currentQuantity = selectedTickets[ticketId] || 0;
     onTicketChange(ticketId, currentQuantity + 1);
   };
 
   const handleDecrement = (ticketId: string) => {
+    if (isLocked) return;
+
     const currentQuantity = selectedTickets[ticketId] || 0;
     if (currentQuantity > 0) {
       onTicketChange(ticketId, currentQuantity - 1);
@@ -39,6 +44,8 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
   };
 
   const handleValidateCode = () => {
+    if (isLocked) return;
+
     if (!code.trim()) {
       setDiscountMessage({
         type: 'error',
@@ -88,7 +95,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
               <CardContent
                 className={`p-6 flex items-center justify-between ${quantity === 0 && isAvailable ? 'cursor-pointer' : ''}`}
                 onClick={() => {
-                  if (!isAvailable) return;
+                  if (!isAvailable || isLocked) return;
 
                   if (isFreeTicket && quantity === 0) {
                     onTicketChange(ticket.id, 1);
@@ -123,7 +130,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                           e.stopPropagation();
                           handleDecrement(ticket.id);
                         }}
-                        disabled={quantity === 0}
+                        disabled={quantity === 0 || isLocked}
                       >
                         <MinusIcon className='h-3 w-3' />
                       </Button>
@@ -147,7 +154,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                           handleIncrement(ticket.id);
                         }
                       }}
-                      disabled={!isAvailable || quantity >= availableQuantity || (isFreeTicket && quantity === 1)}
+                      disabled={!isAvailable || quantity >= availableQuantity || (isFreeTicket && quantity === 1) || isLocked}
                     >
                       <PlusIcon className='h-3 w-3' />
                     </Button>
@@ -176,7 +183,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                   placeholder='Enter your code'
                   className='bg-[#1A1A1A] border-border-gray text-white'
                 />
-                <Button type='button' variant='outline' onClick={handleValidateCode} disabled={!code.trim()}>
+                <Button type='button' variant='outline' onClick={handleValidateCode} disabled={!code.trim() || isLocked}>
                   Apply
                 </Button>
               </div>
@@ -185,6 +192,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                 variant='link'
                 className='p-0 h-auto text-fluorescent-yellow'
                 onClick={() => setShowCouponInput(true)}
+                disabled={isLocked}
               >
                 Add coupon
               </Button>

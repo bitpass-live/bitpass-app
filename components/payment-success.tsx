@@ -35,7 +35,7 @@ export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
             {tickets.map((ticket, index) => (
               <div key={ticket.id} className='flex justify-between text-sm border-b border-border-gray py-1'>
                 <span className='text-muted-foreground'>Ticket #{index + 1}:</span>
-                <span className='text-white font-medium'>{ticket.ticketTypeId}</span>
+                <span className='text-white font-medium'>{ticket.id}</span>
               </div>
             ))}
           </div>

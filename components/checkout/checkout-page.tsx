@@ -16,6 +16,7 @@ export default function CheckoutPage() {
   const { user, isAuthenticated } = useAuth();
   const { draftEvent } = useDraftEventContext();
 
+  const [isLocked, setIsLocked] = useState(false);
   const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({});
   const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
 
@@ -67,6 +68,7 @@ export default function CheckoutPage() {
               selectedTickets={selectedTickets}
               onTicketChange={handleTicketChange}
               onDiscountValidated={handleDiscountValidated}
+              isLocked={isLocked}
             />
           </div>
         </div>
@@ -74,7 +76,7 @@ export default function CheckoutPage() {
         {/* Right side - Checkout form */}
         <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 bg-[#0A0A0A]'>
           <div className='w-full max-w-md mx-auto px-4'>
-            <CheckoutForm selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
+            <CheckoutForm selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} onLockChange={setIsLocked} />
           </div>
         </div>
       </div>
