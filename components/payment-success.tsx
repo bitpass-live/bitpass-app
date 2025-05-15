@@ -4,13 +4,15 @@ import { CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface PaymentSuccessProps {
   tickets: Ticket[];
-  onViewTicket: () => void;
 }
 
-export function PaymentSuccess({ tickets, onViewTicket }: PaymentSuccessProps) {
+export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
+  const router = useRouter();
+  
   if (!tickets || tickets.length === 0) return null;
 
   return (
@@ -39,7 +41,7 @@ export function PaymentSuccess({ tickets, onViewTicket }: PaymentSuccessProps) {
           </div>
 
           <Button
-            onClick={onViewTicket}
+            onClick={() => router.push(`/tickets`)}
             className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray'
           >
             View My Tickets

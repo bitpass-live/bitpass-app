@@ -95,12 +95,6 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
     setCurrentStep('form');
   };
 
-  const handleViewTicket = () => {
-    if (orderId) {
-      router.push(`/events/${draftEvent.id}/ticket/${orderId}`);
-    }
-  };
-
   if (currentStep === 'payment' && orderId && lnInvoice) {
     return (
       <LightningPayment
@@ -115,7 +109,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
   }
 
   if (currentStep === 'success' && tickets) {
-    return <PaymentSuccess tickets={tickets} onViewTicket={handleViewTicket} />;
+    return <PaymentSuccess tickets={tickets} />;
   }
 
   return (

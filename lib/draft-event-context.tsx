@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo } from 'react'
 import { CreateTicketInput, useDraftEvent } from '@/hooks/use-draft-event'
 import type { Event as EventModel, FullEvent, TicketType } from '@/lib/bitpass-sdk/src/types/event'
+import { Ticket } from './bitpass-sdk/src/types/ticket'
 
 type DraftEventProviderProps =
   | { eventId: string; instanceId?: undefined, children: React.ReactNode }
@@ -26,6 +27,7 @@ interface DraftEventContextType {
     endDate: string;
     endTime: string;
   }) => Promise<void>
+  getTickets: () => Promise<Ticket[]>
 }
 
 const DraftEventContext = createContext<DraftEventContextType | undefined>(undefined)

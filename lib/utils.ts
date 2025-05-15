@@ -7,6 +7,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatNostrPubkey(pubkey: string, start: number = 6, end: number = 6): string {
+  if (!pubkey || pubkey.length <= start + end) return pubkey;
+  return `${pubkey.slice(0, start)}...${pubkey.slice(-end)}`;
+}
+
 export const requiredEnvVar = (key: string): string => {
   const envVar = process.env[key];
   if (undefined === envVar) {

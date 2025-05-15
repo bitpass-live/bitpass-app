@@ -3,6 +3,7 @@ import { useAuth } from '@/lib/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 import type { Event as EventModel, FullEvent, TicketType } from '@/lib/bitpass-sdk/src/types/event';
+import { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
 
 export type CreateTicketInput = {
   name: string;
@@ -178,6 +179,12 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
     }
   }, [bitpassAPI, draftEvent, toast]);
 
+  const getTickets = async (): Promise<Ticket[]> => {
+    if (!draftEvent || !draftEvent.id) return [];
+
+    return await bitpassAPI.getUserTickets(draftEvent.id);
+  };
+
   return {
     draftEvent,
     loading,
@@ -189,5 +196,6 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
     addTicket,
     updateTicket,
     deleteTicket,
+    getTickets
   };
 }

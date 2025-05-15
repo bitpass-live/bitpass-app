@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { formatNostrPubkey } from '@/lib/utils';
 
 export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
   const { user, logout } = useAuth();
@@ -75,7 +76,7 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
                   : 'Demo Account'}
               </DropdownMenuLabel>
               <DropdownMenuItem disabled className='text-xs text-muted-foreground'>
-                {user?.email || 'demo@eventro.com'}
+                {user?.email ?? `Public key: ${formatNostrPubkey(user.nostrPubKey!)}`}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {/* <DropdownMenuItem asChild>

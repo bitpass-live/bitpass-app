@@ -808,6 +808,14 @@ export class Bitpass {
     return res.json();
   }
 
+  async getTicketsByEvent(eventId: string): Promise<Ticket[]> {
+    const res = await fetch(`${this.baseUrl}/events/${eventId}/tickets`, {
+      headers: this.headers,
+    });
+    if (!res.ok) throw new Error('Failed to fetch tickets');
+    return res.json();
+  }
+
   /**
    * Update a Lightning payment method.
    * @param pmId UUID of the payment method.
@@ -854,5 +862,16 @@ export class Bitpass {
       const { error } = await res.json();
       throw new Error(error ?? "Failed to delete payment method");
     }
+  }
+
+  async getUserTickets(eventId?: string): Promise<Ticket[]> {
+    const url = new URL(`${this.baseUrl}/users/me/tickets`);
+    if (eventId) url.searchParams.append('eventId', eventId);
+
+    const res = await fetch(url.toString(), {
+      headers: this.headers,
+    });
+    if (!res.ok) throw new Error('Failed to fetch user tickets');
+    return res.json();
   }
 }
