@@ -28,7 +28,7 @@ import {
 } from "../validators/discount.schema";
 import { z } from "zod";
 import type { DiscountCode } from "../types/discount";
-import { Ticket } from "../types/ticket";
+import { AdminTicketType, Ticket } from "../types/ticket";
 
 export class Bitpass {
   /**
@@ -356,7 +356,7 @@ export class Bitpass {
    * @param eventId UUID of the event.
    * @returns Array of ticket types with orders & tickets.
    */
-  async getAdminTickets(eventId: string): Promise<any[]> {
+  async getAdminTickets(eventId: string): Promise<AdminTicketType[]> {
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(
       `${this.baseUrl}/events/${eventId}/tickets/admin`,

@@ -223,7 +223,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loadUserData
       }}
     >
-      {user.loaded ? children : <LoaderView />}
+      {children}
     </AuthContext.Provider>
   );
 }
