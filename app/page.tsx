@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
 import CheckoutPage from '@/components/checkout/checkout-page';
-import { Loader } from 'lucide-react';
 import { LoaderView } from '@/components/loader-view';
 
 export default function AuthPage() {

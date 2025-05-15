@@ -12,6 +12,7 @@ import { useAuth } from '@/lib/auth-provider';
 import { LoginForm } from '../login-form';
 import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
 import { useCheckoutSummary } from '@/hooks/use-checkout-summary';
+import { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
 
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
@@ -25,6 +26,7 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('form');
   const [orderId, setOrderId] = useState<string | null>(null);
   const [lnInvoice, setLnInvoice] = useState<string | null>(null);
+  const [tickets, setTickets] = useState<Ticket[] | null>(null);
 
   const { displayTotal, displayDiscount, displayCurrency } = useCheckoutSummary(selectedTickets, appliedDiscount);
 
@@ -70,12 +72,27 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
     }
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (tickets: Ticket[]) => {
+    setTickets(tickets);
     setCurrentStep('success');
     toast({
       title: 'Payment successful!',
-      description: 'Your payment has been processed successfully.',
+      description: 'Your tickets are ready.',
     });
+  };
+
+  const handlePaymentFailed = () => {
+    toast({
+      title: 'Payment failed or expired',
+      description: 'Please try again and complete the payment on time.',
+      variant: 'destructive',
+    });
+
+    // Reset state
+    setOrderId(null);
+    setLnInvoice(null);
+    setTickets(null);
+    setCurrentStep('form');
   };
 
   const handleViewTicket = () => {
@@ -84,12 +101,21 @@ export function CheckoutForm({ selectedTickets, appliedDiscount }: CheckoutFormP
     }
   };
 
-  if (currentStep === 'payment' && lnInvoice && displayTotal && displayCurrency) {
-    return <LightningPayment invoice={lnInvoice} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} onPaymentSuccess={handlePaymentSuccess} />;
+  if (currentStep === 'payment' && orderId && lnInvoice) {
+    return (
+      <LightningPayment
+        orderId={orderId}
+        invoice={lnInvoice}
+        selectedTickets={selectedTickets}
+        appliedDiscount={appliedDiscount}
+        onPaymentSuccess={handlePaymentSuccess}
+        onPaymentFailed={handlePaymentFailed}
+      />
+    );
   }
 
-  if (currentStep === 'success' && orderId) {
-    return <PaymentSuccess eventId={draftEvent.id} saleId={orderId} onViewTicket={handleViewTicket} />;
+  if (currentStep === 'success' && tickets) {
+    return <PaymentSuccess tickets={tickets} onViewTicket={handleViewTicket} />;
   }
 
   return (

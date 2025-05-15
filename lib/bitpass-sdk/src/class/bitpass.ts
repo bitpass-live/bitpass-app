@@ -28,6 +28,7 @@ import {
 } from "../validators/discount.schema";
 import { z } from "zod";
 import type { DiscountCode } from "../types/discount";
+import { Ticket } from "../types/ticket";
 
 export class Bitpass {
   /**
@@ -318,6 +319,33 @@ export class Bitpass {
     if (!res.ok) {
       const { error } = await res.json();
       throw new Error(error || 'Failed to create order');
+    }
+
+    return res.json();
+  }
+
+  /**
+ * Get the status of an order.
+ * Will return `PENDING`, `PAID` (with tickets), or `EXPIRED`.
+ * @param orderId UUID of the order
+ */
+  async getOrderStatus(orderId: string): Promise<{
+    status: 'PENDING' | 'PAID' | 'EXPIRED';
+    lnInvoice: string;
+    totalAmount: number;
+    expiresAt: string;
+    tickets?: Ticket[];
+  }> {
+    if (!this.token) throw new Error("Unauthorized: please authenticate first");
+
+    const res = await fetch(`${this.baseUrl}/orders/${orderId}/status`, {
+      method: "GET",
+      headers: this.headers,
+    });
+
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error ?? "Failed to fetch order status");
     }
 
     return res.json();

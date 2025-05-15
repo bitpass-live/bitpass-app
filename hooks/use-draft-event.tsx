@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/lib/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
@@ -26,9 +26,13 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
   const [error, setError] = useState<string | null>(null);
   const [eventExist, setEventExists] = useState(false);
 
+  const hasLoaded = useRef(false);
+
   useEffect(() => {
+    if (hasLoaded.current) return;
     if (!user.loaded || (!eventId && !instanceId)) return;
 
+    hasLoaded.current = true;
     setLoading(true);
 
     const load = async () => {
@@ -138,9 +142,9 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       setDraftEvent(prev =>
         prev
           ? {
-              ...prev,
-              ticketTypes: prev.ticketTypes.map(t => (t.id === ticketId ? updated : t)),
-            }
+            ...prev,
+            ticketTypes: prev.ticketTypes.map(t => (t.id === ticketId ? updated : t)),
+          }
           : prev
       );
       toast({ title: 'Ticket updated', description: 'Changes saved successfully.' });
@@ -160,9 +164,9 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
       setDraftEvent(prev =>
         prev
           ? {
-              ...prev,
-              ticketTypes: prev.ticketTypes.filter(t => t.id !== ticketId),
-            }
+            ...prev,
+            ticketTypes: prev.ticketTypes.filter(t => t.id !== ticketId),
+          }
           : prev
       );
       toast({ title: 'Ticket deleted', description: 'The ticket was removed.' });

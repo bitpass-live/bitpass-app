@@ -5,16 +5,24 @@ import { useRouter } from 'next/navigation';
 
 import { LoginForm } from '@/components/login-form';
 import { useAuth } from '@/lib/auth-provider';
+import { useEffect } from 'react';
 
 export default function AuthPage() {
   const router = useRouter();
 
   const { user, isAuthenticated } = useAuth();
 
-  if (user.loaded && isAuthenticated) {
-    router.push('/');
-    return;
-  }
+  useEffect(() => {
+    if (!user.loaded) return;
+
+    if (isAuthenticated) {
+      router.push('/');
+      return;
+    }
+
+  }, [user, isAuthenticated])
+
+  if (!user.loaded) return null;
 
   return (
     <div className='min-h-screen flex flex-col'>
