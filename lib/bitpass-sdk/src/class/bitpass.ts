@@ -28,7 +28,7 @@ import {
 } from "../validators/discount.schema";
 import { z } from "zod";
 import type { DiscountCode } from "../types/discount";
-import { AdminTicketType, Ticket } from "../types/ticket";
+import { AdminOrderWithTickets, AdminTicketType, Ticket } from "../types/ticket";
 
 export class Bitpass {
   /**
@@ -369,6 +369,27 @@ export class Bitpass {
       const { error } = await res.json();
       throw new Error(error ?? "Failed to fetch admin tickets");
     }
+    return res.json();
+  }
+
+  /**
+ * Fetch paid orders for an event, with their tickets and buyer info.
+ * @param eventId UUID of the event.
+ * @returns Array of paid orders with associated tickets and buyer.
+ */
+  async getAdminOrders(eventId: string): Promise<AdminOrderWithTickets[]> {
+    if (!this.token) throw new Error("Unauthorized: please authenticate first");
+
+    const res = await fetch(`${this.baseUrl}/events/${eventId}/orders`, {
+      method: "GET",
+      headers: this.headers,
+    });
+    
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error ?? "Failed to fetch admin orders");
+    }
+
     return res.json();
   }
 

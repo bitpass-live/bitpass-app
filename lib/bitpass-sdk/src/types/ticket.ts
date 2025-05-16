@@ -33,3 +33,22 @@ export type AdminTicketType = {
     isCheckedIn: boolean;
   }[];
 };
+
+export interface AdminOrderWithTickets {
+  id: string;
+  totalAmount: number;
+  createdAt: string;
+  buyer: {
+    id: string;
+    email: string | null;
+    nostrPubKey: string | null;
+  };
+  tickets: {
+    id: string;
+    isCheckedIn: boolean;
+    ticketType: {
+      id: string;
+      name: string;
+    };
+  }[];
+}

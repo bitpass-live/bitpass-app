@@ -1,22 +1,32 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TicketRow } from './ticket-row';
-import { TicketModal } from '../ticket-modal';
-import { useDraftEventContext } from '@/lib/draft-event-context';
-import { useAuth } from '@/lib/auth-provider';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TicketRow } from "./ticket-row";
+import { TicketModal } from "../ticket-modal";
+import { useDraftEventContext } from "@/lib/draft-event-context";
+import { useAuth } from "@/lib/auth-provider";
+
+export interface TicketDisplay {
+  id: string;
+  reference: string;
+  isCheckedIn: boolean;
+  ticketTitle: string;
+  userEmail: string | null;
+  userPubkey: string | null;
+  eventTitle: string;
+}
 
 export function TicketsTable() {
   const { draftEvent } = useDraftEventContext();
   const { bitpassAPI } = useAuth();
 
-  const [tickets, setTickets] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<TicketDisplay[]>([]);
   const [filter, setFilter] = useState<'all' | 'checked-in' | 'not-checked-in'>('not-checked-in');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<TicketDisplay | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -25,18 +35,23 @@ export function TicketsTable() {
       if (!draftEvent?.id) return;
 
       try {
-        const ticketTypes = await bitpassAPI.getAdminTickets(draftEvent.id);
-        const allTickets = ticketTypes.flatMap((type: any) =>
-          type.tickets.map((ticket: any) => ({
-            ...ticket,
-            ticketTypeName: type.name,
-            checkIn: ticket.isCheckedIn,
-            status: 'PAID',
+        const orders = await bitpassAPI.getAdminOrders(draftEvent.id);
+
+        const allTickets = orders.flatMap((order) =>
+          order.tickets.map((ticket) => ({
+            id: ticket.id,
+            isCheckedIn: ticket.isCheckedIn,
+            ticketTitle: ticket.ticketType.name,
+            reference: order.id,
+            userEmail: order.buyer.email,
+            userPubkey: order.buyer.nostrPubKey,
+            eventTitle: draftEvent.title,
           }))
         );
+
         setTickets(allTickets);
       } catch (err) {
-        console.error('Error loading tickets:', err);
+        console.error("Error loading tickets:", err);
       }
     };
 
@@ -45,9 +60,9 @@ export function TicketsTable() {
 
   const filteredSales = useMemo(() => {
     return tickets.filter((sale) => {
-      if (filter === 'all') return true;
-      if (filter === 'checked-in') return sale.checkIn;
-      if (filter === 'not-checked-in') return !sale.checkIn && sale.status === 'paid';
+      if (filter === "all") return true;
+      if (filter === "checked-in") return sale.isCheckedIn;
+      if (filter === "not-checked-in") return !sale.isCheckedIn;
       return true;
     });
   }, [tickets, filter]);
@@ -55,8 +70,8 @@ export function TicketsTable() {
   const totalPages = Math.max(1, Math.ceil(filteredSales.length / itemsPerPage));
   const paginatedSales = filteredSales.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const checkedInCount = tickets.filter((s) => s.checkIn).length;
-  const notCheckedInCount = tickets.filter((s) => !s.checkIn && s.status === 'paid').length;
+  const checkedInCount = tickets.filter((s) => s.isCheckedIn).length;
+  const notCheckedInCount = tickets.filter((s) => !s.isCheckedIn).length;
   const allCount = tickets.length;
 
   useEffect(() => {
@@ -96,50 +111,46 @@ export function TicketsTable() {
 
   return (
     <>
-      <div className='flex justify-between items-center w-full mb-4'>
-        <h2 className='text-xl font-semibold text-foreground'>Tickets</h2>
-        <div className='relative'>
+      <div className="flex justify-between items-center w-full mb-4">
+        <h2 className="text-xl font-semibold text-foreground">Tickets</h2>
+        <div className="relative">
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowFilters(!showFilters);
             }}
-            className='flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-foreground text-sm hover:bg-muted transition-colors'
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-foreground text-sm hover:bg-muted transition-colors"
           >
             <span>
-              {filter === 'all' ? 'All tickets' : filter === 'checked-in' ? 'Checked in' : 'Not checked in'}
+              {filter === "all" ? "All tickets" : filter === "checked-in" ? "Checked in" : "Not checked in"}
             </span>
-            <span className='flex items-center justify-center w-5 h-5 rounded-full bg-primary text-background text-xs font-medium'>
-              {filter === 'all' ? allCount : filter === 'checked-in' ? checkedInCount : notCheckedInCount}
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary text-background text-xs font-medium">
+              {filter === "all" ? allCount : filter === "checked-in" ? checkedInCount : notCheckedInCount}
             </span>
           </button>
 
           {showFilters && (
             <div
-              className='absolute right-0 top-full mt-1 z-50 w-48 rounded-lg border border-border bg-background shadow-xl overflow-hidden'
+              className="absolute right-0 top-full mt-1 z-50 w-48 rounded-lg border border-border bg-background shadow-xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className='p-1.5 bg-background'>
-                {(['all', 'checked-in', 'not-checked-in'] as const).map((f) => (
+              <div className="p-1.5 bg-background">
+                {(["all", "checked-in", "not-checked-in"] as const).map((f) => (
                   <button
                     key={f}
-                    type='button'
-                    className={`w-full text-left px-3 py-2.5 rounded-md text-sm flex justify-between items-center ${filter === f ? 'bg-primary text-background' : 'text-foreground hover:bg-muted transition-colors'
-                      }`}
+                    type="button"
+                    className={`w-full text-left px-3 py-2.5 rounded-md text-sm flex justify-between items-center ${filter === f ? "bg-primary text-background" : "text-foreground hover:bg-muted transition-colors"}`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       handleFilterChange(f);
                     }}
                   >
-                    <span>
-                      {f === 'all' ? 'All tickets' : f === 'checked-in' ? 'Checked in' : 'Not checked in'}
-                    </span>
+                    <span>{f === "all" ? "All tickets" : f === "checked-in" ? "Checked in" : "Not checked in"}</span>
                     <span
-                      className={`text-xs font-medium px-1.5 py-0.5 rounded ${filter === f ? 'bg-background text-primary' : 'bg-muted'
-                        }`}
+                      className={`text-xs font-medium px-1.5 py-0.5 rounded ${filter === f ? "bg-background text-primary" : "bg-muted"}`}
                     >
-                      {f === 'all' ? allCount : f === 'checked-in' ? checkedInCount : notCheckedInCount}
+                      {f === "all" ? allCount : f === "checked-in" ? checkedInCount : notCheckedInCount}
                     </span>
                   </button>
                 ))}
@@ -149,20 +160,19 @@ export function TicketsTable() {
         </div>
       </div>
 
-      <div className='rounded-md border border-border overflow-hidden w-full'>
-        <div className='overflow-x-auto'>
+      <div className="rounded-md border border-border overflow-hidden w-full">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className='w-full'>Reference</TableHead>
-                <TableHead>Ticket</TableHead>
+                <TableHead className="w-full">Ticket ID</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedSales.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={3} className='text-center py-4 text-muted-foreground'>
+                  <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
                     No tickets found
                   </TableCell>
                 </TableRow>
@@ -177,19 +187,17 @@ export function TicketsTable() {
       </div>
 
       {filteredSales.length > 0 && (
-        <div className='flex items-center justify-between mt-4 text-sm'>
-          <div className='text-muted-foreground'>
-            Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-            {Math.min(currentPage * itemsPerPage, filteredSales.length)} of {filteredSales.length} tickets
+        <div className="flex items-center justify-between mt-4 text-sm">
+          <div className="text-muted-foreground">
+            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredSales.length)} of {filteredSales.length} tickets
           </div>
 
-          <div className='flex items-center space-x-1'>
+          <div className="flex items-center space-x-1">
             <button
               onClick={goToPreviousPage}
               disabled={currentPage === 1}
-              className={`p-1.5 rounded-md ${currentPage === 1 ? 'text-muted-foreground cursor-not-allowed' : 'text-foreground hover:bg-muted'
-                }`}
-              aria-label='Previous page'
+              className={`p-1.5 rounded-md ${currentPage === 1 ? "text-muted-foreground cursor-not-allowed" : "text-foreground hover:bg-muted"}`}
+              aria-label="Previous page"
             >
               <ChevronLeft size={16} />
             </button>
@@ -198,8 +206,7 @@ export function TicketsTable() {
               <button
                 key={page}
                 onClick={() => goToPage(page)}
-                className={`w-8 h-8 flex items-center justify-center rounded-md ${currentPage === page ? 'bg-primary text-background' : 'text-foreground hover:bg-muted'
-                  }`}
+                className={`w-8 h-8 flex items-center justify-center rounded-md ${currentPage === page ? "bg-primary text-background" : "text-foreground hover:bg-muted"}`}
               >
                 {page}
               </button>
@@ -208,11 +215,8 @@ export function TicketsTable() {
             <button
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
-              className={`p-1.5 rounded-md ${currentPage === totalPages
-                  ? 'text-muted-foreground cursor-not-allowed'
-                  : 'text-foreground hover:bg-muted'
-                }`}
-              aria-label='Next page'
+              className={`p-1.5 rounded-md ${currentPage === totalPages ? "text-muted-foreground cursor-not-allowed" : "text-foreground hover:bg-muted"}`}
+              aria-label="Next page"
             >
               <ChevronRight size={16} />
             </button>
