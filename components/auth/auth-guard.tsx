@@ -41,7 +41,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         return true;
       }
 
-      if (pathname === '/admin' && !draftEvent?.id) {
+      if (pathname === '/admin' && (!draftEvent || draftEvent.status === "DRAFT")) {
         router.push('/onboarding');
         return true;
       }
@@ -57,7 +57,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     setRedirecting(false);
   }, [pathname])
 
-  if (redirecting || !user.loaded || !draftEvent || !draftEvent.id) return (<LoaderView />)
+  if (redirecting || !user.loaded) return (<LoaderView />)
 
   return <>{children}</>;
 }

@@ -4,7 +4,6 @@ import { createContext, useContext, useMemo } from 'react'
 import { CreateTicketInput, useDraftEvent } from '@/hooks/use-draft-event'
 import type { Event as EventModel, FullEvent, TicketType } from '@/lib/bitpass-sdk/src/types/event'
 import { Ticket } from './bitpass-sdk/src/types/ticket'
-import { LoaderView } from '@/components/loader-view'
 
 type DraftEventProviderProps =
   | { eventId: string; instanceId?: undefined, children: React.ReactNode }
@@ -13,6 +12,7 @@ type DraftEventProviderProps =
 interface DraftEventContextType {
   draftEvent: FullEvent | null
   loading: boolean
+  eventExist: boolean;
   error: string | null
   setDraftField: <K extends keyof EventModel>(field: K, value: EventModel[K]) => void
   saveDraftEvent: () => Promise<void>

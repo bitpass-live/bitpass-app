@@ -10,9 +10,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const isAllowed =
         user?.loaded &&
         isAuthenticated &&
-        draftEvent?.id &&
+        (!draftEvent ||
+        (draftEvent?.id &&
         (draftEvent.creatorId === user.id ||
-            draftEvent.team?.some((member) => member.userId === user.id));
+            draftEvent.team?.some((member) => member.userId === user.id))));
 
     if (!isAllowed) return <LoaderView />;
 

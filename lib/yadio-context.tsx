@@ -14,8 +14,6 @@ export function YadioProvider({ children }: { children: React.ReactNode }) {
         setConverter(instance);
     }, []);
 
-    if (!converter) return <LoaderView />;
-
     return (
         <YadioContext.Provider value={converter}>
             {children}

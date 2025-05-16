@@ -54,6 +54,7 @@ export function useDraftEvent({ eventId, instanceId }: UseDraftEventParams) {
         }
 
         setEventExists(false);
+        setLoading(false);
       } finally {
         setLoading(false);
       }

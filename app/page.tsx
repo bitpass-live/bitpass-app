@@ -8,11 +8,9 @@ import { LoaderView } from '@/components/loader-view';
 
 export default function AuthPage() {
   const { user, isAuthenticated } = useAuth();
-  const { draftEvent, loading } = useDraftEventContext();
+  const { draftEvent } = useDraftEventContext();
 
-  if (loading) return <LoaderView />
-
-  if (user.loaded && isAuthenticated && (!draftEvent || !draftEvent.id)) {
+  if (user.loaded && isAuthenticated && (!draftEvent || !draftEvent.id || draftEvent.status === "DRAFT")) {
     return (
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 flex items-center justify-center py-6">

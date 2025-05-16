@@ -49,8 +49,6 @@ export default function MyTicketsPage() {
     });
   };
 
-  if (loading) return <LoaderView />;
-
   return (
     <>
       <Header backGoHome={true} />

@@ -10,7 +10,6 @@ import { Event as EventModel } from '@/lib/bitpass-sdk/src/types/event';
 import { PaymentMethod } from '@/lib/bitpass-sdk/src/types/payment';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
-import { LoaderView } from '@/components/loader-view';
 
 export type UserRole = 'OWNER' | 'MODERATOR' | 'CHECKIN';
 
