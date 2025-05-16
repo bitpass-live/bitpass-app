@@ -2,13 +2,7 @@ import type { Config } from 'tailwindcss';
 
 const config = {
   darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-    '*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: ['./components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', '*.{js,ts,jsx,tsx,mdx}'],
   prefix: '',
   theme: {
     container: {
@@ -19,16 +13,16 @@ const config = {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ['"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-        heading: ['"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-      },
       colors: {
+        // Base
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+
+        // Brand
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -37,6 +31,12 @@ const config = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+
+        // States
+        success: '#4CAF50',
+        warning: '#FFAC07',
+        error: '#F44336',
+
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
@@ -57,6 +57,7 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+
         // Add specific color references
         'fluorescent-yellow': '#D8FF00',
         'fluorescent-yellow-hover': '#F3FF58',
@@ -71,12 +72,20 @@ const config = {
       },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          from: {
+            height: '0',
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)',
+          },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+          to: {
+            height: '0',
+          },
         },
       },
       animation: {

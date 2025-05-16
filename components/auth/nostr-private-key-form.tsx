@@ -9,17 +9,18 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
 import { ArrowLeft, Eye, EyeOff, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { useAuth } from "@/lib/auth-provider"
 
 interface NostrPrivateKeyFormProps {
-  onSuccess: (pubkey: string) => void
   onBack: () => void
 }
 
-export function NostrPrivateKeyForm({ onSuccess, onBack }: NostrPrivateKeyFormProps) {
+export function NostrPrivateKeyForm({ onBack }: NostrPrivateKeyFormProps) {
   const [privateKey, setPrivateKey] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [showKey, setShowKey] = useState(false)
   const { toast } = useToast()
+  const { loginWithPrivateKey } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,7 +34,6 @@ export function NostrPrivateKeyForm({ onSuccess, onBack }: NostrPrivateKeyFormPr
       return
     }
 
-    // Validate key format (basic check)
     if (!privateKey.startsWith("nsec1") && !privateKey.startsWith("npub1")) {
       toast({
         title: "Invalid key format",
@@ -46,14 +46,13 @@ export function NostrPrivateKeyForm({ onSuccess, onBack }: NostrPrivateKeyFormPr
     setIsLoading(true)
 
     try {
-      // Simulate key verification and conversion to pubkey
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Generate a mock pubkey - in a real app, you would derive this from the private key
-      const mockPubkey = "npub1derived" + Math.random().toString(36).substring(2, 10)
-
+      await loginWithPrivateKey(privateKey);
       setIsLoading(false)
-      onSuccess(mockPubkey)
+
+      toast({
+        title: 'Logged in successfully',
+        description: 'Welcome to Bitpass!',
+      });
     } catch (error) {
       setIsLoading(false)
       toast({

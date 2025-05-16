@@ -3,17 +3,18 @@
 import type React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
-import { PlusIcon, UserIcon, Trash2 } from 'lucide-react';
+import { PlusIcon, UserIcon, Trash2, UserSearch, UserCog } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Badge } from '../ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -21,6 +22,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { EmptyState } from '@/components/empty-state';
+
+import { Role } from '@/types';
 
 import { MOCK_ROLES } from '@/mock/data';
 
@@ -88,17 +92,19 @@ export function TeamManagement({ eventId }: { eventId: string }) {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <PlusIcon className='mr-2 h-4 w-4' />
-              Add Member
+              <PlusIcon className='h-4 w-4' />
+              Invite
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <form onSubmit={handleSubmit}>
+            <form className='flex flex-col h-full' onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle>Agregar Miembro</DialogTitle>
+                <UserSearch className='w-8 h-8 mb-4' />
+                <DialogTitle>New Member</DialogTitle>
                 <DialogDescription>Agrega un miembro para ayudar a gestionar tu evento.</DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 py-4'>
+
+              <DialogBody>
                 <Tabs
                   defaultValue='EMAIL'
                   value={contactType}
@@ -106,39 +112,35 @@ export function TeamManagement({ eventId }: { eventId: string }) {
                 >
                   <TabsList className='grid w-full grid-cols-2 mb-4'>
                     <TabsTrigger value='EMAIL'>Email</TabsTrigger>
-                    <TabsTrigger value='NOSTR'>Nostr / Lightning</TabsTrigger>
+                    <TabsTrigger value='NOSTR'>Nostr</TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value='EMAIL' className='space-y-4 mt-0 p-0'>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='email'>Email</Label>
-                      <Input
-                        id='email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder='correo@ejemplo.com'
-                        type='email'
-                        required
-                      />
-                    </div>
+                  <TabsContent value='EMAIL'>
+                    <Input
+                      id='email'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder='your@email.com'
+                      type='email'
+                      required
+                    />
                   </TabsContent>
 
-                  <TabsContent value='NOSTR' className='space-y-4 mt-0 p-0'>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='pubkey'>Bitcoin Pubkey / Lightning Address</Label>
-                      <Input
-                        id='pubkey'
-                        value={pubkey}
-                        onChange={(e) => setPubkey(e.target.value)}
-                        placeholder='npub1... o usuario@lightning.address'
-                        required
-                      />
-                    </div>
+                  <TabsContent value='NOSTR'>
+                    <Input
+                      id='pubkey'
+                      value={pubkey}
+                      onChange={(e) => setPubkey(e.target.value)}
+                      placeholder='your@lightning.address or npub...'
+                      required
+                    />
                   </TabsContent>
                 </Tabs>
-              </div>
+              </DialogBody>
               <DialogFooter>
-                <Button type='submit'>Agregar Miembro</Button>
+                <Button className='w-full' type='submit'>
+                  Send Invite
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -146,51 +148,43 @@ export function TeamManagement({ eventId }: { eventId: string }) {
       </div>
 
       {MOCK_ROLES.length === 0 ? (
-        <Card>
-          <CardContent className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='rounded-full bg-muted p-3 mb-4'>
-              <UserIcon className='h-10 w-10 text-muted-foreground' />
-            </div>
-            <h3 className='text-lg font-semibold mb-2'>No team members yet</h3>
-            <p className='text-muted-foreground max-w-md mb-6'>Add team members to help manage your event.</p>
-            <Button onClick={() => setDialogOpen(true)}>Add Your First Team Member</Button>
-          </CardContent>
-        </Card>
+        <div className='flex flex-col items-center justify-center py-12 text-center'>
+          <EmptyState className='-my-12' icon={UserCog} size={240} />
+          <h2 className='text-xl font-semibold mb-2'>No team members yet</h2>
+          <p className='text-muted-foreground max-w-md mb-6'>Add team members to help manage your event.</p>
+        </div>
       ) : (
-        <div className='grid gap-4'>
-          {MOCK_ROLES.map((roleItem) => (
-            <Card key={roleItem.pubkey}>
-              <CardContent className='p-6'>
+        <Card className='overflow-hidden gap-[1px] bg-background'>
+          {MOCK_ROLES.map((roleItem: Role) => (
+            <div className='bg-card border-b last:border-none' key={roleItem.pubkey}>
+              <div className='p-6'>
                 <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-3'>
+                  <div className='flex items-center gap-3 w-full'>
                     <div className='rounded-full bg-muted p-2'>
                       <UserIcon className='h-5 w-5' />
                     </div>
-                    <div>
-                      <p className='font-medium'>{roleItem.pubkey.substring(0, 8)}...</p>
-                      <div
-                        className={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${getRoleBadgeClass(
-                          roleItem.role,
-                        )}`}
-                      >
-                        {roleItem.role === 'OWNER' ? 'Creador' : 'Moderador'}
-                      </div>
-                    </div>
+                    <p className='font-medium'>{roleItem.pubkey.substring(0, 8)}...</p>
                   </div>
-                  {roleItem.role !== 'OWNER' && (
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={() => handleRemoveRole(roleItem.pubkey, roleItem.role)}
-                    >
-                      <Trash2 className='h-4 w-4' />
-                    </Button>
-                  )}
+
+                  <div className='flex items-center gap-4'>
+                    <div className='hidden md:flex'>
+                      <Badge variant='secondary'>{roleItem.role === 'OWNER' ? 'Creador' : 'Moderador'}</Badge>
+                    </div>
+                    {roleItem.role !== 'OWNER' && (
+                      <Button
+                        variant='destructive'
+                        size='icon'
+                        onClick={() => handleRemoveRole(roleItem.pubkey, roleItem.role)}
+                      >
+                        <Trash2 className='h-4 w-4' />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
-        </div>
+        </Card>
       )}
     </div>
   );

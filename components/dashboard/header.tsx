@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogOut, User, ChevronDown, Settings } from 'lucide-react';
+import { LogOut, User, Settings, ArrowLeft } from 'lucide-react';
 
 import { useAuth } from '@/lib/auth-provider';
 
@@ -16,8 +16,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { formatNostrPubkey } from '@/lib/utils';
 
-export function Header() {
+export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
@@ -25,11 +26,22 @@ export function Header() {
   if (pathname === '/') return null;
 
   return (
-    <header className='border-b'>
-      <div className='container flex h-16 items-center justify-between py-4'>
-        <Link href='/dashboard' className='flex items-center'>
-          <Logo className='text-xl' />
-        </Link>
+    <header className='border-b bg-card'>
+      <div className='container flex gap-8 h-16 items-center justify-between py-4'>
+        <div className='min-w-10'>
+          {backGoHome && (
+            <Button className='gap-2' variant='secondary' size='icon' asChild>
+              <Link href='/'>
+                <ArrowLeft className='h-4 w-4' />
+              </Link>
+            </Button>
+          )}
+        </div>
+        <div className='flex justify-center w-full h-full'>
+          <Link href='/' className='flex items-center'>
+            <Logo className='text-xl' />
+          </Link>
+        </div>
 
         {/* <nav className='hidden md:flex items-center gap-6'>
           <Link
@@ -48,19 +60,15 @@ export function Header() {
           </Link>
         </nav> */}
 
-        <div className='flex items-center gap-4'>
+        <div className='w-10'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='gap-2'>
+              <Button className='gap-2' variant='secondary' size='icon'>
                 <User className='h-4 w-4' />
-                <span className='hidden sm:inline'>
-                  {user?.name || user?.email || (user?.pubkey && `${user.pubkey.substring(0, 8)}...`) || 'User'}
-                </span>
-                <ChevronDown className='h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>
+              <DropdownMenuLabel className='pb-0'>
                 {user?.authMethod === 'email'
                   ? 'Email Account'
                   : user?.authMethod === 'nostr'
@@ -68,15 +76,15 @@ export function Header() {
                   : 'Demo Account'}
               </DropdownMenuLabel>
               <DropdownMenuItem disabled className='text-xs text-muted-foreground'>
-                {user?.email || user?.pubkey || 'demo@eventro.com'}
+                {user?.email ?? `Public key: ${formatNostrPubkey(user.nostrPubKey!)}`}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              {/* <DropdownMenuItem asChild>
                 <Link href='/settings'>
                   <Settings className='mr-2 h-4 w-4' />
                   <span>Settings</span>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem onClick={logout}>
                 <LogOut className='mr-2 h-4 w-4' />
                 <span>Log out</span>

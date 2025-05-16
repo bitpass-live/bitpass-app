@@ -1,31 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
-import { Zap } from 'lucide-react';
+import { useYadio } from '@/lib/yadio-context';
+import { useCheckoutSummary } from '@/hooks/use-checkout-summary';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/lib/auth-provider';
+import type { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
+import { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
 
 interface LightningPaymentProps {
-  amount: number;
-  onPaymentSuccess: () => void;
+  orderId: string;
+  invoice: string;
+  selectedTickets: Record<string, number>;
+  appliedDiscount: DiscountCode | null;
+  onPaymentSuccess: (tickets: Ticket[]) => void;
+  onPaymentFailed: () => void;
+  onCancelOrder: () => void;
 }
 
-export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentProps) {
-  const [isChecking, setIsChecking] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(900); // 15 minutos en segundos
-  const [invoice, setInvoice] = useState('');
+export function LightningPayment({
+  orderId,
+  invoice,
+  selectedTickets,
+  appliedDiscount,
+  onPaymentSuccess,
+  onPaymentFailed,
+  onCancelOrder
+}: LightningPaymentProps) {
+  const [timeLeft, setTimeLeft] = useState(600);
+  const [satsValue, setSatsValue] = useState<number | null>(null);
+  const { bitpassAPI } = useAuth();
+  const { toast } = useToast();
 
-  // Generar un invoice falso para la demo
+  const converter = useYadio();
+  const { displayTotal, displayCurrency } = useCheckoutSummary(selectedTickets, appliedDiscount);
+
   useEffect(() => {
-    // En una implementación real, aquí se llamaría a una API para generar el invoice
-    const demoInvoice = `lnbc${Math.floor(
-      amount * 100,
-    )}n1p3hkzgzpp5yndenv56xyr9rt8c0lx39z73mf6q3w96yvrj458qt6y70qtfwf82sdqqcqzpgxqyz5vqsp5usw0m4p8gqnl9yt6u7x97er2y7qefr4mpa9m04thazryd5nr6hs9qyyssqy5vk79nvv9xzq8jlq5m8vft46xgrn9t6n9xgmkpwkv5h3v3j4ssxrwjl9l3yqynplwp3snxwhx48a3y8ypnv6k22apct5a6ygycqwgzj25`;
-    setInvoice(demoInvoice);
-
-    // Iniciar el temporizador
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -35,23 +49,72 @@ export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentP
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [amount]);
+  }, []);
+
+  useEffect(() => {
+    const convert = async () => {
+      if (!displayTotal || !displayCurrency) return;
+
+      try {
+        if (displayCurrency === 'SAT') {
+          setSatsValue(displayTotal);
+        } else {
+          const btc = await converter.convertCurrency({
+            amount: displayTotal,
+            from: displayCurrency,
+            to: 'BTC',
+          });
+          setSatsValue(Math.round(btc * 100_000_000));
+        }
+      } catch {
+        setSatsValue(null);
+      }
+    };
+
+    convert();
+  }, [displayTotal, displayCurrency]);
+
+  useEffect(() => {
+    if (!orderId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await bitpassAPI.getOrderStatus(orderId);
+
+        if (data.status === 'PAID') {
+          clearInterval(interval);
+          onPaymentSuccess(data.tickets ?? []);
+        }
+
+        if (data.status === 'EXPIRED') {
+          clearInterval(interval);
+          toast({
+            title: 'Payment expired',
+            description: 'The invoice expired. Please try again.',
+            variant: 'destructive',
+          });
+          onPaymentFailed();
+        }
+      } catch (err: any) {
+        clearInterval(interval);
+        console.error('Payment status check failed:', err);
+        toast({
+          title: 'Error checking payment',
+          description: err.message ?? 'Please try again later.',
+          variant: 'destructive',
+        });
+        onPaymentFailed();
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [orderId, onPaymentSuccess, onPaymentFailed, toast, bitpassAPI]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleSimulatePayment = () => {
-    setIsChecking(true);
-
-    // Simular verificación de pago
-    setTimeout(() => {
-      onPaymentSuccess();
-    }, 2000);
   };
 
   return (
@@ -66,38 +129,37 @@ export function LightningPayment({ amount, onPaymentSuccess }: LightningPaymentP
           </div>
 
           <div className='bg-white p-4 rounded-lg mb-4'>
-            <QRCodeSVG value={invoice} size={200} includeMargin={true} />
+            <QRCodeSVG value={invoice} size={200} />
           </div>
 
           <div className='text-center mb-6'>
-            <p className='text-lg font-bold text-white mb-1'>{formatCurrency(amount, 'ARS')}</p>
-            <p className='text-sm text-muted-foreground'>≈ {Math.floor(amount * 100)} sats</p>
+            {displayTotal !== null && (
+              <p className='text-lg font-bold text-white mb-1'>
+                {formatCurrency(displayTotal, displayCurrency)} {displayCurrency}
+              </p>
+            )}
+            {satsValue !== null && (
+              <p className='text-sm text-muted-foreground'>≈ {satsValue.toLocaleString()} sats</p>
+            )}
           </div>
 
-          <div className='w-full space-y-3'>
-            <Button
-              onClick={handleSimulatePayment}
-              className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray'
-              disabled={isChecking}
-            >
-              {isChecking ? (
-                'Verifying payment...'
-              ) : (
-                <>
-                  <Zap className='mr-2 h-4 w-4' />
-                  Simulate payment
-                </>
-              )}
-            </Button>
+          <Button
+            variant='outline'
+            className='w-full border-border-gray text-white'
+            onClick={() => navigator.clipboard.writeText(invoice)}
+          >
+            Copy invoice
+          </Button>
 
-            <Button
-              variant='outline'
-              className='w-full border-border-gray text-white'
-              onClick={() => navigator.clipboard.writeText(invoice)}
-            >
-              Copy invoice
-            </Button>
-          </div>
+
+          <Button
+            variant="destructive"
+            type="button"
+            className="w-full mt-4"
+            onClick={onCancelOrder}
+          >
+            Cancel order
+          </Button>
         </CardContent>
       </Card>
 

@@ -7,6 +7,33 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatNostrPubkey(pubkey: string, start: number = 6, end: number = 6): string {
+  if (!pubkey || pubkey.length <= start + end) return pubkey;
+  return `${pubkey.slice(0, start)}...${pubkey.slice(-end)}`;
+}
+
+export const requiredEnvVar = (key: string): string => {
+  const envVar = process.env[key];
+  if (undefined === envVar) {
+    throw new Error(`Environment process ${key} must be defined`);
+  }
+  return envVar;
+};
+
+export function getErrorMessage(err: unknown, defaultMessage: string = 'Something went wrong'): string {
+  if (typeof err === 'object' && err !== null) {
+    const anyErr = err as any;
+    if (Array.isArray(anyErr.issues) && anyErr.issues[0]?.message) {
+      return anyErr.issues[0].message;
+    }
+    if (typeof anyErr.message === 'string') {
+      return anyErr.message;
+    }
+  }
+
+  return defaultMessage;
+}
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {

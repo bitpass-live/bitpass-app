@@ -1,13 +1,12 @@
 'use client';
 
 import type React from 'react';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 import { useAuth } from '@/lib/auth-provider';
 import { OTPVerificationForm } from './otp-verification-form';
 
@@ -17,45 +16,31 @@ export function EmailLoginForm() {
   const [otpSent, setOtpSent] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { requestOTPCode } = useAuth();
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email || !email.includes('@')) {
-      toast({
-        title: 'Invalid email',
-        description: 'Please enter a valid email address',
-        variant: 'destructive',
-      });
+    if (!email.includes('@')) {
+      toast({ title: 'Invalid email', description: 'Please enter a valid email address', variant: 'destructive' });
       return;
     }
 
     setIsLoading(true);
-
-    // Simulate API call to send OTP
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    toast({
-      title: 'OTP sent',
-      description: 'Check your email for the verification code',
-    });
-
-    setIsLoading(false);
-    setOtpSent(true);
-  };
-
-  const handleVerificationSuccess = () => {
-    login({ email, role: 'OWNER' });
-    router.push('/checkin');
-    toast({
-      title: 'Logged in successfully',
-      description: 'Welcome to Bitpass!',
-    });
+    try {
+      await requestOTPCode(email);
+      toast({ title: 'OTP sent', description: 'Check your email for the verification code' });
+      setOtpSent(true);
+    } catch (err: any) {
+      toast({ title: 'Error sending OTP', description: err.message || 'Please try again', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (otpSent) {
-    return <OTPVerificationForm email={email} onSuccess={handleVerificationSuccess} onBack={() => setOtpSent(false)} />;
+    return (
+      <OTPVerificationForm email={email} onSuccess={() => router.push('/')} onBack={() => setOtpSent(false)} />
+    );
   }
 
   return (

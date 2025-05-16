@@ -3,9 +3,9 @@
 import type React from 'react';
 
 import { useState, useCallback } from 'react';
-import { PlusIcon, Pencil, Trash2, Tag } from 'lucide-react';
+import { PlusIcon, Pencil, Trash2, Tag, Percent, EllipsisVertical, BadgePercent, TicketPercent } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,9 +19,12 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogBody,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { EmptyState } from '@/components/empty-state';
+import { MenuOptions } from '@/components/menu-options';
 
 import type { DiscountCode } from '@/types';
 import { MOCK_DISCOUNTS_CODES, MOCK_EVENT } from '@/mock/data';
@@ -35,19 +38,30 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
   const [maxUses, setMaxUses] = useState('');
   const [active, setActive] = useState(true);
 
+  // Submenu
+  const [selectedCode, setSelectedCode] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState(false);
+
   const { toast } = useToast();
 
   // Get event data and discount codes from store
   const event = MOCK_EVENT;
   const discountCodes = MOCK_DISCOUNTS_CODES;
 
-  const handleOpenDialog = useCallback(() => {
-    setEditingCode(null);
-    setCode('');
-    setValue('');
-    setMaxUses('');
-    setActive(true);
-
+  const handleOpenDialog = useCallback((discountCode?: DiscountCode) => {
+    if (discountCode) {
+      setEditingCode(discountCode);
+      setCode(discountCode.code);
+      setValue(discountCode.value.toString());
+      setMaxUses(discountCode.maxUses ? discountCode.maxUses.toString() : '');
+      setActive(discountCode.active);
+    } else {
+      setEditingCode(null);
+      setCode('');
+      setValue('');
+      setMaxUses('');
+      setActive(true);
+    }
     setDialogOpen(true);
   }, []);
 
@@ -93,6 +107,39 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
     });
   }, []);
 
+  const handleOpenMenu = (id: string) => {
+    setSelectedCode(id);
+    setOpenMenu(true);
+  };
+
+  const getOpcionesMenu = () => {
+    if (!selectedCode) return [];
+
+    const currentCode = discountCodes.find((code) => code.id === selectedCode);
+    if (!currentCode) return [];
+
+    return [
+      {
+        id: 'edit',
+        text: 'Edit',
+        action: () => handleOpenDialog(currentCode),
+        variant: 'outline' as const,
+      },
+      {
+        id: 'toggle',
+        text: currentCode.active ? 'Disable' : 'Active',
+        action: () => handleToggleActive(currentCode.id, currentCode.active),
+        variant: currentCode.active ? 'outline' : 'secondary',
+      },
+      {
+        id: 'delete',
+        text: 'Delete',
+        action: () => handleDeleteCode(currentCode.id),
+        variant: 'destructive' as const,
+      },
+    ];
+  };
+
   // Show loading state if event not found
   if (!event) {
     return <div className='p-8 text-center'>Cargando datos del evento...</div>;
@@ -105,23 +152,23 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => handleOpenDialog()}>
-              <PlusIcon className='mr-2 h-4 w-4' />
-              Crear Código
+              <PlusIcon className='h-4 w-4' />
+              New
             </Button>
           </DialogTrigger>
-          <DialogContent className='sm:max-w-[550px]'>
-            <form onSubmit={handleSubmit}>
+          <DialogContent>
+            <form className='flex flex-col h-full' onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle>{editingCode ? 'Editar Código de Descuento' : 'Crear Código de Descuento'}</DialogTitle>
+                <BadgePercent className='w-8 h-8 mb-4' />
+                <DialogTitle>{editingCode ? 'Editar Código de Descuento' : 'New Discount Code'}</DialogTitle>
                 <DialogDescription>
                   {editingCode
                     ? 'Modifica los detalles del código de descuento'
                     : 'Define un nuevo código de descuento para este evento'}
                 </DialogDescription>
               </DialogHeader>
-              <div className='grid gap-4 py-4'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='code'>Código</Label>
+              <DialogBody>
+                <div>
                   <Input
                     id='code'
                     value={code}
@@ -131,35 +178,35 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
                   />
                 </div>
 
-                <div className='grid grid-cols-2 gap-4'>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='value'>{'Monto de Descuento'}</Label>
+                <div className='flex gap-4'>
+                  <div className='flex h-10 w-full max-w-36'>
                     <Input
+                      className='rounded-r-none text-end'
                       id='value'
                       type='number'
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder={'Ej: 1500'}
+                      placeholder={'Discount'}
                       min='0'
                       required
                     />
+                    <div className='flex items-center justify-center h-full px-3 bg-border rounded-r-md border border-r-0 border-input'>
+                      <Percent className='w-4 h-4 text-muted-foreground' />
+                    </div>
                   </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='maxUses'>Límite de Usos (opcional)</Label>
-                    <Input
-                      id='maxUses'
-                      type='number'
-                      value={maxUses}
-                      onChange={(e) => setMaxUses(e.target.value)}
-                      placeholder='Vacío para uso ilimitado'
-                      min='1'
-                    />
-                  </div>
+                  <Input
+                    id='maxUses'
+                    type='number'
+                    value={maxUses}
+                    onChange={(e) => setMaxUses(e.target.value)}
+                    placeholder='Unlimited quota'
+                    min='1'
+                  />
                 </div>
-              </div>
+              </DialogBody>
               <DialogFooter>
                 <Button className='w-full' type='submit'>
-                  {editingCode ? 'Guardar Cambios' : 'Crear Código'}
+                  {editingCode ? 'Save' : 'Create'}
                 </Button>
               </DialogFooter>
             </form>
@@ -168,78 +215,66 @@ export function DiscountCodeManagement({ eventId }: { eventId: string }) {
       </div>
 
       {discountCodes.length === 0 ? (
-        <Card>
-          <CardContent className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='rounded-full bg-muted p-3 mb-4'>
-              <Tag className='h-10 w-10 text-muted-foreground' />
-            </div>
-            <h3 className='text-lg font-semibold mb-2'>No hay códigos de descuento</h3>
-            <p className='text-muted-foreground max-w-md mb-6'>
-              Crea códigos de descuento para ofrecer promociones especiales a tus asistentes.
-            </p>
-            <Button onClick={() => handleOpenDialog()}>Crear tu Primer Código</Button>
-          </CardContent>
-        </Card>
+        <div className='flex flex-col items-center justify-center py-12 text-center'>
+          <EmptyState className='-my-12' icon={TicketPercent} size={240} />
+          <h2 className='text-xl font-semibold mb-2'>There are no discount codes</h2>
+          <p className='text-muted-foreground max-w-md mb-6'>
+            Create discount codes to offer special promotions to your attendees.
+          </p>
+        </div>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Códigos de Descuento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Código</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Usos</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className='text-right'>Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {discountCodes.map((discountCode) => {
-                  const isActive = discountCode.active;
+        <Card className='overflow-hidden'>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className='w-4'></TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>Disc.</TableHead>
+                <TableHead className='hidden md:table-cell'>Uses</TableHead>
+                <TableHead></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {discountCodes.map((discountCode: DiscountCode) => {
+                const isActive = discountCode.active;
 
-                  return (
-                    <TableRow key={discountCode.id}>
-                      <TableCell className='font-medium'>{discountCode.code}</TableCell>
-                      <TableCell>{`${discountCode.value}%`}</TableCell>
-                      <TableCell>
-                        {discountCode.used}
-                        {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
-                      </TableCell>
-                      <TableCell>
-                        <div className='flex items-center'>
-                          <Switch
-                            checked={discountCode.active}
-                            onCheckedChange={(checked) => handleToggleActive(discountCode.id, !checked)}
-                            className='mr-2'
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <div className='flex justify-end gap-2'>
-                          <Button variant='outline' size='icon' onClick={() => handleOpenDialog()} title='Editar'>
-                            <Pencil className='h-4 w-4' />
-                          </Button>
-                          <Button
-                            variant='outline'
-                            size='icon'
-                            onClick={() => handleDeleteCode(discountCode.id)}
-                            title='Eliminar'
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
+                return (
+                  <TableRow key={discountCode.id}>
+                    <TableCell className='w-4'>
+                      <div
+                        className={`w-4 h-4 rounded-full ${discountCode?.active ? 'bg-primary' : 'bg-gray-600'}`}
+                      ></div>
+                    </TableCell>
+                    <TableCell className='font-medium'>{discountCode.code}</TableCell>
+                    <TableCell>{`${discountCode.value}%`}</TableCell>
+                    <TableCell className='hidden md:table-cell'>
+                      {discountCode.used}
+                      {discountCode.maxUses ? ` / ${discountCode.maxUses}` : ''}
+                    </TableCell>
+                    <TableCell>
+                      <div className='flex justify-end gap-2'>
+                        <Button variant='secondary' size='icon' onClick={() => handleOpenMenu(discountCode?.id)}>
+                          <EllipsisVertical className='w-4 h-4' />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </Card>
       )}
+
+      <MenuOptions
+        id={selectedCode || undefined}
+        // TO-DO
+        // Change by Discount Code for reference
+        title='[Change to Code]'
+        options={getOpcionesMenu()}
+        open={openMenu}
+        onOpenChange={setOpenMenu}
+      />
     </div>
   );
 }

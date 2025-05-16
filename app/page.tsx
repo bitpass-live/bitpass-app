@@ -1,72 +1,62 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
+import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
-import { useToast } from '@/components/ui/use-toast';
-
-import { LoginForm } from '@/components/login-form';
-// import { Logo } from '@/components/logo';
-import { Button } from '@/components/ui/button';
+import CheckoutPage from '@/components/checkout/checkout-page';
+import { LoaderView } from '@/components/loader-view';
 
 export default function AuthPage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const { login } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { draftEvent } = useDraftEventContext();
 
-  const handleDemoLogin = () => {
-    login({ email: 'demo@bitpass.com', role: 'OWNER' });
-    toast({
-      title: 'Demo mode activated',
-      description: 'You are now using Bitpass in demo mode',
-    });
+  if (user.loaded && isAuthenticated && (!draftEvent || !draftEvent.id || draftEvent.status === "DRAFT")) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 flex items-center justify-center py-6">
+            <div className="flex flex-col gap-4 w-full max-w-md mx-auto px-4">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold">Welcome!</h1>
+                <p className="text-muted-foreground mt-2">
+                  Create your first event with our step-by-step guide.
+                </p>
+              </div>
 
-    router.push('/dashboard');
-  };
-
-  return (
-    <div className='min-h-screen flex flex-col'>
-      {/* Header */}
-      {/* <header className='border-b'>
-        <div className='container flex h-16 items-center justify-between py-4'>
-          <Link href='/' className='flex items-center'>
-            <Logo className='text-xl' />
-          </Link>
-        </div>
-      </header> */}
-
-      {/* Main content */}
-      <main className='flex-1 flex items-center justify-center py-6'>
-        <div className='flex flex-col gap-4 w-full max-w-md mx-auto px-4'>
-          <div className='text-center'>
-            <h1 className='text-2xl font-bold'>Welcome Back</h1>
-            <p className='text-muted-foreground mt-2'>Sign in to your account to continue</p>
-          </div>
-
-          <LoginForm />
-
-          <div className='text-center text-sm text-muted-foreground'>
-            <p>
-              Don&apos;t have an account?{' '}
-              <Link href='/' className='text-primary hover:underline'>
-                Go to homepage
+              <Link
+                href="/onboarding"
+                className="text-center bg-primary text-black rounded-md py-2 px-4 hover:bg-primary/90 transition"
+              >
+                Start now
               </Link>
-            </p>
+            </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (user.loaded && !isAuthenticated && (!draftEvent || !draftEvent.id)) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 flex items-center justify-center py-6">
+          <div className="flex flex-col gap-4 w-full max-w-md mx-auto px-4">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold">Welcome!</h1>
+              <p className="text-muted-foreground mt-2">
+                You need to log in to start creating your event.
+              </p>
+            </div>
+
+            <Link
+              href="/login"
+              className="text-center bg-primary text-black rounded-md py-2 px-4 hover:bg-primary/90 transition"
+            >
+              Log in
+            </Link>
           </div>
+        </main>
+      </div>
+    );
+  }
 
-          <Button className='w-full mt-0' variant='ghost' onClick={handleDemoLogin}>
-            Try Demo Mode
-          </Button>
-        </div>
-      </main>
-
-      {/* Footer */}
-      {/* <footer className='py-6 border-t'>
-        <div className='container text-center text-sm text-muted-foreground'>
-          <p>© {new Date().getFullYear()} NotPass. All rights reserved.</p>
-        </div>
-      </footer> */}
-    </div>
-  );
+  return (<CheckoutPage />);
 }

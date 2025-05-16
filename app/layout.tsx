@@ -1,10 +1,14 @@
 import type React from 'react';
 import type { Metadata } from 'next';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
+
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/lib/auth-provider';
 import { AuthGuard } from '@/components/auth/auth-guard';
+
+import './globals.css';
+import { DraftEventProvider } from '@/lib/draft-event-context';
+import { INSTANCE_ID } from '@/lib/instance-id';
+import { YadioProvider } from '@/lib/yadio-context';
 
 export const metadata: Metadata = {
   title: {
@@ -67,13 +71,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='es' className='scroll-smooth dark'>
-      <body className='bg-[#0A0A0A] font-sans'>
-        <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false}>
-          <AuthProvider>
-            <AuthGuard>{children}</AuthGuard>
-            <Toaster />
-          </AuthProvider>
-        </ThemeProvider>
+      <body>
+        <AuthProvider>
+          <DraftEventProvider instanceId={INSTANCE_ID}>
+            <YadioProvider>
+              <AuthGuard>{children}</AuthGuard>
+              <Toaster />
+            </YadioProvider>
+          </DraftEventProvider>
+        </AuthProvider>
       </body>
     </html>
   );
