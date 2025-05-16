@@ -19,6 +19,7 @@ const EventShape = {
   endTime: z
     .string()
     .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Time must be in HH:mm format"),
+  instanceId: z.string().optional(),
 };
 
 export const CreateEventSchema = z

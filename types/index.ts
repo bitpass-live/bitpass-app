@@ -1,5 +1,5 @@
 // Types
-type Currencies = 'SAT' | 'ARS' | 'USD';
+export type Currencies = 'SAT' | 'ARS' | 'USD';
 type ListStatus = 'pending' | 'paid' | 'cancelled';
 
 export interface Ticket {

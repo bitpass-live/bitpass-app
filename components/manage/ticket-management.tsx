@@ -6,7 +6,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { PlusIcon, Pencil, Trash2, AlertCircle, TicketIcon, TicketSlash } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 import { useAuth } from '@/lib/auth-provider';
 
 import { Button } from '@/components/ui/button';
@@ -29,17 +29,17 @@ import {
 import { EmptyState } from '@/components/empty-state';
 import { SatoshiIcon } from '@/components/icon/satoshi';
 
-import type { Ticket } from '@/types';
-
 import { useDraftEventContext } from '@/lib/draft-event-context';
-import { TicketType } from '@/lib/bitpass-sdk/src/types/event';
+import { TicketType, TicketTypeWithSoldCount } from '@/lib/bitpass-sdk/src/types/event';
 
 export function TicketManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState<TicketType | null>(null);
 
-  const { tickets, loading, draftEvent, addTicket, updateTicket, deleteTicket } = useDraftEventContext();
+  const { loading, draftEvent, addTicket, updateTicket, deleteTicket } = useDraftEventContext();
   const { paymentMethods } = useAuth();
+
+  const tickets = useMemo(() => draftEvent?.ticketTypes ?? [], [])
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
@@ -278,18 +278,17 @@ export function TicketManagement() {
       ) : (
         <Card>
           {tickets?.length > 0 &&
-            tickets?.map((ticket: TicketType) => (
+            tickets?.map((ticket: TicketTypeWithSoldCount) => (
               <div className='border-b last:border-none' key={ticket.id}>
                 <div className='p-6'>
                   <div className='flex items-center justify-between gap-4'>
                     <div className='flex items-center gap-2 w-full'>
                       <h3 className='text-lg font-semibold'>{ticket.name}</h3>
-                      <p className='text-text-secondary'>{ticket?.price === 0 ? 'Gratis' : '$' + ticket?.price}</p>
+                      <p className='text-text-secondary'>{ticket?.price === 0 ? 'Gratis' : '$' + ticket?.price + ' ' + ticket.currency}</p>
                     </div>
                     <div className='hidden md:flex whitespace-nowrap'>
                       <p className='text-muted-foreground text-sm'>
-                        {/* TODO: add sold tickets amount */}
-                        {ticket.quantity === -1 ? 'Ilimitado' : `${0} / ${ticket.quantity} vendidos`}
+                        {ticket.quantity === -1 ? 'Ilimitado' : `${ticket.soldCount} / ${ticket.quantity} vendidos`}
                       </p>
                     </div>
                     <div className='flex gap-2'>

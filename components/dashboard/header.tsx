@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { formatNostrPubkey } from '@/lib/utils';
 
 export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
   const { user, logout } = useAuth();
@@ -30,14 +31,14 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
         <div className='min-w-10'>
           {backGoHome && (
             <Button className='gap-2' variant='secondary' size='icon' asChild>
-              <Link href='/dashboard'>
+              <Link href='/'>
                 <ArrowLeft className='h-4 w-4' />
               </Link>
             </Button>
           )}
         </div>
         <div className='flex justify-center w-full h-full'>
-          <Link href='/dashboard' className='flex items-center'>
+          <Link href='/' className='flex items-center'>
             <Logo className='text-xl' />
           </Link>
         </div>
@@ -67,7 +68,7 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>
+              <DropdownMenuLabel className='pb-0'>
                 {user?.authMethod === 'email'
                   ? 'Email Account'
                   : user?.authMethod === 'nostr'
@@ -75,15 +76,15 @@ export function Header({ backGoHome = false }: { backGoHome?: boolean }) {
                   : 'Demo Account'}
               </DropdownMenuLabel>
               <DropdownMenuItem disabled className='text-xs text-muted-foreground'>
-                {user?.email || user?.pubkey || 'demo@eventro.com'}
+                {user?.email ?? `Public key: ${formatNostrPubkey(user.nostrPubKey!)}`}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              {/* <DropdownMenuItem asChild>
                 <Link href='/settings'>
                   <Settings className='mr-2 h-4 w-4' />
                   <span>Settings</span>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem onClick={logout}>
                 <LogOut className='mr-2 h-4 w-4' />
                 <span>Log out</span>

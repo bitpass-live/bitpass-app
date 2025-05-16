@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { CheckIcon, XIcon } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 import type { CheckInResult } from './hooks/use-check-in';
 import { MOCK_SALES } from '@/mock/data';
 

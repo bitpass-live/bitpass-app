@@ -1,5 +1,5 @@
 import type { Event as NostrEvent } from "nostr-tools";
-import type { Event as EventModel } from "../types/event";
+import type { Event as EventModel, FullEvent } from "../types/event";
 import type {
   CreateEventInput,
   UpdateEventInput,
@@ -28,6 +28,7 @@ import {
 } from "../validators/discount.schema";
 import { z } from "zod";
 import type { DiscountCode } from "../types/discount";
+import { AdminOrderWithTickets, AdminTicketType, Ticket } from "../types/ticket";
 
 export class Bitpass {
   /**
@@ -122,7 +123,7 @@ export class Bitpass {
    * @param input Data for the new event.
    * @returns The created Event record.
    */
-  async createDraftEvent(input: CreateEventInput): Promise<EventModel> {
+  async createDraftEvent(input: CreateEventInput): Promise<FullEvent> {
     CreateEventSchema.parse(input);
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(`${this.baseUrl}/events`, {
@@ -137,6 +138,24 @@ export class Bitpass {
         : payload.error ?? "Failed to create draft event";
       throw new Error(errorMsg);
     }
+    return res.json();
+  }
+
+  /**
+ * Get a draft event by instanceId, if it exists.
+ * @param instanceId Instance identifier
+ * @returns The event, or throws 404 if not found.
+ */
+  async getEventByInstanceId(instanceId: string): Promise<FullEvent> {
+    const res = await fetch(`${this.baseUrl}/events/instance/${instanceId}`, {
+      headers: this.headers,
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || 'Failed to fetch event by instanceId');
+    }
+
     return res.json();
   }
 
@@ -161,7 +180,7 @@ export class Bitpass {
    * @param eventId UUID of the event.
    * @returns Event details.
    */
-  async getEvent(eventId: string): Promise<EventModel> {
+  async getEvent(eventId: string): Promise<FullEvent> {
     const res = await fetch(`${this.baseUrl}/events/${eventId}`, {
       method: "GET",
       headers: this.headers,
@@ -178,7 +197,7 @@ export class Bitpass {
    * @param eventId UUID of the draft event.
    * @returns Draft event details.
    */
-  async getDraftEvent(eventId: string): Promise<EventModel> {
+  async getDraftEvent(eventId: string): Promise<FullEvent> {
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(`${this.baseUrl}/events/${eventId}`, {
       method: "GET",
@@ -200,7 +219,7 @@ export class Bitpass {
   async updateEvent(
     eventId: string,
     input: UpdateEventInput
-  ): Promise<EventModel> {
+  ): Promise<FullEvent> {
     UpdateEventSchema.parse(input);
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(`${this.baseUrl}/events/${eventId}`, {
@@ -269,11 +288,75 @@ export class Bitpass {
   }
 
   /**
+ * Create a new order for the given event and selected ticket types.
+ *
+ * @param input - Order creation input
+ * @param input.eventId - ID of the event
+ * @param input.ticketTypes - List of ticket types and their quantities
+ * @param input.discountCode - (Optional) Discount code to apply
+ * @param input.paymentMethodId - (Optional) Payment method ID to use
+ * @returns The created order including Lightning invoice and metadata
+ *
+ * @throws If the request fails or the server returns an error
+ */
+  async createOrder(input: {
+    eventId: string;
+    ticketTypes: { ticketTypeId: string; quantity: number }[];
+    discountCode?: string;
+    paymentMethodId?: string;
+  }): Promise<{
+    orderId: string;
+    lnInvoice: string;
+    expiresAt: string;
+    totalAmount: number;
+  }> {
+    const res = await fetch(`${this.baseUrl}/orders`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error || 'Failed to create order');
+    }
+
+    return res.json();
+  }
+
+  /**
+ * Get the status of an order.
+ * Will return `PENDING`, `PAID` (with tickets), or `EXPIRED`.
+ * @param orderId UUID of the order
+ */
+  async getOrderStatus(orderId: string): Promise<{
+    status: 'PENDING' | 'PAID' | 'EXPIRED';
+    lnInvoice: string;
+    totalAmount: number;
+    expiresAt: string;
+    tickets?: Ticket[];
+  }> {
+    if (!this.token) throw new Error("Unauthorized: please authenticate first");
+
+    const res = await fetch(`${this.baseUrl}/orders/${orderId}/status`, {
+      method: "GET",
+      headers: this.headers,
+    });
+
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error ?? "Failed to fetch order status");
+    }
+
+    return res.json();
+  }
+
+  /**
    * Fetch detailed ticket types for an event (admin view).
    * @param eventId UUID of the event.
    * @returns Array of ticket types with orders & tickets.
    */
-  async getAdminTickets(eventId: string): Promise<any[]> {
+  async getAdminTickets(eventId: string): Promise<AdminTicketType[]> {
     if (!this.token) throw new Error("Unauthorized: please authenticate first");
     const res = await fetch(
       `${this.baseUrl}/events/${eventId}/tickets/admin`,
@@ -286,6 +369,27 @@ export class Bitpass {
       const { error } = await res.json();
       throw new Error(error ?? "Failed to fetch admin tickets");
     }
+    return res.json();
+  }
+
+  /**
+ * Fetch paid orders for an event, with their tickets and buyer info.
+ * @param eventId UUID of the event.
+ * @returns Array of paid orders with associated tickets and buyer.
+ */
+  async getAdminOrders(eventId: string): Promise<AdminOrderWithTickets[]> {
+    if (!this.token) throw new Error("Unauthorized: please authenticate first");
+
+    const res = await fetch(`${this.baseUrl}/events/${eventId}/orders`, {
+      method: "GET",
+      headers: this.headers,
+    });
+    
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error ?? "Failed to fetch admin orders");
+    }
+
     return res.json();
   }
 
@@ -661,6 +765,27 @@ export class Bitpass {
   }
 
   /**
+ * Link a payment method to an event.
+ * If a method of the same type already exists, it will be replaced.
+ * @param eventId Event to associate the method with.
+ * @param methodId Payment method to link.
+ */
+  async addPaymentMethodToEvent(eventId: string, methodId: string): Promise<void> {
+    if (!this.token) throw new Error("Unauthorized: please authenticate first");
+
+    const res = await fetch(`${this.baseUrl}/events/${eventId}/payment-methods`, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify({ methodId }),
+    });
+
+    if (!res.ok) {
+      const payload = await res.json();
+      throw new Error(payload.error ?? "Failed to add payment method to event");
+    }
+  }
+
+  /**
    * Configure a new Lightning payment method.
    * @param lightningAddress Lightning address (LUD16).
    * @returns Created payment method.
@@ -701,6 +826,14 @@ export class Bitpass {
       const { error } = await res.json();
       throw new Error(error ?? "Failed to list payment methods");
     }
+    return res.json();
+  }
+
+  async getTicketsByEvent(eventId: string): Promise<Ticket[]> {
+    const res = await fetch(`${this.baseUrl}/events/${eventId}/tickets`, {
+      headers: this.headers,
+    });
+    if (!res.ok) throw new Error('Failed to fetch tickets');
     return res.json();
   }
 
@@ -750,5 +883,16 @@ export class Bitpass {
       const { error } = await res.json();
       throw new Error(error ?? "Failed to delete payment method");
     }
+  }
+
+  async getUserTickets(eventId?: string): Promise<Ticket[]> {
+    const url = new URL(`${this.baseUrl}/users/me/tickets`);
+    if (eventId) url.searchParams.append('eventId', eventId);
+
+    const res = await fetch(url.toString(), {
+      headers: this.headers,
+    });
+    if (!res.ok) throw new Error('Failed to fetch user tickets');
+    return res.json();
   }
 }

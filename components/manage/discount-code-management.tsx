@@ -5,7 +5,7 @@ import type React from 'react';
 import { useState, useCallback } from 'react';
 import { PlusIcon, Pencil, Trash2, Tag, Percent, EllipsisVertical, BadgePercent, TicketPercent } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';;
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

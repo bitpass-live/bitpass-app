@@ -1,23 +1,19 @@
 'use client';
 
 import { CheckCircle } from 'lucide-react';
-
 import { Card, CardContent } from '@/components/ui/card';
-
-import { Event, TicketSale } from '@/types';
-import { MOCK_EVENT, MOCK_SALES } from '@/mock/data';
+import type { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface PaymentSuccessProps {
-  eventId: string;
-  saleId: string;
-  onViewTicket: () => void;
+  tickets: Ticket[];
 }
 
-export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccessProps) {
-  const event: Event = MOCK_EVENT;
-  const sale: TicketSale = MOCK_SALES[0];
-
-  if (!event || !sale) return null;
+export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
+  const router = useRouter();
+  
+  if (!tickets || tickets.length === 0) return null;
 
   return (
     <div className='w-full max-w-md space-y-6'>
@@ -36,30 +32,20 @@ export function PaymentSuccess({ eventId, saleId, onViewTicket }: PaymentSuccess
           </div>
 
           <div className='w-full space-y-4 mb-6'>
-            <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Event:</span>
-              <span className='text-white font-medium'>{event.title}</span>
-            </div>
-            <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Ticket:</span>
-              <span className='text-white font-medium'>{sale?.ticketTitle}</span>
-            </div>
-            <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Quantity:</span>
-              <span className='text-white font-medium'>{sale?.quantity}</span>
-            </div>
-            <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>Ref:</span>
-              <span className='text-white font-medium'>{sale?.reference}</span>
-            </div>
+            {tickets.map((ticket, index) => (
+              <div key={ticket.id} className='flex justify-between text-sm border-b border-border-gray py-1'>
+                <span className='text-muted-foreground'>Ticket #{index + 1}:</span>
+                <span className='text-white font-medium'>{ticket.id}</span>
+              </div>
+            ))}
           </div>
 
-          {/* <Button
-            onClick={onViewTicket}
+          <Button
+            onClick={() => router.push(`/tickets`)}
             className='w-full bg-fluorescent-yellow hover:bg-fluorescent-yellow-hover text-dark-gray'
           >
-            Ver mi ticket
-          </Button> */}
+            View My Tickets
+          </Button>
         </CardContent>
       </Card>
 

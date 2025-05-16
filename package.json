@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "generate-instance": "node .bitpass/generate-instance-id.js",
+    "dev": "pnpm generate-instance && next dev",
+    "build": "pnpm generate-instance && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -65,6 +66,7 @@
     "use-sync-external-store": "latest",
     "uuid": "latest",
     "vaul": "^0.9.6",
+    "yadio-sdk": "^1.0.3",
     "zod": "^3.24.4",
     "zustand": "latest"
   },
@@ -76,6 +78,7 @@
     "eslint-config-next": "15.3.2",
     "postcss": "^8",
     "tailwindcss": "^3.4.17",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   },
   "packageManager": "pnpm@8.15.6+sha512.77b89e9be77a2b06ad8f403a19cae5e22976f61023f98ad323d5c30194958ebc02ee0a6ae5d13ee454f6134e4e8caf29a05f0b1a0e1d2b17bca6b6a1f1159f86"

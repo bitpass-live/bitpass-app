@@ -6,6 +6,9 @@ import { AuthProvider } from '@/lib/auth-provider';
 import { AuthGuard } from '@/components/auth/auth-guard';
 
 import './globals.css';
+import { DraftEventProvider } from '@/lib/draft-event-context';
+import { INSTANCE_ID } from '@/lib/instance-id';
+import { YadioProvider } from '@/lib/yadio-context';
 
 export const metadata: Metadata = {
   title: {
@@ -70,8 +73,12 @@ export default function RootLayout({
     <html lang='es' className='scroll-smooth dark'>
       <body>
         <AuthProvider>
-          <AuthGuard>{children}</AuthGuard>
-          <Toaster />
+          <DraftEventProvider instanceId={INSTANCE_ID}>
+            <YadioProvider>
+              <AuthGuard>{children}</AuthGuard>
+              <Toaster />
+            </YadioProvider>
+          </DraftEventProvider>
         </AuthProvider>
       </body>
     </html>

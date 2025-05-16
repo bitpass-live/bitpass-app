@@ -4,21 +4,18 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { EventInfo } from '@/components/event-info';
-import { CheckoutForm } from '@/components/checkout-form';
+import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 
 import { DiscountCode } from '@/types';
-import { MOCK_EVENT } from '@/mock/data';
+import { useDraftEventContext } from '@/lib/draft-event-context';
 
 export default function HomePage() {
-  // ID del evento hardcodeado para la demo
-  const eventId = 'event123';
+  const { draftEvent } = useDraftEventContext();
 
   const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({});
   const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
-
-  const event = MOCK_EVENT;
 
   const handleTicketChange = (ticketId: string, quantity: number) => {
     setSelectedTickets((prev) => ({
@@ -31,7 +28,7 @@ export default function HomePage() {
     setAppliedDiscount(discountCode);
   };
 
-  if (!event) {
+  if (!draftEvent || !draftEvent.id) {
     return (
       <div className='flex items-center justify-center h-screen'>
         <p>Event not found</p>
@@ -55,7 +52,7 @@ export default function HomePage() {
               </Button>
             </div>
             <EventInfo
-              event={event}
+              event={draftEvent}
               selectedTickets={selectedTickets}
               onTicketChange={handleTicketChange}
               onDiscountValidated={handleDiscountValidated}
@@ -66,7 +63,7 @@ export default function HomePage() {
         {/* Right side - Checkout form */}
         <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 bg-[#0A0A0A]'>
           <div className='w-full max-w-md mx-auto px-4'>
-            <CheckoutForm eventId={eventId} selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
+            <CheckoutForm selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} />
           </div>
         </div>
       </div>
