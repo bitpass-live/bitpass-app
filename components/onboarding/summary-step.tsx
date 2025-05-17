@@ -59,7 +59,7 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
       currentStep={3}
       totalSteps={4}
       icon={Check}
-      title='Your Event Is Ready!'
+      title='Your Event Is Almost Ready!'
       subtitle='Configuration Summary'
     >
       <div className='space-y-6'>
@@ -122,7 +122,7 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
           </CardContent>
         </Card>
 
-        <div className='space-y-3'>
+        {/* <div className='space-y-3'>
           <h3 className='text-lg font-medium'>Important URLs</h3>
 
           <Card className='flex flex-row md:items-center justify-between p-3'>
@@ -160,7 +160,7 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
               </Button>
             </div>
           </Card>
-        </div>
+        </div> */}
 
         <StepNavigation onNext={handleFinish} onBack={onBack} isLastStep={true} />
       </div>
