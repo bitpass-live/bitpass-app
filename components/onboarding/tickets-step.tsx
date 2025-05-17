@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { TicketCheck, PlusIcon, TicketIcon, Pencil, Trash2 } from 'lucide-react';
 
-import { useToast } from '@/hooks/use-toast';;
+import { useToast } from '@/hooks/use-toast';
 import { useDraftEventContext } from '@/lib/draft-event-context';
 
 import { SatoshiIcon } from '@/components/icon/satoshi';
@@ -40,10 +40,10 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState<'ARS' | 'SAT' | 'USD'>('ARS');
+  const [currency, setCurrency] = useState<'ARS' | 'SAT' | 'USD'>('USD');
   const [quantity, setQuantity] = useState('');
-  const [isFree, setIsFree] = useState(true);
-  const [isLimited, setIsLimited] = useState(false);
+  const [isFree, setIsFree] = useState(false);
+  const [isLimited, setIsLimited] = useState(true);
 
   const { toast } = useToast();
 
@@ -60,9 +60,9 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
       setEditingTicket(null);
       setTitle('');
       setAmount('');
-      setIsFree(true);
-      setCurrency('ARS');
-      setIsLimited(false);
+      setIsFree(false);
+      setCurrency('USD');
+      setIsLimited(true);
       setQuantity('');
     }
 
@@ -94,15 +94,18 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
 
       setDialogOpen(false);
     },
-    [editingTicket, title, amount, currency, isFree, isLimited, quantity, addTicket, updateTicket]
+    [editingTicket, title, amount, currency, isFree, isLimited, quantity, addTicket, updateTicket],
   );
 
-  const handleDeleteTicket = useCallback(async (ticketId: string) => {
-    const confirmed = confirm('Are you sure you want to delete this ticket?');
-    if (!confirmed) return;
+  const handleDeleteTicket = useCallback(
+    async (ticketId: string) => {
+      const confirmed = confirm('Are you sure you want to delete this ticket?');
+      if (!confirmed) return;
 
-    await deleteTicket(ticketId);
-  }, [deleteTicket]);
+      await deleteTicket(ticketId);
+    },
+    [deleteTicket],
+  );
 
   const handleNext = useCallback(() => {
     if (tickets.length === 0) {
@@ -153,12 +156,12 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
                   <Card>
                     <CardContent className='p-4'>
                       <div className='flex items-center justify-between'>
-                        <Label>Precio</Label>
+                        <Label>Price</Label>
                         <div className='flex items-center gap-2'>
                           <Label htmlFor='free-ticket' className='text-sm text-muted-foreground'>
                             Free
                           </Label>
-                          <Switch id='free-ticket' checked={isFree} onCheckedChange={setIsFree} />
+                          <Switch id='free-ticket' checked={isFree} onCheckedChange={setIsFree} disabled />
                         </div>
                       </div>
                       {!isFree && (
@@ -203,7 +206,7 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
                   <Card>
                     <CardContent className='p-4'>
                       <div className='flex items-center justify-between'>
-                        <Label>Cupo</Label>
+                        <Label>Quota</Label>
                         <div className='flex items-center gap-2'>
                           <Label htmlFor='limited-quantity' className='text-sm text-muted-foreground'>
                             Unlimited
@@ -212,6 +215,7 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
                             id='limited-quantity'
                             checked={!isLimited}
                             onCheckedChange={(checked) => setIsLimited(!checked)}
+                            disabled
                           />
                         </div>
                       </div>
@@ -223,7 +227,7 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
                             type='number'
                             value={quantity}
                             onChange={(e) => setQuantity(e.target.value)}
-                            placeholder='Cantidad de tickets disponibles'
+                            placeholder='Number of tickets available'
                             min='1'
                             required
                           />
@@ -246,7 +250,9 @@ export function TicketsStep({ onNext, onBack }: TicketsStepProps) {
           <Card>
             <div className='p-6 text-center text-muted-foreground'>
               <p className='text-sm'>No tickets have been created for this event yet.</p>
-              <p className='text-sm'>Click <strong>"New"</strong> to add your first ticket.</p>
+              <p className='text-sm'>
+                Click <strong>"New"</strong> to add your first ticket.
+              </p>
             </div>
           </Card>
         )}
