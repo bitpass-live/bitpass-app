@@ -6,15 +6,15 @@
 
 ## ✅ Features
 
-- [x] **Ticket Sales**: Sell tickets with Bitcoin Lightning Network payments
-- [x] **Check-in System**: Scan QR codes or manually enter ticket references
-- [x] **Discount Codes**: Create and manage discount codes for your events
 - [x] **Responsive Design**: Works on desktop and mobile devices
+- [x] **Event Management**: Create and manage events with customizable details
+- [x] **Ticket Sales**: Sell tickets with Bitcoin Lightning Network payments
+- [x] **Payment Processing**: Accept payments via Lightning Network
 
 ## 🚀 Soon
-- [ ] **Event Management**: Create and manage events with customizable details
+- [ ] **Check-in System**: Scan QR codes or manually enter ticket references
+- [ ] **Discount Codes**: Create and manage discount codes for your events
 - [ ] **Team Management**: Invite team members with different roles
-- [ ] **Payment Processing**: Accept payments via Lightning Network or others
 
 ## 🛠️ Technologies
 
@@ -33,24 +33,22 @@
 
 ### Installation
 
+This project uses [pnpm](https://pnpm.io/) to install dependencies and run scripts.
+
 1. Clone the repository:
 ```bash
-git clone https://github.com/unllamas/bitpass.git
-cd bitpass
+git clone https://github.com/bitpass-live/bitpass-app.git
+cd bitpass-app
 ```
 
 2. Install dependencies:
 ```bash
-npm install
-# or
-yarn install
+pnpm install
 ```
 
 3. Run the development server:
 ```bash
-npm run dev
-# or
-yarn dev
+pnpm dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
