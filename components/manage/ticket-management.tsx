@@ -6,7 +6,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { PlusIcon, Pencil, Trash2, AlertCircle, TicketIcon, TicketSlash } from 'lucide-react';
 
-import { useToast } from '@/hooks/use-toast';;
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/auth-provider';
 
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,7 @@ export function TicketManagement() {
   const { loading, draftEvent, addTicket, updateTicket, deleteTicket } = useDraftEventContext();
   const { paymentMethods } = useAuth();
 
-  const tickets = useMemo(() => draftEvent?.ticketTypes ?? [], [])
+  const tickets = useMemo(() => draftEvent?.ticketTypes ?? [], []);
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
@@ -53,83 +53,89 @@ export function TicketManagement() {
 
   // Check if user has lightning address configured
   const lightning = paymentMethods.find((m) => m.type === 'LIGHTNING');
-  const hasLightningAddress = Boolean(lightning)
+  const hasLightningAddress = Boolean(lightning);
 
   const handleOpenDialog = useCallback((ticket?: TicketType) => {
     if (ticket) {
-      setEditingTicket(ticket)
-      setTitle(ticket.name)
-      setAmount(ticket.price.toString())
-      setIsFree(ticket.price === 0)
-      setCurrency(ticket.currency)
-      setIsLimited(ticket.quantity !== -1)
-      setQuantity(ticket.quantity !== -1 ? ticket.quantity.toString() : '')
+      setEditingTicket(ticket);
+      setTitle(ticket.name);
+      setAmount(ticket.price.toString());
+      setIsFree(ticket.price === 0);
+      setCurrency(ticket.currency);
+      setIsLimited(ticket.quantity !== -1);
+      setQuantity(ticket.quantity !== -1 ? ticket.quantity.toString() : '');
     } else {
       // Modo creación
-      setEditingTicket(null)
-      setTitle('')
-      setAmount('')
-      setIsFree(true)
-      setCurrency('ARS')
-      setIsLimited(false)
-      setQuantity('')
+      setEditingTicket(null);
+      setTitle('');
+      setAmount('');
+      setIsFree(true);
+      setCurrency('ARS');
+      setIsLimited(false);
+      setQuantity('');
     }
 
-    setDialogOpen(true)
-  }, [])
+    setDialogOpen(true);
+  }, []);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      if (editingTicket) {
-        await updateTicket(editingTicket.id, {
-          name: title,
-          price: isFree ? 0 : parseFloat(amount),
-          currency,
-          quantity: isLimited ? parseInt(quantity) : -1
-        })
-      } else {
-        await addTicket({
-          name: title,
-          price: isFree ? 0 : parseFloat(amount),
-          currency,
-          quantity: isLimited ? parseInt(quantity) : -1
-        })
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        if (editingTicket) {
+          await updateTicket(editingTicket.id, {
+            name: title,
+            price: isFree ? 0 : parseFloat(amount),
+            currency,
+            quantity: isLimited ? parseInt(quantity) : -1,
+          });
+        } else {
+          await addTicket({
+            name: title,
+            price: isFree ? 0 : parseFloat(amount),
+            currency,
+            quantity: isLimited ? parseInt(quantity) : -1,
+          });
+        }
+
+        setDialogOpen(false);
+      } catch (err: any) {
+        toast({
+          title: 'Error',
+          description: err?.message || 'Failed to save ticket',
+          variant: 'destructive',
+        });
       }
-
-      setDialogOpen(false)
-    } catch (err: any) {
-      toast({
-        title: 'Error',
-        description: err?.message || 'Failed to save ticket',
-        variant: 'destructive',
-      })
-    }
-  }, [editingTicket, title, amount, currency, isFree, isLimited, quantity, updateTicket, addTicket, toast])
+    },
+    [editingTicket, title, amount, currency, isFree, isLimited, quantity, updateTicket, addTicket, toast],
+  );
 
   const handleNavigateToSettings = () => {
     router.push('/settings?tab=payments');
   };
 
-  const handleDeleteTicket = useCallback(async (ticketId: string) => {
-    const confirmation = confirm('Are you sure you want to delete this ticket?');
-    if (!confirmation) return
+  const handleDeleteTicket = useCallback(
+    async (ticketId: string) => {
+      const confirmation = confirm('Are you sure you want to delete this ticket?');
+      if (!confirmation) return;
 
-    try {
-      await deleteTicket(ticketId)
-      toast({
-        title: 'Ticket deleted',
-        description: 'Your ticket has been deleted successfully.',
-      })
-    } catch (err: any) {
-      console.error('Error deleting ticket:', err)
-      toast({
-        title: 'Error',
-        description: err?.message || 'Failed to delete ticket',
-        variant: 'destructive',
-      })
-    }
-  }, [deleteTicket, toast])
+      try {
+        await deleteTicket(ticketId);
+        toast({
+          title: 'Ticket deleted',
+          description: 'Your ticket has been deleted successfully.',
+        });
+      } catch (err: any) {
+        console.error('Error deleting ticket:', err);
+        toast({
+          title: 'Error',
+          description: err?.message || 'Failed to delete ticket',
+          variant: 'destructive',
+        });
+      }
+    },
+    [deleteTicket, toast],
+  );
 
   // Show loading state if event not found
   if (!draftEvent || loading) {
@@ -167,7 +173,7 @@ export function TicketManagement() {
                 <Card>
                   <CardContent className='p-4'>
                     <div className='flex items-center justify-between'>
-                      <Label>Precio</Label>
+                      <Label>Price</Label>
                       <div className='flex items-center gap-2'>
                         <Label htmlFor='free-ticket' className='text-sm text-muted-foreground'>
                           Free
@@ -215,7 +221,7 @@ export function TicketManagement() {
                 <Card>
                   <CardContent className='p-4'>
                     <div className='flex items-center justify-between'>
-                      <Label>Cupo</Label>
+                      <Label>Quota</Label>
                       <div className='flex items-center gap-2'>
                         <Label htmlFor='limited-quantity' className='text-sm text-muted-foreground'>
                           Unlimited
@@ -235,7 +241,7 @@ export function TicketManagement() {
                           type='number'
                           value={quantity}
                           onChange={(e) => setQuantity(e.target.value)}
-                          placeholder='Cantidad de tickets disponibles'
+                          placeholder='Number of tickets available'
                           min='1'
                           required
                         />
@@ -284,7 +290,9 @@ export function TicketManagement() {
                   <div className='flex items-center justify-between gap-4'>
                     <div className='flex items-center gap-2 w-full'>
                       <h3 className='text-lg font-semibold'>{ticket.name}</h3>
-                      <p className='text-text-secondary'>{ticket?.price === 0 ? 'Gratis' : '$' + ticket?.price + ' ' + ticket.currency}</p>
+                      <p className='text-text-secondary'>
+                        {ticket?.price === 0 ? 'Gratis' : '$' + ticket?.price + ' ' + ticket.currency}
+                      </p>
                     </div>
                     <div className='hidden md:flex whitespace-nowrap'>
                       <p className='text-muted-foreground text-sm'>
