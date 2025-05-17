@@ -14,35 +14,36 @@ const PRIVILEGED_ROUTES: string[] = ['/admin', '/admin/checkin', '/admin/setting
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated } = useAuth();
   const { draftEvent } = useDraftEventContext();
-  const [redirecting, setRedirecting] = useState<boolean>();
+  const [redirecting, setRedirecting] = useState<boolean>(false);
 
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!user || !user.loaded || !draftEvent || redirecting) return;
-
-    const isOwner = draftEvent.creatorId === user.id;
-    const isTeamMember = draftEvent.team?.some((member) => member.userId === user.id) ?? false;
+    if (!user || !user.loaded || redirecting) return;
 
     const shouldRedirect = () => {
-      if ((AUTHENTICATED_ROUTES.includes(pathname) || PRIVILEGED_ROUTES.includes(pathname)) && !isAuthenticated) {
-        router.push('/');
+
+      if (!isAuthenticated && (PRIVILEGED_ROUTES.includes(pathname) || AUTHENTICATED_ROUTES.includes(pathname))) {
+        router.push('/login');
         return true;
       }
+
+      const isOwner = draftEvent ? draftEvent.creatorId === user.id : false;
+      const isTeamMember = draftEvent ? draftEvent.team?.some((member) => member.userId === user.id) : false;
 
       if (PRIVILEGED_ROUTES.includes(pathname) && isAuthenticated && !isOwner && !isTeamMember) {
         router.push('/');
         return true;
       }
 
-      if (pathname === '/onboarding' && draftEvent.status === 'PUBLISHED') {
-        router.push('/admin');
+      if (pathname === '/admin' && (!draftEvent || draftEvent.status === "DRAFT")) {
+        router.push('/onboarding');
         return true;
       }
 
-      if (pathname === '/admin' && (!draftEvent || draftEvent.status === "DRAFT")) {
-        router.push('/onboarding');
+      if (pathname === '/onboarding' && (draftEvent && draftEvent.status === 'PUBLISHED')) {
+        router.push('/admin');
         return true;
       }
 
