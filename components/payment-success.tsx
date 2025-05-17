@@ -12,7 +12,7 @@ interface PaymentSuccessProps {
 
 export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
   const router = useRouter();
-  
+
   if (!tickets || tickets.length === 0) return null;
 
   return (
@@ -20,7 +20,7 @@ export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
       <h2 className='text-xl font-semibold text-white'>Payment completed!</h2>
 
       <Card className='bg-[#151515] border-border-gray'>
-        <CardContent className='p-6 flex flex-col items-center'>
+        <CardContent className='p-6 flex flex-col items-center gap-1'>
           <div className='mb-6 text-center'>
             <div className='inline-flex items-center justify-center p-2 bg-green-100 rounded-full mb-4'>
               <CheckCircle className='h-12 w-12 text-green-600' />
@@ -33,7 +33,7 @@ export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
 
           <div className='w-full space-y-4 mb-6'>
             {tickets.map((ticket, index) => (
-              <div key={ticket.id} className='flex justify-between text-sm border-b border-border-gray py-1'>
+              <div key={ticket.id} className='flex flex-col justify-between text-sm border-b border-border-gray pb-2'>
                 <span className='text-muted-foreground'>Ticket #{index + 1}:</span>
                 <span className='text-white font-medium'>{ticket.id}</span>
               </div>
