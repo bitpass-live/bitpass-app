@@ -9,7 +9,6 @@
 - [x] **Responsive Design**: Works on desktop and mobile devices
 - [x] **Event Management**: Create and manage events with customizable details
 - [x] **Ticket Sales**: Sell tickets with Bitcoin Lightning Network payments
-- [x] **Payment Processing**: Accept payments via Lightning Network
 
 ## 🚀 Soon
 - [ ] **Check-in System**: Scan QR codes or manually enter ticket references
