@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useCallback } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
-import { useToast } from '@/hooks/use-toast';;
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CardTitle, CardDescription } from '@/components/ui/card';
@@ -26,18 +26,18 @@ export function EventManagement({ eventId }: { eventId: string }) {
   const { draftEvent, loading, error, setDraftField, saveDraftEvent } = useDraftEventContext();
 
   const { user } = useAuth();
-  const router = useRouter()
+  const router = useRouter();
 
   if (!user.loaded) return null;
 
-  if (!user.id) router.push('/login')
+  if (!user.id) router.push('/login');
 
   const handleShareEvent = useCallback(() => {
     const eventUrl = `${window.location.origin}/events/${eventId}`;
-    toast({
-      title: 'Link copied',
-      description: `Event URL: ${eventUrl}`,
-    });
+    // toast({
+    //   title: 'Link copied',
+    //   description: `Event URL: ${eventUrl}`,
+    // });
   }, [eventId, toast]);
 
   if (error) {
@@ -55,8 +55,8 @@ export function EventManagement({ eventId }: { eventId: string }) {
           <h1 className='text-xl md:text-3xl font-bold'>{draftEvent.title}</h1>
         </div>
         <div className='flex gap-2'>
-          <Button variant='secondary' size='icon' onClick={handleShareEvent} asChild>
-            <Link target='_blank' href={`/event/${draftEvent.id}`}>
+          <Button variant='secondary' size='icon' asChild>
+            <Link href={`/`}>
               <ArrowUpRight className='h-4 w-4' />
             </Link>
           </Button>
