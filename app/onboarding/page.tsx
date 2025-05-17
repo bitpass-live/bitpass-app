@@ -19,7 +19,7 @@ export default function OnboardingPage() {
   };
 
   const handleFinish = () => {
-    window.location.href = '/admin';
+    window.location.href = '/';
   };
 
   const renderStep = () => {
@@ -37,5 +37,5 @@ export default function OnboardingPage() {
     }
   };
 
-  return renderStep()
+  return renderStep();
 }
