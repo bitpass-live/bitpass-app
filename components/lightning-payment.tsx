@@ -29,7 +29,7 @@ export function LightningPayment({
   appliedDiscount,
   onPaymentSuccess,
   onPaymentFailed,
-  onCancelOrder
+  onCancelOrder,
 }: LightningPaymentProps) {
   const [timeLeft, setTimeLeft] = useState(600);
   const [satsValue, setSatsValue] = useState<number | null>(null);
@@ -117,30 +117,28 @@ export function LightningPayment({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  console.log('displayTotal', displayTotal);
+
   return (
     <div className='w-full max-w-md space-y-6'>
       <h2 className='text-xl font-semibold text-white'>Pay with Lightning Network</h2>
 
-      <Card className='bg-[#151515] border-border-gray'>
-        <CardContent className='p-6 flex flex-col items-center'>
-          <div className='mb-4 text-center'>
+      <Card>
+        <CardContent className='flex flex-col items-center gap-2 p-6'>
+          <div className='text-center'>
             <p className='text-sm text-muted-foreground mb-1'>Time remaining to pay</p>
             <p className='text-xl font-mono font-bold text-white'>{formatTime(timeLeft)}</p>
           </div>
 
-          <div className='bg-white p-4 rounded-lg mb-4'>
+          <div className='bg-white p-4 rounded-lg'>
             <QRCodeSVG value={invoice} size={200} />
           </div>
 
-          <div className='text-center mb-6'>
+          <div className='text-center'>
             {displayTotal !== null && (
-              <p className='text-lg font-bold text-white mb-1'>
-                {formatCurrency(displayTotal, displayCurrency)} {displayCurrency}
-              </p>
+              <p className='text-lg font-bold text-white'>{formatCurrency(displayTotal, displayCurrency)}</p>
             )}
-            {satsValue !== null && (
-              <p className='text-sm text-muted-foreground'>≈ {satsValue.toLocaleString()} sats</p>
-            )}
+            {satsValue !== null && <p className='text-sm text-muted-foreground'>≈ {satsValue.toLocaleString()} sats</p>}
           </div>
 
           <Button
@@ -151,13 +149,7 @@ export function LightningPayment({
             Copy invoice
           </Button>
 
-
-          <Button
-            variant="destructive"
-            type="button"
-            className="w-full mt-4"
-            onClick={onCancelOrder}
-          >
+          <Button variant='destructive' type='button' className='w-full' onClick={onCancelOrder}>
             Cancel order
           </Button>
         </CardContent>
