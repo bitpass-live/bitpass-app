@@ -55,8 +55,8 @@ export function isEventLive(event: Event): boolean {
 
 export function formatCurrency(amount: number, currency: 'SAT' | 'ARS' | 'USD'): string {
   if (currency === 'SAT') {
-    return `${amount.toLocaleString()} sats`;
+    return `${amount.toLocaleString()} ${currency}`;
   }
 
-  return `$${amount.toLocaleString()}`;
+  return `$${amount.toLocaleString()} ${currency}`;
 }
