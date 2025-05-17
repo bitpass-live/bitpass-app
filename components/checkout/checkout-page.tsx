@@ -31,14 +31,6 @@ export default function CheckoutPage() {
     setAppliedDiscount(discountCode);
   };
 
-  if (!draftEvent || !draftEvent.id) {
-    return (
-      <div className='flex items-center justify-center h-screen'>
-        <p>Event not found</p>
-      </div>
-    );
-  }
-
   return (
     <div className='min-h-screen flex flex-col'>
       {/* Main content */}
@@ -52,7 +44,7 @@ export default function CheckoutPage() {
               </div>
               {user.loaded && isAuthenticated && (
                 <div className='flex gap-2'>
-                  {draftEvent.creatorId === user.id && (
+                  {draftEvent?.creatorId === user.id && (
                     <Button variant='secondary' size='sm' asChild>
                       <Link href='/admin'>Admin panel</Link>
                     </Button>
@@ -64,7 +56,7 @@ export default function CheckoutPage() {
               )}
             </div>
             <EventInfo
-              event={draftEvent}
+              event={draftEvent!}
               selectedTickets={selectedTickets}
               onTicketChange={handleTicketChange}
               onDiscountValidated={handleDiscountValidated}
@@ -76,7 +68,11 @@ export default function CheckoutPage() {
         {/* Right side - Checkout form */}
         <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 bg-[#0A0A0A]'>
           <div className='w-full max-w-md mx-auto px-4'>
-            <CheckoutForm selectedTickets={selectedTickets} appliedDiscount={appliedDiscount} onLockChange={setIsLocked} />
+            <CheckoutForm
+              selectedTickets={selectedTickets}
+              appliedDiscount={appliedDiscount}
+              onLockChange={setIsLocked}
+            />
           </div>
         </div>
       </div>
