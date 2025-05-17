@@ -93,7 +93,9 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
           return (
             <Card key={ticket.id} className='bg-[#0A0A0A] border-border-gray'>
               <CardContent
-                className={`p-6 flex items-center justify-between ${quantity === 0 && isAvailable ? 'cursor-pointer' : ''}`}
+                className={`p-6 flex items-center justify-between ${
+                  quantity === 0 && isAvailable ? 'cursor-pointer' : ''
+                }`}
                 onClick={() => {
                   if (!isAvailable || isLocked) return;
 
@@ -110,7 +112,7 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                 <div>
                   <h3 className='font-medium text-white'>{ticket.name}</h3>
                   <p className={`${!isAvailable ? 'text-muted-foreground' : 'text-fluorescent-yellow'}`}>
-                    {ticket.price === 0 ? 'Gratis' : (`${formatCurrency(ticket.price, ticket.currency)} ${ticket.currency}`)}
+                    {ticket.price === 0 ? 'Gratis' : `${formatCurrency(ticket.price, ticket.currency)}`}
                   </p>
                   {ticket.quantity !== -1 && (
                     <p className='text-xs text-muted-foreground'>
@@ -154,7 +156,9 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
                           handleIncrement(ticket.id);
                         }
                       }}
-                      disabled={!isAvailable || quantity >= availableQuantity || (isFreeTicket && quantity === 1) || isLocked}
+                      disabled={
+                        !isAvailable || quantity >= availableQuantity || (isFreeTicket && quantity === 1) || isLocked
+                      }
                     >
                       <PlusIcon className='h-3 w-3' />
                     </Button>
@@ -166,57 +170,62 @@ export function EventInfo({ event, selectedTickets, onTicketChange, onDiscountVa
         })}
       </div>
 
-      <div className='mt-6 px-4'>
-        <div className='flex justify-between text-sm mb-2'>
-          <span className='text-white'>Subtotal:</span>
-          <span className='text-white'>${(displayTotal ?? 0) + displayDiscount} {displayCurrency}</span>
-        </div>
-
-        {!validatedCode ? (
-          <>
-            {showCouponInput ? (
-              <div className='flex gap-2 mt-2'>
-                <Input
-                  id='discount-code'
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder='Enter your code'
-                  className='bg-[#1A1A1A] border-border-gray text-white'
-                />
-                <Button type='button' variant='outline' onClick={handleValidateCode} disabled={!code.trim() || isLocked}>
-                  Apply
-                </Button>
-              </div>
-            ) : (
-              <Button
-                variant='link'
-                className='p-0 h-auto text-fluorescent-yellow'
-                onClick={() => setShowCouponInput(true)}
-                disabled={isLocked}
-              >
-                Add coupon
-              </Button>
-            )}
-          </>
-        ) : (
-          <div className='flex justify-between items-center text-sm mb-2'>
-            <div className='flex flex-col'>
-              <span className='text-fluorescent-yellow'>Discount ({validatedCode.code}):</span>
-              <p className='text-sm text-green-500'>
-                {`${validatedCode.percentage}% discount`}
-              </p>
-            </div>
-            <div className='flex items-center gap-2'>
-              <span className='text-fluorescent-yellow'>-${displayDiscount}</span>
-            </div>
+      {displayTotal > 0 && (
+        <div className='mt-6 px-4'>
+          <div className='flex justify-between text-sm mb-2'>
+            <span className='text-white'>Subtotal:</span>
+            <span className='text-white'>{formatCurrency((displayTotal ?? 0) + displayDiscount, displayCurrency)}</span>
           </div>
-        )}
 
-        <div className='flex justify-between text-base font-medium mt-2 pt-2 border-t border-border-gray'>
-          <span className='text-white'>Total to pay:</span>
-          <span className='text-white'>${displayTotal} {displayCurrency}</span>
+          {!validatedCode ? (
+            <>
+              {showCouponInput ? (
+                <div className='flex gap-2 mt-2'>
+                  <Input
+                    id='discount-code'
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder='Enter your code'
+                    className='bg-[#1A1A1A] border-border-gray text-white'
+                  />
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={handleValidateCode}
+                    disabled={!code.trim() || isLocked}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant='link'
+                  className='p-0 h-auto text-fluorescent-yellow'
+                  onClick={() => setShowCouponInput(true)}
+                  disabled={isLocked}
+                >
+                  Add coupon
+                </Button>
+              )}
+            </>
+          ) : (
+            <div className='flex justify-between items-center text-sm mb-2'>
+              <div className='flex flex-col'>
+                <span className='text-fluorescent-yellow'>Discount ({validatedCode.code}):</span>
+                <p className='text-sm text-green-500'>{`${validatedCode.percentage}% discount`}</p>
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-fluorescent-yellow'>-${displayDiscount}</span>
+              </div>
+            </div>
+          )}
+
+          <div className='flex justify-between text-base font-medium mt-2 pt-2 border-t border-border-gray'>
+            <span className='text-white'>Total to pay:</span>
+            <span className='text-white'>{formatCurrency(displayTotal, displayCurrency)}</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
