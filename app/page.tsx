@@ -1,62 +1,44 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
+
 import CheckoutPage from '@/components/checkout/checkout-page';
 import { LoaderView } from '@/components/loader-view';
+import { Button } from '@/components/ui/button';
+import { ArrowUpRight } from 'lucide-react';
 
 export default function AuthPage() {
-  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  // const { user, isAuthenticated } = useAuth();
   const { draftEvent } = useDraftEventContext();
 
-  if (user.loaded && isAuthenticated && (!draftEvent || !draftEvent.id || draftEvent.status === "DRAFT")) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <main className="flex-1 flex items-center justify-center py-6">
-            <div className="flex flex-col gap-4 w-full max-w-md mx-auto px-4">
-              <div className="text-center">
-                <h1 className="text-2xl font-bold">Welcome!</h1>
-                <p className="text-muted-foreground mt-2">
-                  Create your first event with our step-by-step guide.
-                </p>
-              </div>
+  // Redirect to onboarding
+  // useEffect(() => {
+  //   if (!draftEvent || !draftEvent.id || draftEvent.status === 'DRAFT') {
+  //     router.push('/onboarding');
+  //   }
+  // }, [user.loaded, isAuthenticated, draftEvent, router]);
 
-              <Link
-                href="/onboarding"
-                className="text-center bg-primary text-black rounded-md py-2 px-4 hover:bg-primary/90 transition"
-              >
-                Start now
-              </Link>
-            </div>
-        </main>
+  // Redirect to login if user is not authenticated and no draft event exists
+  // useEffect(() => {
+  //   if (!isAuthenticated && (!draftEvent || !draftEvent.id)) {
+  //     router.push('/login');
+  //   }
+  // }, [user.loaded, isAuthenticated, draftEvent, router]);
+
+  if (!draftEvent) {
+    return (
+      <div className='flex items-center justify-center h-screen'>
+        <p>Loading event...</p>
       </div>
     );
   }
 
-  if (user.loaded && !isAuthenticated && (!draftEvent || !draftEvent.id)) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <main className="flex-1 flex items-center justify-center py-6">
-          <div className="flex flex-col gap-4 w-full max-w-md mx-auto px-4">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold">Welcome!</h1>
-              <p className="text-muted-foreground mt-2">
-                You need to log in to start creating your event.
-              </p>
-            </div>
-
-            <Link
-              href="/login"
-              className="text-center bg-primary text-black rounded-md py-2 px-4 hover:bg-primary/90 transition"
-            >
-              Log in
-            </Link>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  return (<CheckoutPage />);
+  return <CheckoutPage />;
 }
