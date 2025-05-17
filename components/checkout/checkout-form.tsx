@@ -12,6 +12,7 @@ import { LoginForm } from '../login-form';
 import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
 import { useCheckoutSummary } from '@/hooks/use-checkout-summary';
 import { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
+import { formatCurrency } from '@/lib/utils';
 
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
@@ -142,18 +143,12 @@ export function CheckoutForm({ selectedTickets, appliedDiscount, onLockChange }:
                 )}
                 <p>
                   Total estimated:{' '}
-                  <span className='font-semibold'>${displayTotal}</span>{' '}
-                  ({displayCurrency})
+                  <span className='font-semibold'>{formatCurrency(displayTotal, displayCurrency)}</span>
                 </p>
               </div>
             )}
 
-            <Button
-              size='lg'
-              type='submit'
-              className='w-full'
-              disabled={isSubmitting || !isFormValid()}
-            >
+            <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
               {isSubmitting ? 'Processing...' : 'Continue to payment'}
             </Button>
           </div>
