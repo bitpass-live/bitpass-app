@@ -16,11 +16,10 @@ export default function AuthPage() {
     if (!user.loaded) return;
 
     if (isAuthenticated) {
-      router.push('/');
+      router.push('/admin');
       return;
     }
-
-  }, [user, isAuthenticated])
+  }, [user, isAuthenticated]);
 
   if (!user.loaded) return null;
 
