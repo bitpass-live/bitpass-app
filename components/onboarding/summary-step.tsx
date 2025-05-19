@@ -73,14 +73,14 @@ export function SummaryStep({ onFinish, onBack }: SummaryStepProps) {
                 <span className='text-muted-foreground'>Lightning Address:</span>
                 <span>{lightningAddress || 'Not configured'}</span>
               </div>
-              <div className='flex justify-between'>
+              {/* <div className='flex justify-between'>
                 <span className='text-muted-foreground'>Ticket types:</span>
                 <span>{draftEvent?.ticketTypes?.length ?? 0}</span>
-              </div>
-              <div className='flex justify-between'>
+              </div> */}
+              {/* <div className='flex justify-between'>
                 <span className='text-muted-foreground'>Team members:</span>
                 <span>{draftEvent?.team?.length ?? 1}</span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
