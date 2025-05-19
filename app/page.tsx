@@ -16,31 +16,29 @@ export default function AuthPage() {
   const router = useRouter();
 
   const { user, isAuthenticated } = useAuth();
-  const { draftEvent } = useDraftEventContext();
-
-  console.log('draftEvent', draftEvent);
+  // const { draftEvent } = useDraftEventContext();
 
   // Redirect to onboarding
-  useEffect(() => {
-    if (!draftEvent || !draftEvent.id || draftEvent.status === 'DRAFT') {
-      router.push('/onboarding');
-    }
-  }, [user.loaded, isAuthenticated, draftEvent, router]);
+  // useEffect(() => {
+  //   if (!draftEvent?.id || draftEvent?.status === 'DRAFT') {
+  //     router.push('/onboarding');
+  //   }
+  // }, [user.loaded, isAuthenticated, draftEvent, router]);
 
   // Redirect to login if user is not authenticated and no draft event exists
-  useEffect(() => {
-    if (!isAuthenticated && (!draftEvent || !draftEvent.id)) {
-      router.push('/login');
-    }
-  }, [user.loaded, isAuthenticated, draftEvent, router]);
+  // useEffect(() => {
+  //   if (!isAuthenticated && !draftEvent?.id) {
+  //     router.push('/login');
+  //   }
+  // }, [user.loaded, isAuthenticated, draftEvent, router]);
 
-  if (!draftEvent) {
-    return (
-      <div className='flex items-center justify-center h-screen'>
-        <p>Loading event...</p>
-      </div>
-    );
-  }
+  // if (!draftEvent) {
+  //   return (
+  //     <div className='flex items-center justify-center h-screen'>
+  //       <p>Loading event...</p>
+  //     </div>
+  //   );
+  // }
 
   return <CheckoutPage />;
 }
