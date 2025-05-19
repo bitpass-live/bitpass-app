@@ -31,6 +31,14 @@ export default function CheckoutPage() {
     setAppliedDiscount(discountCode);
   };
 
+  if (!draftEvent) {
+    return (
+      <div className='flex items-center justify-center h-screen'>
+        <p>Loading event...</p>
+      </div>
+    );
+  }
+
   return (
     <div className='min-h-screen flex flex-col'>
       {/* Main content */}
