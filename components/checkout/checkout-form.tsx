@@ -13,6 +13,8 @@ import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
 import { useCheckoutSummary } from '@/hooks/use-checkout-summary';
 import { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
 import { formatCurrency } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 
 interface CheckoutFormProps {
   selectedTickets: Record<string, number>;
@@ -28,25 +30,23 @@ export function CheckoutForm({ selectedTickets, appliedDiscount, onLockChange }:
   const [orderId, setOrderId] = useState<string | null>(null);
   const [lnInvoice, setLnInvoice] = useState<string | null>(null);
   const [tickets, setTickets] = useState<Ticket[] | null>(null);
-
-  const { displayTotal, displayDiscount, displayCurrency } = useCheckoutSummary(selectedTickets, appliedDiscount);
+  // Component state
+  const [activeTab, setActiveTab] = useState('email');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [nostrId, setNostrId] = useState('');
 
   const { toast } = useToast();
-  const { user, isAuthenticated, paymentMethods, bitpassAPI } = useAuth();
+  const { paymentMethods, bitpassAPI } = useAuth();
   const { draftEvent } = useDraftEventContext();
 
   if (!draftEvent?.id) return null;
 
-  const totalTickets = Object.values(selectedTickets).reduce((sum, qty) => sum + qty, 0);
-  const isFormValid = () => isAuthenticated && totalTickets > 0;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid()) return;
+    setIsSubmitting(true);
 
     try {
-      setIsSubmitting(true);
-
       const payload = {
         eventId: draftEvent.id,
         ticketTypes: Object.entries(selectedTickets)
@@ -126,34 +126,51 @@ export function CheckoutForm({ selectedTickets, appliedDiscount, onLockChange }:
     <div className='space-y-4'>
       <h2 className='text-xl font-semibold text-white'>Complete purchase</h2>
 
-      {!isAuthenticated ? (
-        <LoginForm />
-      ) : (
-        <form onSubmit={handleSubmit} className='space-y-6'>
-          <div className='space-y-4'>
-            <Label className='text-white'>Logged in with {user.authMethod}</Label>
-            <p>{user.authMethod === 'email' ? user.email : user.nostrPubKey}</p>
+      <form onSubmit={handleSubmit} className='space-y-6'>
+        <Tabs defaultValue='email' value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className='grid w-full grid-cols-2 mb-6'>
+            <TabsTrigger value='email'>Email</TabsTrigger>
+            <TabsTrigger value='nostr'>Nostr</TabsTrigger>
+          </TabsList>
 
-            {displayTotal !== null && (
-              <div className='text-sm text-muted-foreground'>
-                {displayDiscount > 0 && (
-                  <p>
-                    Discount applied: <span className='font-semibold'>-${displayDiscount}</span>
-                  </p>
-                )}
-                <p>
-                  Total estimated:{' '}
-                  <span className='font-semibold'>{formatCurrency(displayTotal, displayCurrency)}</span>
-                </p>
-              </div>
+          <div className='space-y-4'>
+            {/* Mostrar el campo de nombre solo cuando la pestaña Email está activa */}
+            {activeTab === 'email' && (
+              <Input
+                id='name'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder='Your Name (optional)'
+              />
             )}
 
-            <Button size='lg' type='submit' className='w-full' disabled={isSubmitting || !isFormValid()}>
-              {isSubmitting ? 'Processing...' : 'Continue to payment'}
-            </Button>
+            <TabsContent value='email' className='space-y-4 mt-0 p-0'>
+              <Input
+                id='email'
+                type='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder='your@email.com'
+                required={activeTab === 'email'}
+              />
+            </TabsContent>
+
+            <TabsContent value='nostr' className='space-y-4 mt-0 p-0'>
+              <Input
+                id='nostrId'
+                value={nostrId}
+                onChange={(e) => setNostrId(e.target.value)}
+                placeholder='Pubkey, npub... or NIP-05'
+                required={activeTab === 'nostr'}
+              />
+            </TabsContent>
           </div>
-        </form>
-      )}
+        </Tabs>
+
+        <Button className='w-full' size='lg' type='submit' disabled={isSubmitting}>
+          {isSubmitting ? 'Procesando...' : 'Continuar al pago'}
+        </Button>
+      </form>
     </div>
   );
 }
