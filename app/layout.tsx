@@ -13,23 +13,14 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'BitPass - Venta de Entradas con Bitcoin y Nostr',
+    default: 'BitPass - Ticket Sales with Bitcoin and Nostr',
     template: '%s | BitPass',
   },
-  description:
-    'Organizá eventos descentralizados, vendé entradas verificables y cobrá con Lightning Network. 100% open source.',
-  keywords: [
-    'eventos',
-    'entradas',
-    'Bitcoin',
-    'Lightning Network',
-    'Nostr',
-    'NFT tickets',
-    'ticketing descentralizado',
-  ],
+  description: 'Manage events, sell tickets, and get paid with Lightning Network and Nostr.',
+  keywords: ['events', 'tickets', 'Bitcoin', 'Lightning Network', 'Nostr'],
   openGraph: {
-    title: 'BitPass - Eventos con Lightning y Nostr',
-    description: 'La nueva forma de crear, cobrar y validar entradas usando Bitcoin y tecnología descentralizada.',
+    title: 'BitPass - Ticket Sales with Bitcoin and Nostr',
+    description: 'Manage events, sell tickets, and get paid with Lightning Network and Nostr.',
     url: 'https://bitpass.live',
     siteName: 'BitPass',
     images: [
@@ -40,15 +31,15 @@ export const metadata: Metadata = {
         alt: 'BitPass Preview',
       },
     ],
-    locale: 'es_AR',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BitPass - Venta de Entradas con Bitcoin y Nostr',
-    description: 'Gestioná eventos y cobrá en SATs con Nostr y Lightning.',
-    site: '@BitPass_io',
-    creator: '@BitPass_io',
+    title: 'BitPass - Ticket Sales with Bitcoin and Nostr',
+    description: 'Manage events, sell tickets, and get paid with Lightning Network and Nostr.',
+    site: '@bitpasslive',
+    creator: '@bitpasslive',
     images: ['https://bitpass.live/og-image.jpg'],
   },
   robots: {
@@ -59,8 +50,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://bitpass.live',
     languages: {
-      'es-AR': 'https://bitpass.live',
-      'en-US': 'https://bitpass.live/en',
+      'en-US': 'https://bitpass.live',
+      'es-AR': 'https://bitpass.live/es',
     },
   },
 };
