@@ -31,9 +31,6 @@ export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
             <div className='max-w-32 max-h-32 mx-auto'>
               <Lottie animationData={animationCheck} loop={false} />
             </div>
-            {/* <div className='inline-flex items-center justify-center p-2 bg-green-100 rounded-full mb-4'>
-              <CheckCircle className='h-12 w-12 text-green-600' />
-            </div> */}
             <h3 className='text-xl font-bold text-white mb-2'>Thank!</h3>
             <p className='text-muted-foreground'>
               Your payment has been processed successfully and your tickets are ready.
