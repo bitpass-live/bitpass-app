@@ -1,10 +1,16 @@
 'use client';
 
-import { CheckCircle } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import type { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
-import { Button } from '@/components/ui/button';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import { CheckCircle } from 'lucide-react';
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+
+import type { Ticket } from '@/lib/bitpass-sdk/src/types/ticket';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+import animationCheck from './animations/check.json';
 
 interface PaymentSuccessProps {
   tickets: Ticket[];
@@ -22,10 +28,13 @@ export function PaymentSuccess({ tickets }: PaymentSuccessProps) {
       <Card className='bg-[#151515] border-border-gray'>
         <CardContent className='p-6 flex flex-col items-center gap-1'>
           <div className='mb-6 text-center'>
-            <div className='inline-flex items-center justify-center p-2 bg-green-100 rounded-full mb-4'>
-              <CheckCircle className='h-12 w-12 text-green-600' />
+            <div className='max-w-32 max-h-32 mx-auto'>
+              <Lottie animationData={animationCheck} loop={false} />
             </div>
-            <h3 className='text-xl font-bold text-white mb-2'>Thank you for your purchase!</h3>
+            {/* <div className='inline-flex items-center justify-center p-2 bg-green-100 rounded-full mb-4'>
+              <CheckCircle className='h-12 w-12 text-green-600' />
+            </div> */}
+            <h3 className='text-xl font-bold text-white mb-2'>Thank!</h3>
             <p className='text-muted-foreground'>
               Your payment has been processed successfully and your tickets are ready.
             </p>
