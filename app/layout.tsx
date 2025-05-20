@@ -1,18 +1,19 @@
 import type React from 'react';
 import type { Metadata } from 'next';
 
-import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/lib/auth-provider';
-import { AuthGuard } from '@/components/auth/auth-guard';
-
-import './globals.css';
 import { DraftEventProvider } from '@/lib/draft-event-context';
 import { INSTANCE_ID } from '@/lib/instance-id';
 import { YadioProvider } from '@/lib/yadio-context';
 
+import { Toaster } from '@/components/ui/toaster';
+import { AuthGuard } from '@/components/auth/auth-guard';
+
+import './globals.css';
+
 export const metadata: Metadata = {
   title: {
-    default: 'BitPass – Venta de Entradas con Bitcoin y Nostr',
+    default: 'BitPass - Venta de Entradas con Bitcoin y Nostr',
     template: '%s | BitPass',
   },
   description:
@@ -27,13 +28,13 @@ export const metadata: Metadata = {
     'ticketing descentralizado',
   ],
   openGraph: {
-    title: 'BitPass – Eventos con Lightning y Nostr',
+    title: 'BitPass - Eventos con Lightning y Nostr',
     description: 'La nueva forma de crear, cobrar y validar entradas usando Bitcoin y tecnología descentralizada.',
-    url: 'https://BitPass.io',
+    url: 'https://bitpass.live',
     siteName: 'BitPass',
     images: [
       {
-        url: 'https://BitPass.io/og-image.jpg',
+        url: 'https://bitpass.live/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'BitPass Preview',
@@ -44,11 +45,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BitPass – Venta de Entradas con Bitcoin y Nostr',
+    title: 'BitPass - Venta de Entradas con Bitcoin y Nostr',
     description: 'Gestioná eventos y cobrá en SATs con Nostr y Lightning.',
     site: '@BitPass_io',
     creator: '@BitPass_io',
-    images: ['https://BitPass.io/og-image.jpg'],
+    images: ['https://bitpass.live/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -56,10 +57,10 @@ export const metadata: Metadata = {
     nocache: false,
   },
   alternates: {
-    canonical: 'https://BitPass.io',
+    canonical: 'https://bitpass.live',
     languages: {
-      'es-AR': 'https://BitPass.io',
-      'en-US': 'https://BitPass.io/en',
+      'es-AR': 'https://bitpass.live',
+      'en-US': 'https://bitpass.live/en',
     },
   },
 };
@@ -70,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='es' className='scroll-smooth dark'>
+    <html lang='es' className='scroll-smooth dark bg-background'>
       <body>
         <AuthProvider>
           <DraftEventProvider instanceId={INSTANCE_ID}>
