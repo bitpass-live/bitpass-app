@@ -1,44 +1,90 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { useDraftEventContext } from '@/lib/draft-event-context';
 import { useAuth } from '@/lib/auth-provider';
 
-import CheckoutPage from '@/components/checkout/checkout-page';
-import { LoaderView } from '@/components/loader-view';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight } from 'lucide-react';
+import { Logo } from '@/components/logo';
+import { EventInfo } from '@/components/event-info';
+import { CheckoutForm } from '@/components/checkout/checkout-form';
 
-export default function AuthPage() {
-  const router = useRouter();
+import { DiscountCode } from '@/lib/bitpass-sdk/src/types/discount';
 
+export default function HomePage() {
   const { user, isAuthenticated } = useAuth();
-  // const { draftEvent } = useDraftEventContext();
+  const { draftEvent } = useDraftEventContext();
 
-  // Redirect to onboarding
-  // useEffect(() => {
-  //   if (!draftEvent?.id || draftEvent?.status === 'DRAFT') {
-  //     router.push('/onboarding');
-  //   }
-  // }, [user.loaded, isAuthenticated, draftEvent, router]);
+  const [isLocked, setIsLocked] = useState(false);
+  const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({});
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
 
-  // Redirect to login if user is not authenticated and no draft event exists
-  // useEffect(() => {
-  //   if (!isAuthenticated && !draftEvent?.id) {
-  //     router.push('/login');
-  //   }
-  // }, [user.loaded, isAuthenticated, draftEvent, router]);
+  const handleTicketChange = (ticketId: string, quantity: number) => {
+    setSelectedTickets((prev) => ({
+      ...prev,
+      [ticketId]: quantity,
+    }));
+  };
 
-  // if (!draftEvent) {
-  //   return (
-  //     <div className='flex items-center justify-center h-screen'>
-  //       <p>Loading event...</p>
-  //     </div>
-  //   );
-  // }
+  const handleDiscountValidated = (discountCode: DiscountCode | null) => {
+    setAppliedDiscount(discountCode);
+  };
 
-  return <CheckoutPage />;
+  if (!draftEvent) {
+    return (
+      <div className='flex items-center justify-center h-screen'>
+        <p>Loading event...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className='min-h-screen flex flex-col'>
+      {/* Main content */}
+      <div className='flex-1 flex flex-col md:flex-row'>
+        {/* Left side - Event info and tickets */}
+        <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10 border-b md:border-b-0 md:border-r bg-card'>
+          <div className='w-full max-w-md mx-auto px-4'>
+            <div className='flex items-center justify-between gap-2 w-full pb-4 border-b text-lg'>
+              <div className='flex gap-2'>
+                <Logo /> <span className='text-sm text-muted-foreground'>/ Ticketing</span>
+              </div>
+              {user.loaded && isAuthenticated && (
+                <div className='flex gap-2'>
+                  {draftEvent?.creatorId === user.id && (
+                    <Button variant='secondary' size='sm' asChild>
+                      <Link href='/admin'>Admin panel</Link>
+                    </Button>
+                  )}
+                  <Button variant='secondary' size='sm' asChild>
+                    <Link href='/tickets'>My tickets</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+            <EventInfo
+              event={draftEvent!}
+              selectedTickets={selectedTickets}
+              onTicketChange={handleTicketChange}
+              onDiscountValidated={handleDiscountValidated}
+              isLocked={isLocked}
+            />
+          </div>
+        </div>
+
+        {/* Right side - Checkout form */}
+        <div className='flex flex-col items-center w-full md:w-1/2 py-6 md:p-10'>
+          <div className='w-full max-w-md mx-auto px-4'>
+            <CheckoutForm
+              selectedTickets={selectedTickets}
+              appliedDiscount={appliedDiscount}
+              onLockChange={setIsLocked}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
