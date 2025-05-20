@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='es' className='scroll-smooth dark bg-background'>
+    <html lang='en' className='scroll-smooth dark bg-background'>
       <body>
         <AuthProvider>
           <DraftEventProvider instanceId={INSTANCE_ID}>
