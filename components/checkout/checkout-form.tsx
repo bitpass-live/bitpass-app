@@ -167,8 +167,13 @@ export function CheckoutForm({ selectedTickets, appliedDiscount, onLockChange }:
           </div>
         </Tabs>
 
-        <Button className='w-full' size='lg' type='submit' disabled={isSubmitting}>
-          {isSubmitting ? 'Procesando...' : 'Continuar al pago'}
+        <Button
+          className='w-full'
+          size='lg'
+          type='submit'
+          disabled={isSubmitting || Object.entries(selectedTickets).filter(([_, qty]) => qty > 0).length === 0}
+        >
+          {isSubmitting ? 'Processing...' : 'Continue to Payment'}
         </Button>
       </form>
     </div>
